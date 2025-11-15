@@ -1,0 +1,50 @@
+[
+  {
+    "input": {
+      "platforms": [
+        "Instagram",
+        "TikTok"
+      ],
+      "target_audiences": [
+        "Gen Z (18-24)",
+        "Young Professionals (25-35)"
+      ],
+      "niche": "Fashion and Lifestyle",
+      "follower_range": "50K-500K",
+      "engagement_rate_min": 3.0
+    },
+    "expected_output_type": "list_of_creators",
+    "description": "Find fashion influencers on Instagram and TikTok targeting Gen Z and young professionals"
+  },
+  {
+    "input": {
+      "platforms": [
+        "YouTube"
+      ],
+      "target_audiences": [
+        "Tech Enthusiasts",
+        "Gamers"
+      ],
+      "niche": "Technology Reviews",
+      "follower_range": "100K-1M",
+      "content_type": "Video Reviews"
+    },
+    "expected_output_type": "list_of_creators",
+    "description": "Find tech review YouTubers for gaming audience"
+  },
+  {
+    "input": {
+      "platforms": [
+        "LinkedIn"
+      ],
+      "target_audiences": [
+        "B2B Decision Makers"
+      ],
+      "niche": "Business Strategy",
+      "follower_range": "10K-100K",
+      "content_focus": "Thought Leadership"
+    },
+    "expected_output_type": "list_of_creators",
+    "description": "Find LinkedIn thought leaders for B2B audience"
+  }
+]

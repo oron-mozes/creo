@@ -1,0 +1,51 @@
+[
+  {
+    "input": {
+      "creator_name": "@techreviewer",
+      "creator_type": "Tech YouTuber",
+      "subscriber_count": "500K",
+      "campaign_type": "Product Review",
+      "product": "New smartphone",
+      "key_points": [
+        "Early access",
+        "Honest review",
+        "Creative freedom"
+      ],
+      "tone": "Professional but friendly"
+    },
+    "expected_output_type": "outreach_message",
+    "description": "Create outreach message for tech reviewer"
+  },
+  {
+    "input": {
+      "creator_name": "@fashionista",
+      "creator_type": "Fashion Instagram Influencer",
+      "subscriber_count": "200K",
+      "campaign_type": "Sponsored Post",
+      "product": "Sustainable clothing brand",
+      "key_points": [
+        "Sustainability focus",
+        "Long-term partnership"
+      ],
+      "tone": "Casual and approachable"
+    },
+    "expected_output_type": "outreach_message",
+    "description": "Create outreach message for fashion influencer"
+  },
+  {
+    "input": {
+      "creator_name": "@fitnessguru",
+      "creator_type": "Fitness Content Creator",
+      "subscriber_count": "150K",
+      "campaign_type": "Brand Ambassadorship",
+      "product": "Fitness app",
+      "key_points": [
+        "Authentic partnership",
+        "User testimonials"
+      ],
+      "tone": "Motivational and authentic"
+    },
+    "expected_output_type": "outreach_message",
+    "description": "Create outreach message for fitness creator"
+  }
+]

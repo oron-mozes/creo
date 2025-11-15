@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web venv scaffold-agent
+.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge
 
 # Virtual environment path
 VENV = venv
@@ -17,6 +17,8 @@ help:
 	@echo "  make web          - Start ADK web interface"
 	@echo "  make venv         - Create virtual environment"
 	@echo "  make scaffold-agent NAME=\"Agent Name\" DESC=\"Description\" - Scaffold a new agent"
+	@echo "  make generate-tests - Generate synthetic test data for all agents"
+	@echo "  make judge AGENT=\"Agent-folder-name\""
 
 # Create virtual environment
 venv:
@@ -28,7 +30,7 @@ venv:
 # Install dependencies
 install: venv
 	$(PIP) install --upgrade pip
-	$(PIP) install google-adk
+	$(PIP) install google-adk==1.18.0 google-generativeai==0.8.2
 	@if [ -f requirements.txt ]; then $(PIP) install -r requirements.txt; fi
 	@echo "Installation complete. Activate venv with: source $(VENV)/bin/activate"
 
@@ -73,3 +75,13 @@ scaffold-agent: venv
 	fi
 	$(PYTHON) scripts/scaffold_agent.py "$(NAME)" "$(DESC)"
 
+# Generate synthetic test data for all agents
+generate-tests: venv
+	$(PYTHON) agents/test_utils.py
+
+judge: venv
+	@if [ -z "$(AGENT)" ]; then \
+		echo "Usage: make judge AGENT=<agent-folder-name>"; \
+		exit 1; \
+	fi
+	$(PYTHON) scripts/judge_agent.py --agent-dir agents/$(AGENT)

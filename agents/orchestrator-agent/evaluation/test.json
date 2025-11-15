@@ -1,0 +1,41 @@
+[
+  {
+    "input": {
+      "user_request": "I need to find fashion influencers for my brand"
+    },
+    "expected_redirect": "creator_finder_agent",
+    "description": "Should redirect to creator finder agent"
+  },
+  {
+    "input": {
+      "user_request": "I want to create a campaign brief for a product launch"
+    },
+    "expected_redirect": "campaing_brief_agent",
+    "description": "Should redirect to campaign brief agent"
+  },
+  {
+    "input": {
+      "user_request": "Help me write an outreach message to a creator"
+    },
+    "expected_redirect": "outreach_message_agent",
+    "description": "Should redirect to outreach message agent"
+  },
+  {
+    "input": {
+      "user_request": "I need a complete marketing campaign strategy"
+    },
+    "expected_redirect": "campaign_builder_agent",
+    "description": "Should redirect to campaign builder agent"
+  },
+  {
+    "input": {
+      "user_request": "I need to find creators, then create outreach messages, then build a campaign"
+    },
+    "expected_redirect": [
+      "creator_finder_agent",
+      "outreach_message_agent",
+      "campaign_builder_agent"
+    ],
+    "description": "Should suggest workflow sequence with multiple agents"
+  }
+]

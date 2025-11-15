@@ -1,0 +1,34 @@
+[
+  {
+    "input": {
+      "objective": "Launch new eco-friendly skincare product",
+      "target_audience": "Environmentally conscious millennials (25-40), primarily female",
+      "budget": "$50,000",
+      "timeline": "3 months",
+      "channels": [
+        "Instagram",
+        "TikTok",
+        "YouTube",
+        "Influencer partnerships"
+      ]
+    },
+    "expected_output_type": "campaign_plan",
+    "description": "Build comprehensive campaign for eco-friendly skincare launch"
+  },
+  {
+    "input": {
+      "objective": "Increase B2B SaaS product sign-ups",
+      "target_audience": "Small business owners, marketing managers",
+      "budget": "$30,000",
+      "timeline": "2 months",
+      "channels": [
+        "LinkedIn",
+        "Email",
+        "Webinars",
+        "Content marketing"
+      ]
+    },
+    "expected_output_type": "campaign_plan",
+    "description": "Build B2B SaaS lead generation campaign"
+  }
+]

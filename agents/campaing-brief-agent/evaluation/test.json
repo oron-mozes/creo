@@ -1,0 +1,42 @@
+[
+  {
+    "input": {
+      "campaign_name": "Summer Fashion Launch 2024",
+      "objectives": [
+        "Brand awareness",
+        "Product launch",
+        "Engagement"
+      ],
+      "target_audience": "Fashion-conscious millennials (25-40)",
+      "budget": "$50,000",
+      "timeline": "3 months",
+      "key_messages": [
+        "Sustainable fashion",
+        "Summer collection",
+        "Limited edition"
+      ]
+    },
+    "expected_output_type": "campaign_brief",
+    "description": "Create a campaign brief for summer fashion launch"
+  },
+  {
+    "input": {
+      "campaign_name": "Tech Product Launch",
+      "objectives": [
+        "Product education",
+        "Pre-orders",
+        "Reviews"
+      ],
+      "target_audience": "Tech early adopters",
+      "budget": "$100,000",
+      "timeline": "2 months",
+      "key_messages": [
+        "Innovation",
+        "Performance",
+        "Early access"
+      ]
+    },
+    "expected_output_type": "campaign_brief",
+    "description": "Create a campaign brief for tech product launch"
+  }
+]
