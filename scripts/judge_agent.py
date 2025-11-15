@@ -8,6 +8,7 @@ import importlib.util
 import json
 import os
 import sys
+import time
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -145,19 +146,42 @@ def run_agent_case(agent: AdkAgent, case_input: Dict[str, Any]) -> str:
     )
 
     final_response: str | None = None
+    all_responses: List[str] = []
+    function_calls: List[str] = []
+
     for event in runner.run(
         user_id=user_id,
         session_id=session_id,
         new_message=new_message,
     ):
-        if event.author != agent.name:
-            continue
-        if event.is_final_response():
-            candidate = _content_to_text(event.content)
+        # Collect all agent responses (including from sub-agents)
+        candidate = _content_to_text(event.content)
+        if candidate:
+            all_responses.append(candidate)
+
+        # Capture function calls (for orchestrator agents)
+        if event.content and event.content.parts:
+            for part in event.content.parts:
+                if hasattr(part, 'function_call') and part.function_call:
+                    fc_name = getattr(part.function_call, 'name', None)
+                    if fc_name:
+                        function_calls.append(fc_name)
+
+        # Track final response from the root agent
+        if event.author == agent.name and event.is_final_response():
             if candidate:
                 final_response = candidate
-    if final_response is None:
-        raise RuntimeError("Agent produced no final response for the given input.")
+
+    # Return best available output
+    if final_response:
+        return final_response
+    elif all_responses:
+        return "\n".join(all_responses)
+    elif function_calls:
+        # For orchestrator agents that only make function calls
+        return f"Agent delegated to: {', '.join(function_calls)}"
+    else:
+        raise RuntimeError("Agent produced no text response or function calls for the given input.")
     return final_response
 
 # ---------------------------------------------------------------------------
@@ -178,6 +202,8 @@ class Judge:
             raise RuntimeError("Set GEMINI_API_KEY (or GOOGLE_API_KEY) before running the judge.")
         genai.configure(api_key=api_key)
         self._model = genai.GenerativeModel(model_name)
+        self._last_request_time = 0.0
+        self._min_request_interval = 6.5  # ~9 requests per minute to stay under 10/min limit
 
     def score(
         self,
@@ -186,6 +212,13 @@ class Judge:
         test_input: Dict[str, Any],
         agent_output: str,
     ) -> JudgeResult:
+        # Rate limiting: ensure we don't exceed API quota
+        elapsed = time.time() - self._last_request_time
+        if elapsed < self._min_request_interval:
+            sleep_time = self._min_request_interval - elapsed
+            print(f"  [Rate limiting: waiting {sleep_time:.1f}s...]", end="\r")
+            time.sleep(sleep_time)
+
         prompt = f"""
 You are an impartial judge scoring how well an agent handled a test case.
 
@@ -202,10 +235,33 @@ Score the response on a 0-1 confidence scale where:
 - 0.0 = fails entirely.
 Respond ONLY with a JSON object: {{"score": <float 0-1>, "rationale": "<1-2 sentence reason>"}}.
 """
-        response = self._model.generate_content(prompt, generation_config={"temperature": 0.1})
-        raw = response.text.strip()
-        payload = json.loads(raw)
-        return JudgeResult(score=float(payload["score"]), rationale=str(payload["rationale"]))
+        # Try up to 3 times to get valid JSON
+        for attempt in range(3):
+            try:
+                self._last_request_time = time.time()
+                response = self._model.generate_content(prompt, generation_config={"temperature": 0.1})
+                raw = response.text.strip()
+
+                # Try to extract JSON if wrapped in markdown code blocks
+                if raw.startswith("```"):
+                    lines = raw.split("\n")
+                    # Remove first and last lines (markdown fences)
+                    raw = "\n".join(lines[1:-1]) if len(lines) > 2 else raw
+                    # Remove json language identifier if present
+                    if raw.startswith("json"):
+                        raw = raw[4:].strip()
+
+                payload = json.loads(raw)
+                return JudgeResult(score=float(payload["score"]), rationale=str(payload["rationale"]))
+            except (json.JSONDecodeError, KeyError, ValueError) as e:
+                if attempt == 2:  # Last attempt
+                    # Return a default low score if we can't parse
+                    print(f"Warning: Failed to parse judge response after 3 attempts. Raw: {raw[:100]}")
+                    return JudgeResult(score=0.0, rationale=f"Judge failed to provide valid score (parse error: {str(e)})")
+                continue  # Retry
+
+        # Fallback (shouldn't reach here)
+        return JudgeResult(score=0.0, rationale="Judge failed to provide valid score")
 
 # ---------------------------------------------------------------------------
 # High-level orchestration
@@ -232,7 +288,12 @@ def main() -> None:
 
     for idx, case in enumerate(cases, start=1):
         case_input = case["input"]
-        expected = case.get("expected_output_type", "unspecified")
+        # Support both expected_output_type (for regular agents) and expected_redirect (for orchestrator)
+        expected = case.get("expected_output_type") or case.get("expected_redirect", "unspecified")
+        if isinstance(expected, list):
+            expected = f"redirect to agents: {', '.join(expected)}"
+        elif expected and expected != "unspecified":
+            expected = f"redirect to: {expected}" if "expected_redirect" in case else expected
         description = case.get("description", f"Case #{idx}")
 
         if args.dry_run:
@@ -251,6 +312,25 @@ def main() -> None:
         print("Detailed results:")
         for desc, score, rationale in table:
             print(f"- {desc}: {score:.2f} | {rationale}")
+
+        # Save report to evaluation folder
+        report_data = {
+            "average_confidence_score": round(avg_score, 3),
+            "total_cases": len(table),
+            "test_results": [
+                {
+                    "description": desc,
+                    "score": round(score, 2),
+                    "rationale": rationale
+                }
+                for desc, score, rationale in table
+            ]
+        }
+
+        report_path = args.agent_dir / "evaluation" / "report.json"
+        with open(report_path, "w") as f:
+            json.dump(report_data, f, indent=2, ensure_ascii=False)
+        print(f"\n✓ Report saved to: {report_path}")
     else:
         print("\nDry-run complete. No scores generated.")
 

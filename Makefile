@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge
+.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge server
 
 # Virtual environment path
 VENV = venv
@@ -19,6 +19,7 @@ help:
 	@echo "  make scaffold-agent NAME=\"Agent Name\" DESC=\"Description\" - Scaffold a new agent"
 	@echo "  make generate-tests - Generate synthetic test data for all agents"
 	@echo "  make judge AGENT=\"Agent-folder-name\""
+	@echo "  make server       - Start FastAPI server (exposes orchestrator agent)"
 
 # Create virtual environment
 venv:
@@ -30,7 +31,7 @@ venv:
 # Install dependencies
 install: venv
 	$(PIP) install --upgrade pip
-	$(PIP) install google-adk==1.18.0 google-generativeai==0.8.2
+	$(PIP) install google-adk==1.18.0 google-generativeai==0.8.2 python-multipart fastapi uvicorn
 	@if [ -f requirements.txt ]; then $(PIP) install -r requirements.txt; fi
 	@echo "Installation complete. Activate venv with: source $(VENV)/bin/activate"
 
@@ -85,3 +86,9 @@ judge: venv
 		exit 1; \
 	fi
 	$(PYTHON) scripts/judge_agent.py --agent-dir agents/$(AGENT)
+
+# Start FastAPI server
+server: venv
+	@echo "Starting FastAPI server on http://localhost:8000"
+	@echo "API Documentation: http://localhost:8000/docs"
+	$(VENV)/bin/uvicorn server:app --reload --host 0.0.0.0 --port 8000
