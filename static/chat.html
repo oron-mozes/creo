@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Creo</title>
+    <meta name="description" content="Chat with Creo AI to find the perfect influencers for your business">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out forwards;
+        }
+        /* Auto-grow textarea */
+        #messageInput {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Header -->
+    <header class="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-10">
+        <div class="px-4 py-2">
+            <div class="flex items-center">
+                <a href="/" class="pl-2">
+                    <img src="/static/creo-logo-BesatB3H.png" alt="Creo" style="height: 3rem;">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex h-[calc(100vh-4rem)]">
+        <!-- Side Menu -->
+        <aside class="w-64 border-r flex flex-col" style="background-color: rgba(0, 160, 235, 0.03);">
+            <!-- Sessions List -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase mb-3 px-2">Recent Chats</h3>
+                <div id="sessionList" class="space-y-1">
+                    <!-- Sessions will be loaded here -->
+                </div>
+            </div>
+
+            <!-- New Chat Button (Footer) -->
+            <div class="p-4 border-t" style="background-color: rgba(0, 160, 235, 0.05);">
+                <button onclick="createNewSession()" class="w-full text-white px-4 py-2.5 rounded-xl font-medium transition-all text-sm flex items-center justify-center gap-2" style="background-color: rgb(0, 160, 235);" onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'" onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    New Chat
+                </button>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <main class="flex-1 flex flex-col">
+            <!-- Messages Container -->
+            <div id="messagesContainer" class="flex-1 overflow-y-auto px-6 py-8">
+                <div class="max-w-4xl mx-auto space-y-4" id="messages">
+                    <!-- Initial bot message -->
+                    <div class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
+                            <div class="text-base leading-relaxed text-gray-700">
+                                Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area (Fixed at bottom) -->
+            <div class="bg-white">
+                <div class="max-w-4xl mx-auto px-6 py-4">
+                    <div class="bg-white p-5 shadow-2xl border-2 border-gray-200 rounded-3xl">
+                        <div class="flex gap-4 items-end">
+                            <textarea
+                                id="messageInput"
+                                rows="1"
+                                class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
+                                placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"
+                            ></textarea>
+                            <button
+                                id="sendButton"
+                                onclick="sendMessage()"
+                                class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0" style="background-color: rgba(0, 160, 235, 0.4);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send h-5 w-5">
+                                    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                                    <path d="m21.854 2.147-10.94 10.939"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get session ID from URL
+        function getSessionId() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1] || generateSessionId();
+        }
+
+        function generateSessionId() {
+            return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+
+        function getUserId() {
+            let userId = localStorage.getItem('creo_user_id');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('creo_user_id', userId);
+            }
+            return userId;
+        }
+
+        // Load sessions from localStorage
+        function loadSessions() {
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const sessionList = document.getElementById('sessionList');
+            const currentSessionId = getSessionId();
+
+            sessionList.innerHTML = sessions.map(session => `
+                <a href="/chat/${session.id}"
+                   class="block px-3 py-2.5 rounded-lg transition-all text-sm"
+                   style="${session.id === currentSessionId ?
+                       'background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235); font-weight: 500;' :
+                       'color: #374151;'}"
+                   onmouseover="if('${session.id}' !== '${currentSessionId}') this.style.backgroundColor='rgba(0, 0, 0, 0.03)'"
+                   onmouseout="if('${session.id}' !== '${currentSessionId}') this.style.backgroundColor='transparent'">
+                    <div class="truncate">${session.title}</div>
+                    <div class="text-xs mt-0.5" style="color: #9CA3AF;">${new Date(session.timestamp).toLocaleDateString()}</div>
+                </a>
+            `).join('');
+        }
+
+        // Save session to localStorage
+        function saveSession(sessionId, title) {
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const existingIndex = sessions.findIndex(s => s.id === sessionId);
+
+            const session = {
+                id: sessionId,
+                title: title || 'New Chat',
+                timestamp: Date.now()
+            };
+
+            if (existingIndex >= 0) {
+                sessions[existingIndex] = session;
+            } else {
+                sessions.unshift(session);
+            }
+
+            // Keep only last 50 sessions
+            if (sessions.length > 50) sessions.length = 50;
+
+            localStorage.setItem('creo_sessions', JSON.stringify(sessions));
+            loadSessions();
+        }
+
+        function createNewSession() {
+            const newSessionId = generateSessionId();
+            window.location.href = '/chat/' + newSessionId;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const sessionId = getSessionId();
+            const userId = getUserId();
+
+            // Add user message to chat
+            const messagesDiv = document.getElementById('messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl ml-12 md:ml-20 animate-fade-in';
+            userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
+            userMessageDiv.style.borderColor = 'rgba(0, 160, 235, 0.2)';
+            userMessageDiv.style.border = '1px solid';
+            userMessageDiv.innerHTML = `
+                <div class="flex-1 text-base leading-relaxed text-gray-700 text-right">
+                    ${escapeHtml(message)}
+                </div>
+            `;
+            messagesDiv.appendChild(userMessageDiv);
+
+            // Save session with first message as title
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const existingSession = sessions.find(s => s.id === sessionId);
+            if (!existingSession) {
+                const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
+                saveSession(sessionId, title);
+            }
+
+            // Clear input and reset height
+            input.value = '';
+            input.style.height = 'auto';
+            document.getElementById('sendButton').style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
+
+            // Scroll to bottom
+            const container = document.getElementById('messagesContainer');
+            container.scrollTop = container.scrollHeight;
+
+            // Show loading
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
+            loadingDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <svg class="h-5 w-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
+                    <div class="text-base text-gray-400 mt-2">Thinking...</div>
+                </div>
+            `;
+            messagesDiv.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                // Call API
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: userId,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remove loading
+                loadingDiv.remove();
+
+                // Add bot response
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
+                botMessageDiv.innerHTML = `
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
+                        <div class="text-base leading-relaxed text-gray-700 mt-2 whitespace-pre-wrap">${escapeHtml(data.response)}</div>
+                    </div>
+                `;
+                messagesDiv.appendChild(botMessageDiv);
+                container.scrollTop = container.scrollHeight;
+            } catch (error) {
+                // Remove loading
+                loadingDiv.remove();
+
+                // Show error
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'flex gap-4 p-5 rounded-3xl bg-red-50 border border-red-200 mr-12 md:mr-20 animate-fade-in';
+                errorDiv.innerHTML = `
+                    <div class="flex-1 text-base text-red-700">
+                        Sorry, something went wrong. Please try again.
+                    </div>
+                `;
+                messagesDiv.appendChild(errorDiv);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Auto-grow textarea and update button state
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        function autoGrowTextarea() {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = messageInput.scrollHeight + 'px';
+        }
+
+        messageInput.addEventListener('input', function() {
+            // Auto-grow
+            autoGrowTextarea();
+
+            // Update button state
+            if (this.value.trim()) {
+                sendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            } else {
+                sendButton.style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
+            }
+        });
+
+        // Initialize
+        loadSessions();
+        messageInput.focus();
+    </script>
+</body>
+</html>

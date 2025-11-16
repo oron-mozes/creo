@@ -11,7 +11,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 
 # Ensure project root is on sys.path
@@ -95,6 +95,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files directory
+static_dir = PROJECT_ROOT / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
 # Request/Response models
 class ChatRequest(BaseModel):
     message: str
@@ -142,43 +147,15 @@ def content_to_text(content: types.Content | None) -> str:
             texts.append(part.text)
     return "\n".join(texts).strip()
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 def read_root():
-    """Root endpoint with API information."""
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Creo Agent API</title>
-        <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-            h1 { color: #333; }
-            .endpoint { background: #f4f4f4; padding: 10px; margin: 10px 0; border-radius: 5px; }
-            code { background: #e0e0e0; padding: 2px 6px; border-radius: 3px; }
-        </style>
-    </head>
-    <body>
-        <h1>🤖 Creo Agent API</h1>
-        <p>Welcome to the Creo Agent API - AI-powered influencer marketing automation</p>
+    """Serve the homepage."""
+    return FileResponse("static/index.html")
 
-        <h2>API Endpoints</h2>
-        <div class="endpoint">
-            <strong>POST</strong> <code>/api/chat</code> - Chat with the orchestrator agent
-        </div>
-        <div class="endpoint">
-            <strong>GET</strong> <code>/health</code> - Health check
-        </div>
-        <div class="endpoint">
-            <strong>GET</strong> <code>/docs</code> - Interactive API documentation (Swagger)
-        </div>
-        <div class="endpoint">
-            <strong>DELETE</strong> <code>/api/session/{user_id}</code> - Clear user session
-        </div>
-
-        <p><a href="/docs">→ View Interactive API Documentation</a></p>
-    </body>
-    </html>
-    """
+@app.get("/chat/{session_id}")
+def chat_page(session_id: str):
+    """Serve the chat page with session ID."""
+    return FileResponse("static/chat.html")
 
 @app.get("/health")
 def health_check():

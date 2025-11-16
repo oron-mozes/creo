@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="static/creo-logo-BesatB3H.png" alt="Creo Logo" width="200">
+</p>
+
 # Creo Agent API
 
 AI-powered influencer marketing automation platform with intelligent agents for campaign building, creator discovery, and outreach.
