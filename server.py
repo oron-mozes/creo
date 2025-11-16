@@ -198,11 +198,14 @@ def get_session_messages(session_id: str) -> list:
         result = []
         for msg in messages:
             msg_data = msg.to_dict()
+            timestamp = msg_data.get('timestamp')
+            # Convert Firestore DatetimeWithNanoseconds to ISO format string for JSON serialization
+            timestamp_str = timestamp.isoformat() if timestamp else None
             result.append({
                 'id': msg.id,
                 'role': msg_data.get('role'),
                 'content': msg_data.get('content'),
-                'timestamp': msg_data.get('timestamp'),
+                'timestamp': timestamp_str,
                 'user_id': msg_data.get('user_id')
             })
         return result
