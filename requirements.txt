@@ -1,5 +1,6 @@
 fastapi
-uvicorn
+uvicorn[standard]
+python-socketio
 google-adk
 google-generativeai
 python-multipart

@@ -253,45 +253,15 @@
 
             if (!message) return;
 
-            // Add user message to chat
-            const messagesDiv = document.getElementById('messages');
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl ml-12 md:ml-20 animate-fade-in';
-            userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
-            userMessageDiv.style.borderColor = 'rgba(0, 160, 235, 0.2)';
-            userMessageDiv.style.border = '1px solid';
-            userMessageDiv.innerHTML = `
-                <div class="flex-1 text-base leading-relaxed text-gray-700 text-right">
-                    ${escapeHtml(message)}
-                </div>
-            `;
-            messagesDiv.appendChild(userMessageDiv);
-
-            // Clear input and reset height
-            input.value = '';
-            input.style.height = 'auto';
-            document.getElementById('sendButton').style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
-
-            // Show loading
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
-            loadingDiv.innerHTML = `
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                    <svg class="h-5 w-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                    <div class="text-base text-gray-400 mt-2">Thinking...</div>
-                </div>
-            `;
-            messagesDiv.appendChild(loadingDiv);
-            loadingDiv.scrollIntoView({ behavior: 'smooth' });
+            // Disable input during submission
+            input.disabled = true;
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.style.opacity = '0.5';
 
             try {
-                // Call API
-                const response = await fetch('/api/chat', {
+                // Create session with initial message
+                const response = await fetch('/api/sessions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -304,38 +274,16 @@
 
                 const data = await response.json();
 
-                // Remove loading
-                loadingDiv.remove();
-
-                // Add bot response
-                const botMessageDiv = document.createElement('div');
-                botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
-                botMessageDiv.innerHTML = `
-                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                        <div class="text-base leading-relaxed text-gray-700 mt-2 whitespace-pre-wrap">${escapeHtml(data.response)}</div>
-                    </div>
-                `;
-                messagesDiv.appendChild(botMessageDiv);
-                botMessageDiv.scrollIntoView({ behavior: 'smooth' });
+                // Redirect to chat page
+                window.location.href = `/chat/${data.session_id}`;
             } catch (error) {
-                // Remove loading
-                loadingDiv.remove();
+                // Re-enable input on error
+                input.disabled = false;
+                sendButton.disabled = false;
+                sendButton.style.opacity = '1';
 
-                // Show error
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'flex gap-4 p-5 rounded-3xl bg-red-50 border border-red-200 mr-12 md:mr-20 animate-fade-in';
-                errorDiv.innerHTML = `
-                    <div class="flex-1 text-base text-red-700">
-                        Sorry, something went wrong. Please try again.
-                    </div>
-                `;
-                messagesDiv.appendChild(errorDiv);
+                // Show error message
+                alert('Sorry, something went wrong. Please try again.');
             }
         }
 

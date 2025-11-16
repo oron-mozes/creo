@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
+import socketio
 
 # Ensure project root is on sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -21,6 +22,8 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from google.adk.runners import InMemoryRunner
 from google.genai import types
+from google.cloud import firestore
+from datetime import datetime
 
 # Setup environment variables
 def setup_env() -> None:
@@ -71,6 +74,24 @@ if missing_vars:
         f"For local dev: Add to .env file"
     )
 
+# Initialize Firestore (use emulator or mock for local dev)
+try:
+    # Check if running in Cloud Run (production)
+    if os.environ.get('K_SERVICE'):
+        db = firestore.Client()
+    # Check for Firestore emulator
+    elif os.environ.get('FIRESTORE_EMULATOR_HOST'):
+        db = firestore.Client()
+    # Local development without Firestore - use in-memory storage
+    else:
+        print("WARNING: Firestore not configured. Using in-memory storage for development.")
+        print("To use Firestore locally, set FIRESTORE_EMULATOR_HOST or run with Cloud credentials.")
+        db = None
+except Exception as e:
+    print(f"WARNING: Firestore initialization failed: {e}")
+    print("Using in-memory storage for development.")
+    db = None
+
 # Import orchestrator agent (handle hyphenated directory name)
 import importlib.util
 agent_path = PROJECT_ROOT / "agents" / "orchestrator-agent" / "agent.py"
@@ -78,6 +99,14 @@ spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
 orchestrator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(orchestrator_module)
 root_agent = orchestrator_module.root_agent
+
+# Initialize Socket.IO
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins='*',
+    logger=True,
+    engineio_logger=True
+)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -100,6 +129,9 @@ static_dir = PROJECT_ROOT / "static"
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+# Combine FastAPI and Socket.IO
+socket_app = socketio.ASGIApp(sio, app)
+
 # Request/Response models
 class ChatRequest(BaseModel):
     message: str
@@ -111,9 +143,83 @@ class ChatResponse(BaseModel):
     session_id: str
     user_id: str
 
-# In-memory session storage (for demo purposes)
-# In production, you'd use a proper session store
+class CreateSessionRequest(BaseModel):
+    message: str
+    user_id: Optional[str] = None
+
+class CreateSessionResponse(BaseModel):
+    session_id: str
+    user_id: str
+
+class GetMessagesResponse(BaseModel):
+    messages: list
+    session_id: str
+
+# In-memory storage (for local dev and active runners)
 active_runners = {}
+in_memory_messages = {}  # session_id -> list of messages
+
+# Firestore message storage functions
+def save_message_to_firestore(session_id: str, role: str, content: str, user_id: str = None):
+    """Save a message to Firestore or in-memory storage."""
+    if db is not None:
+        # Use Firestore
+        message_ref = db.collection('sessions').document(session_id).collection('messages').document()
+        message_data = {
+            'role': role,
+            'content': content,
+            'timestamp': firestore.SERVER_TIMESTAMP,
+            'user_id': user_id
+        }
+        message_ref.set(message_data)
+        return message_ref.id
+    else:
+        # Use in-memory storage for local development
+        if session_id not in in_memory_messages:
+            in_memory_messages[session_id] = []
+
+        message_data = {
+            'id': str(uuid.uuid4()),
+            'role': role,
+            'content': content,
+            'timestamp': datetime.now(),
+            'user_id': user_id
+        }
+        in_memory_messages[session_id].append(message_data)
+        return message_data['id']
+
+def get_session_messages(session_id: str) -> list:
+    """Get all messages for a session from Firestore or in-memory storage."""
+    if db is not None:
+        # Use Firestore
+        messages_ref = db.collection('sessions').document(session_id).collection('messages')
+        messages = messages_ref.order_by('timestamp').stream()
+
+        result = []
+        for msg in messages:
+            msg_data = msg.to_dict()
+            result.append({
+                'id': msg.id,
+                'role': msg_data.get('role'),
+                'content': msg_data.get('content'),
+                'timestamp': msg_data.get('timestamp'),
+                'user_id': msg_data.get('user_id')
+            })
+        return result
+    else:
+        # Use in-memory storage for local development
+        return in_memory_messages.get(session_id, [])
+
+def search_conversation_history(session_id: str, query: str = None, limit: int = 10) -> list:
+    """
+    Search conversation history for RAG.
+    This function can be used as a tool by the orchestrator agent.
+    """
+    messages = get_session_messages(session_id)
+
+    # If query provided, you could implement semantic search here
+    # For now, just return recent messages
+    return messages[-limit:] if len(messages) > limit else messages
 
 def get_or_create_runner(user_id: str) -> InMemoryRunner:
     """Get or create a runner for the given user."""
@@ -161,6 +267,29 @@ def chat_page(session_id: str):
 def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "agent": "orchestrator"}
+
+@app.post("/api/sessions", response_model=CreateSessionResponse)
+def create_session(request: CreateSessionRequest):
+    """
+    Create a new chat session with an initial message.
+    Returns session_id to redirect user to chat page.
+    """
+    session_id = f"session_{uuid.uuid4().hex}"
+    user_id = request.user_id or f"user_{uuid.uuid4().hex[:8]}"
+
+    # Store the initial message in Firestore
+    save_message_to_firestore(session_id, "user", request.message, user_id)
+
+    return CreateSessionResponse(session_id=session_id, user_id=user_id)
+
+@app.get("/api/sessions/{session_id}/messages", response_model=GetMessagesResponse)
+def get_messages(session_id: str):
+    """
+    Get all messages for a session from Firestore.
+    Used when loading the chat page to show existing messages.
+    """
+    messages = get_session_messages(session_id)
+    return GetMessagesResponse(messages=messages, session_id=session_id)
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
@@ -226,6 +355,157 @@ def clear_session(user_id: str):
         return {"status": "success", "message": f"Session cleared for user: {user_id}"}
     return {"status": "not_found", "message": f"No session found for user: {user_id}"}
 
+# Socket.IO Event Handlers
+@sio.event
+async def connect(sid, environ):
+    """Handle client connection."""
+    print(f"Client connected: {sid}")
+
+@sio.event
+async def disconnect(sid):
+    """Handle client disconnection."""
+    print(f"Client disconnected: {sid}")
+
+@sio.event
+async def join_session(sid, data):
+    """
+    Join a specific session room and process initial message if it exists.
+    This will stream the agent's response to the initial message.
+    """
+    session_id = data.get('session_id')
+    user_id = data.get('user_id', 'default_user')
+
+    if not session_id:
+        await sio.emit('error', {'error': 'Missing session_id'}, room=sid)
+        return
+
+    # Join the session room
+    await sio.enter_room(sid, session_id)
+    print(f"Client {sid} joined session {session_id}")
+
+    # Send chat history first from Firestore
+    messages = get_session_messages(session_id)
+    await sio.emit('chat_history', {
+        'messages': messages,
+        'session_id': session_id
+    }, room=sid)
+
+    # If there's an initial user message and no assistant response yet, process it
+    if messages and messages[-1]['role'] == 'user':
+        initial_message = messages[-1]['content']
+
+        try:
+            # Get or create runner
+            runner = get_or_create_runner(user_id)
+            ensure_session(runner, user_id, session_id)
+
+            # Create message for agent
+            new_message = types.Content(
+                role="user",
+                parts=[types.Part(text=initial_message)],
+            )
+
+            # Emit thinking status
+            await sio.emit('agent_thinking', {'session_id': session_id}, room=session_id)
+
+            # Stream agent responses
+            response_chunks = []
+
+            for event in runner.run(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=new_message,
+            ):
+                chunk = content_to_text(event.content)
+                if chunk:
+                    response_chunks.append(chunk)
+                    # Emit chunk to client
+                    await sio.emit('message_chunk', {
+                        'chunk': chunk,
+                        'session_id': session_id
+                    }, room=session_id)
+
+                # Check if final response
+                if event.author == root_agent.name and event.is_final_response():
+                    final_text = content_to_text(event.content)
+                    if final_text:
+                        # Store assistant message in Firestore
+                        save_message_to_firestore(session_id, "assistant", final_text, user_id)
+
+                        # Emit final message
+                        await sio.emit('message_complete', {
+                            'message': final_text,
+                            'session_id': session_id
+                        }, room=session_id)
+                        break
+
+        except Exception as e:
+            print(f"Error processing initial message: {str(e)}")
+            await sio.emit('error', {'error': str(e)}, room=sid)
+
+@sio.event
+async def send_message(sid, data):
+    """
+    Handle incoming message from client via Socket.IO.
+    Stream responses back to the client as they're generated.
+    """
+    try:
+        message = data.get('message')
+        session_id = data.get('session_id')
+        user_id = data.get('user_id', 'default_user')
+
+        if not message or not session_id:
+            await sio.emit('error', {'error': 'Missing message or session_id'}, room=sid)
+            return
+
+        # Store user message in Firestore
+        save_message_to_firestore(session_id, "user", message, user_id)
+
+        # Get or create runner
+        runner = get_or_create_runner(user_id)
+        ensure_session(runner, user_id, session_id)
+
+        # Create message for agent
+        new_message = types.Content(
+            role="user",
+            parts=[types.Part(text=message)],
+        )
+
+        # Stream agent responses
+        response_chunks = []
+
+        for event in runner.run(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=new_message,
+        ):
+            chunk = content_to_text(event.content)
+            if chunk:
+                response_chunks.append(chunk)
+                # Emit chunk to client
+                await sio.emit('message_chunk', {
+                    'chunk': chunk,
+                    'session_id': session_id
+                }, room=session_id)
+
+            # Check if final response
+            if event.author == root_agent.name and event.is_final_response():
+                final_text = content_to_text(event.content)
+                if final_text:
+                    # Store assistant message in Firestore
+                    save_message_to_firestore(session_id, "assistant", final_text, user_id)
+
+                    # Emit final message
+                    await sio.emit('message_complete', {
+                        'message': final_text,
+                        'session_id': session_id
+                    }, room=session_id)
+                    break
+
+    except Exception as e:
+        print(f"Error in send_message: {str(e)}")
+        await sio.emit('error', {'error': str(e)}, room=sid)
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(socket_app, host="0.0.0.0", port=8000)
