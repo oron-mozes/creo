@@ -17,6 +17,7 @@ _SUB_AGENT_ENUMS = [
     AgentName.CAMPAING_BRIEF_AGENT,
     AgentName.OUTREACH_MESSAGE_AGENT,
     AgentName.CAMPAIGN_BUILDER_AGENT,
+    AgentName.FRONTDESK_AGENT,  # ALWAYS called last to format responses for users
 ]
 
 
@@ -28,6 +29,10 @@ def _load_sub_agent(agent_enum: AgentName) -> Agent:
     spec = importlib.util.spec_from_file_location(agent_name, agent_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+
+    # Frontdesk agent exports as 'frontdesk', others export with their full name
+    if agent_enum == AgentName.FRONTDESK_AGENT:
+        return getattr(module, 'frontdesk')
     return getattr(module, agent_name)
 
 
