@@ -19,6 +19,34 @@
             max-height: 200px;
             overflow-y: auto;
         }
+        /* Typing indicator animation */
+        @keyframes typing-dot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgb(0, 160, 235);
+            display: inline-block;
+            animation: typing-dot 1.4s infinite;
+        }
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-white">
@@ -62,15 +90,14 @@
             <div id="messagesContainer" class="flex-1 overflow-y-auto px-6 py-8">
                 <div class="max-w-4xl mx-auto space-y-4" id="messages">
                     <!-- Initial bot message -->
-                    <div class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1 space-y-2">
-                            <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                            <div class="text-base leading-relaxed text-gray-700">
+                    <div class="flex gap-4 animate-fade-in">
+                        <div class="flex gap-3 items-start max-w-[85%]">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200" style="color: #1f2937;">
                                 Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!
                             </div>
                         </div>
@@ -196,13 +223,15 @@
         function addUserMessage(message) {
             const messagesDiv = document.getElementById('messages');
             const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl ml-12 md:ml-20 animate-fade-in';
-            userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
-            userMessageDiv.style.borderColor = 'rgba(0, 160, 235, 0.2)';
-            userMessageDiv.style.border = '1px solid';
+            userMessageDiv.className = 'flex gap-4 justify-end animate-fade-in';
             userMessageDiv.innerHTML = `
-                <div class="flex-1 text-base leading-relaxed text-gray-700 text-right">
-                    ${escapeHtml(message)}
+                <div class="flex gap-3 items-start max-w-[85%]">
+                    <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed" style="background-color: rgba(0, 160, 235, 0.08); color: #1f2937;">
+                        ${escapeHtml(message)}
+                    </div>
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white font-semibold text-sm" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                        U
+                    </div>
                 </div>
             `;
             messagesDiv.appendChild(userMessageDiv);
@@ -212,16 +241,17 @@
         function addBotMessage(message) {
             const messagesDiv = document.getElementById('messages');
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
+            botMessageDiv.className = 'flex gap-4 animate-fade-in';
             botMessageDiv.innerHTML = `
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                    <div class="text-base leading-relaxed text-gray-700 mt-2 whitespace-pre-wrap">${escapeHtml(message)}</div>
+                <div class="flex gap-3 items-start max-w-[85%]">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200 whitespace-pre-wrap" style="color: #1f2937;">
+                        ${escapeHtml(message)}
+                    </div>
                 </div>
             `;
             messagesDiv.appendChild(botMessageDiv);
@@ -231,16 +261,19 @@
         function showLoading() {
             const messagesDiv = document.getElementById('messages');
             currentLoadingDiv = document.createElement('div');
-            currentLoadingDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
+            currentLoadingDiv.className = 'flex gap-4 animate-fade-in';
             currentLoadingDiv.innerHTML = `
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                    <svg class="h-5 w-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                    <div class="text-base text-gray-400 mt-2">Thinking...</div>
+                <div class="flex gap-3 items-start max-w-[85%]">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 p-4 rounded-2xl text-base bg-white border border-gray-200 flex items-center gap-2">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
                 </div>
             `;
             messagesDiv.appendChild(currentLoadingDiv);
@@ -258,28 +291,64 @@
             hideLoading();
             const messagesDiv = document.getElementById('messages');
             currentResponseDiv = document.createElement('div');
-            currentResponseDiv.className = 'flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in';
+            currentResponseDiv.className = 'flex gap-4 animate-fade-in';
             currentResponseDiv.innerHTML = `
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                    <div class="response-content text-base leading-relaxed text-gray-700 mt-2 whitespace-pre-wrap"></div>
+                <div class="flex gap-3 items-start max-w-[85%]">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="response-content flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200 whitespace-pre-wrap" style="color: #1f2937;"></div>
                 </div>
             `;
             messagesDiv.appendChild(currentResponseDiv);
             scrollToBottom();
         }
 
+        // Typewriter effect for streaming responses
+        let typingQueue = [];
+        let isTyping = false;
+
         function appendToStreamingResponse(chunk) {
             if (currentResponseDiv) {
-                const contentDiv = currentResponseDiv.querySelector('.response-content');
-                contentDiv.textContent += chunk;
-                scrollToBottom();
+                // Add chunk to queue
+                typingQueue.push(chunk);
+
+                // Start typing if not already typing
+                if (!isTyping) {
+                    typeNextChunk();
+                }
             }
+        }
+
+        function typeNextChunk() {
+            if (typingQueue.length === 0) {
+                isTyping = false;
+                return;
+            }
+
+            isTyping = true;
+            const chunk = typingQueue.shift();
+            const contentDiv = currentResponseDiv?.querySelector('.response-content');
+
+            if (!contentDiv) {
+                isTyping = false;
+                return;
+            }
+
+            let charIndex = 0;
+            const typeInterval = setInterval(() => {
+                if (charIndex < chunk.length) {
+                    contentDiv.textContent += chunk[charIndex];
+                    charIndex++;
+                    scrollToBottom();
+                } else {
+                    clearInterval(typeInterval);
+                    // Type next chunk immediately
+                    typeNextChunk();
+                }
+            }, 20); // 20ms per character for smooth typing
         }
 
         function finishStreamingResponse() {

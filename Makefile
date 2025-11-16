@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge server docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
+.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
 
 # Virtual environment path
 VENV = venv
@@ -14,7 +14,12 @@ help:
 	@echo "  make format       - Format code"
 	@echo "  make clean        - Clean cache files and venv"
 	@echo "  make run-agent    - Run the campaign planner agent"
-	@echo "  make web          - Start ADK web interface"
+	@echo "  make web          - Start ADK web interface (all agents)"
+	@echo "  make web-creator-finder    - Start ADK web interface (creator-finder agent only)"
+	@echo "  make web-campaign-builder  - Start ADK web interface (campaign-builder agent only)"
+	@echo "  make web-campaign-brief    - Start ADK web interface (campaign-brief agent only)"
+	@echo "  make web-outreach-message  - Start ADK web interface (outreach-message agent only)"
+	@echo "  make web-orchestrator      - Start ADK web interface (orchestrator agent only)"
 	@echo "  make venv         - Create virtual environment"
 	@echo "  make scaffold-agent NAME=\"Agent Name\" DESC=\"Description\" - Scaffold a new agent"
 	@echo "  make generate-tests - Generate synthetic test data for all agents"
@@ -75,9 +80,30 @@ clean:
 run-agent: venv
 	$(PYTHON) -m agents.campaing-planner-agent.agent
 
-# Start ADK web interface
+# Start ADK web interface (all agents)
 web: venv
 	$(VENV)/bin/adk web
+
+# Start ADK web interface for individual agents
+web-creator-finder: venv
+	@echo "Starting ADK web interface with creator-finder agent only..."
+	$(PYTHON) scripts/web_agent.py creator-finder
+
+web-campaign-builder: venv
+	@echo "Starting ADK web interface with campaign-builder agent only..."
+	$(PYTHON) scripts/web_agent.py campaign-builder
+
+web-campaign-brief: venv
+	@echo "Starting ADK web interface with campaign-brief agent only..."
+	$(PYTHON) scripts/web_agent.py campaign-brief
+
+web-outreach-message: venv
+	@echo "Starting ADK web interface with outreach-message agent only..."
+	$(PYTHON) scripts/web_agent.py outreach-message
+
+web-orchestrator: venv
+	@echo "Starting ADK web interface with orchestrator agent only..."
+	$(PYTHON) scripts/web_agent.py orchestrator
 
 # Scaffold a new agent
 scaffold-agent: venv
@@ -98,11 +124,11 @@ judge: venv
 	fi
 	$(PYTHON) scripts/judge_agent.py --agent-dir agents/$(AGENT)
 
-# Start FastAPI server
+# Start FastAPI server with Socket.IO
 server: venv
-	@echo "Starting FastAPI server on http://localhost:8000"
+	@echo "Starting FastAPI server with Socket.IO on http://localhost:8000"
 	@echo "API Documentation: http://localhost:8000/docs"
-	$(VENV)/bin/uvicorn server:app --reload --host 0.0.0.0 --port 8000
+	$(VENV)/bin/uvicorn server:socket_app --reload --host 0.0.0.0 --port 8000
 
 # Docker commands
 DOCKER_IMAGE = creo-agent-api

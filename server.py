@@ -182,7 +182,7 @@ def save_message_to_firestore(session_id: str, role: str, content: str, user_id:
             'id': str(uuid.uuid4()),
             'role': role,
             'content': content,
-            'timestamp': datetime.now(),
+            'timestamp': datetime.now().isoformat(),  # Convert to ISO format string for JSON serialization
             'user_id': user_id
         }
         in_memory_messages[session_id].append(message_data)
@@ -277,8 +277,12 @@ def create_session(request: CreateSessionRequest):
     session_id = f"session_{uuid.uuid4().hex}"
     user_id = request.user_id or f"user_{uuid.uuid4().hex[:8]}"
 
+    print(f"[CREATE_SESSION] session_id={session_id}, user_id={user_id}, message='{request.message[:50]}...'")
+
     # Store the initial message in Firestore
     save_message_to_firestore(session_id, "user", request.message, user_id)
+
+    print(f"[CREATE_SESSION] Message stored successfully for session {session_id}")
 
     return CreateSessionResponse(session_id=session_id, user_id=user_id)
 
@@ -288,7 +292,9 @@ def get_messages(session_id: str):
     Get all messages for a session from Firestore.
     Used when loading the chat page to show existing messages.
     """
+    print(f"[GET_MESSAGES] Fetching messages for session {session_id}")
     messages = get_session_messages(session_id)
+    print(f"[GET_MESSAGES] Found {len(messages)} messages for session {session_id}")
     return GetMessagesResponse(messages=messages, session_id=session_id)
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -375,16 +381,20 @@ async def join_session(sid, data):
     session_id = data.get('session_id')
     user_id = data.get('user_id', 'default_user')
 
+    print(f"[JOIN_SESSION] Client {sid} requesting to join session {session_id} (user: {user_id})")
+
     if not session_id:
+        print(f"[JOIN_SESSION] ERROR: Missing session_id")
         await sio.emit('error', {'error': 'Missing session_id'}, room=sid)
         return
 
     # Join the session room
     await sio.enter_room(sid, session_id)
-    print(f"Client {sid} joined session {session_id}")
+    print(f"[JOIN_SESSION] Client {sid} successfully joined session {session_id}")
 
     # Send chat history first from Firestore
     messages = get_session_messages(session_id)
+    print(f"[JOIN_SESSION] Sending {len(messages)} messages from chat history to client {sid}")
     await sio.emit('chat_history', {
         'messages': messages,
         'session_id': session_id
@@ -393,6 +403,7 @@ async def join_session(sid, data):
     # If there's an initial user message and no assistant response yet, process it
     if messages and messages[-1]['role'] == 'user':
         initial_message = messages[-1]['content']
+        print(f"[JOIN_SESSION] Last message is from user, processing initial message: '{initial_message[:50]}...'")
 
         try:
             # Get or create runner
@@ -406,10 +417,12 @@ async def join_session(sid, data):
             )
 
             # Emit thinking status
+            print(f"[JOIN_SESSION] Emitting agent_thinking status")
             await sio.emit('agent_thinking', {'session_id': session_id}, room=session_id)
 
             # Stream agent responses
             response_chunks = []
+            print(f"[JOIN_SESSION] Starting agent processing")
 
             for event in runner.run(
                 user_id=user_id,
@@ -419,6 +432,7 @@ async def join_session(sid, data):
                 chunk = content_to_text(event.content)
                 if chunk:
                     response_chunks.append(chunk)
+                    print(f"[JOIN_SESSION] Streaming chunk: '{chunk[:50]}...'")
                     # Emit chunk to client
                     await sio.emit('message_chunk', {
                         'chunk': chunk,
@@ -429,19 +443,25 @@ async def join_session(sid, data):
                 if event.author == root_agent.name and event.is_final_response():
                     final_text = content_to_text(event.content)
                     if final_text:
+                        print(f"[JOIN_SESSION] Got final response, saving to storage")
                         # Store assistant message in Firestore
                         save_message_to_firestore(session_id, "assistant", final_text, user_id)
 
                         # Emit final message
+                        print(f"[JOIN_SESSION] Emitting message_complete")
                         await sio.emit('message_complete', {
                             'message': final_text,
                             'session_id': session_id
                         }, room=session_id)
                         break
 
+            print(f"[JOIN_SESSION] Initial message processing complete")
+
         except Exception as e:
-            print(f"Error processing initial message: {str(e)}")
+            print(f"[JOIN_SESSION] ERROR processing initial message: {str(e)}")
             await sio.emit('error', {'error': str(e)}, room=sid)
+    else:
+        print(f"[JOIN_SESSION] No initial message to process (messages empty or last message is from assistant)")
 
 @sio.event
 async def send_message(sid, data):
@@ -454,11 +474,15 @@ async def send_message(sid, data):
         session_id = data.get('session_id')
         user_id = data.get('user_id', 'default_user')
 
+        print(f"[SEND_MESSAGE] Received message from {sid}: session={session_id}, user={user_id}, message='{message[:50]}...'")
+
         if not message or not session_id:
+            print(f"[SEND_MESSAGE] ERROR: Missing message or session_id")
             await sio.emit('error', {'error': 'Missing message or session_id'}, room=sid)
             return
 
         # Store user message in Firestore
+        print(f"[SEND_MESSAGE] Storing user message in storage")
         save_message_to_firestore(session_id, "user", message, user_id)
 
         # Get or create runner
