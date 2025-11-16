@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'  # Trigger on version tags like v1.0.0, v1.2.3, etc.
 
+# Required permissions for creating releases
+permissions:
+  contents: write
+
 env:
   PROJECT_ID: gen-lang-client-0751221742
   SERVICE_NAME: creo
