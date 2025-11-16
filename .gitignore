@@ -13,4 +13,8 @@ env/
 ENV/
 .venv
 
+# Temporary backup files
+*.backup
+agents/__init__.py.backup
+
 .claude

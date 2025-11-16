@@ -11,6 +11,8 @@ class AgentName(str, Enum):
     CAMPAING_BRIEF_AGENT = 'campaing_brief_agent'
     CAMPAING_PLANNER_AGENT = 'campaing_planner_agent'
     OUTREACH_MESSAGE_AGENT = 'outreach_message_agent'
+    FRONTDESK_AGENT = 'frontdesk_agent'
+
     CAMPAIGN_BUILDER_AGENT = 'campaign_builder_agent'
 
 
