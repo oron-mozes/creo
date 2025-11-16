@@ -1,0 +1,45 @@
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.pytest_cache
+.ruff_cache
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Environment variables (don't copy .env to container)
+.env
+
+# MacOS
+.DS_Store
+
+# Evaluation reports (optional - remove if you want them in container)
+agents/*/evaluation/report.json
+
+# Documentation
+*.md
+!API.md
+
+# Claude
+.claude/

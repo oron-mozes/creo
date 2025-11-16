@@ -10,6 +10,8 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 # Ensure project root is on sys.path
@@ -20,24 +22,62 @@ if str(PROJECT_ROOT) not in sys.path:
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 
-# Load environment variables from .env
-def load_project_env() -> None:
-    """Load key/value pairs from the project's .env if GEMINI_API_KEY not already set."""
-    env_path = PROJECT_ROOT / ".env"
-    if "GEMINI_API_KEY" in os.environ or not env_path.exists():
+# Setup environment variables
+def setup_env() -> None:
+    """
+    Setup environment variables for the application.
+
+    Priority:
+    1. GEMINI_API_KEY from runtime env (Cloud Run)
+    2. GOOGLE_API_KEY from runtime env (fallback)
+    3. .env file (local development only)
+    """
+    # If GEMINI_API_KEY already set (e.g., from Cloud Run Secret Manager), use it
+    if "GEMINI_API_KEY" in os.environ:
         return
-    with open(env_path, "r") as env_file:
-        for line in env_file:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            key, value = line.split("=", 1)
-            os.environ.setdefault(key.strip(), value.strip())
 
-load_project_env()
+    # Try GOOGLE_API_KEY as fallback
+    if "GOOGLE_API_KEY" in os.environ:
+        os.environ["GEMINI_API_KEY"] = os.environ["GOOGLE_API_KEY"]
+        return
 
-# Import orchestrator agent
-from agents.orchestrator_agent.agent import root_agent
+    # For local development only: load from .env
+    env_path = PROJECT_ROOT / ".env"
+    if env_path.exists():
+        with open(env_path, "r") as env_file:
+            for line in env_file:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip()
+
+                # Set GOOGLE_API_KEY as GEMINI_API_KEY
+                if key == "GOOGLE_API_KEY" and "GEMINI_API_KEY" not in os.environ:
+                    os.environ["GEMINI_API_KEY"] = value
+
+                os.environ.setdefault(key, value)
+
+setup_env()
+
+# Verify required environment variables
+required_vars = ["GEMINI_API_KEY", "PINECONE_API_KEY"]
+missing_vars = [var for var in required_vars if not os.environ.get(var)]
+if missing_vars:
+    raise EnvironmentError(
+        f"Missing required environment variables: {', '.join(missing_vars)}\n"
+        f"For Cloud Run: Ensure secrets are configured in Secret Manager\n"
+        f"For local dev: Add to .env file"
+    )
+
+# Import orchestrator agent (handle hyphenated directory name)
+import importlib.util
+agent_path = PROJECT_ROOT / "agents" / "orchestrator-agent" / "agent.py"
+spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
+orchestrator_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(orchestrator_module)
+root_agent = orchestrator_module.root_agent
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -102,17 +142,43 @@ def content_to_text(content: types.Content | None) -> str:
             texts.append(part.text)
     return "\n".join(texts).strip()
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
     """Root endpoint with API information."""
-    return {
-        "name": "Creo Agent API",
-        "version": "1.0.0",
-        "endpoints": {
-            "chat": "/api/chat",
-            "health": "/health"
-        }
-    }
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Creo Agent API</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+            h1 { color: #333; }
+            .endpoint { background: #f4f4f4; padding: 10px; margin: 10px 0; border-radius: 5px; }
+            code { background: #e0e0e0; padding: 2px 6px; border-radius: 3px; }
+        </style>
+    </head>
+    <body>
+        <h1>🤖 Creo Agent API</h1>
+        <p>Welcome to the Creo Agent API - AI-powered influencer marketing automation</p>
+
+        <h2>API Endpoints</h2>
+        <div class="endpoint">
+            <strong>POST</strong> <code>/api/chat</code> - Chat with the orchestrator agent
+        </div>
+        <div class="endpoint">
+            <strong>GET</strong> <code>/health</code> - Health check
+        </div>
+        <div class="endpoint">
+            <strong>GET</strong> <code>/docs</code> - Interactive API documentation (Swagger)
+        </div>
+        <div class="endpoint">
+            <strong>DELETE</strong> <code>/api/session/{user_id}</code> - Clear user session
+        </div>
+
+        <p><a href="/docs">→ View Interactive API Documentation</a></p>
+    </body>
+    </html>
+    """
 
 @app.get("/health")
 def health_check():

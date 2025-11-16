@@ -245,6 +245,131 @@ After scaffolding, you'll need to:
 - Keep functions focused and single-purpose
 - Add docstrings to functions and classes
 
+## Deployment
+
+### Running the API Server Locally
+
+```bash
+# Start the FastAPI server
+make server
+
+# Or manually:
+source venv/bin/activate
+uvicorn server:app --reload --host 0.0.0.0 --port 8000
+```
+
+Visit:
+- API: http://localhost:8000
+- Interactive Docs: http://localhost:8000/docs
+
+### Deployment Options
+
+We support multiple deployment platforms:
+
+#### Option 1: Google Cloud Run (Recommended for Competition)
+
+**Free Tier:** 2 million requests/month
+
+**Requirements:**
+- Google Cloud account
+- Billing enabled (won't be charged within free tier)
+- gcloud CLI installed
+
+**Setup:**
+
+1. Install gcloud CLI:
+   ```bash
+   # macOS
+   brew install google-cloud-sdk
+   ```
+
+2. Login and configure:
+   ```bash
+   # Login with your personal Google account
+   gcloud auth login
+
+   # List projects
+   gcloud projects list
+
+   # Set active project
+   gcloud config set project YOUR_PROJECT_ID
+   ```
+
+3. Enable billing at: https://console.cloud.google.com/billing
+
+4. Enable required APIs:
+   ```bash
+   gcloud services enable run.googleapis.com \
+     cloudbuild.googleapis.com \
+     artifactregistry.googleapis.com
+   ```
+
+5. Deploy:
+   ```bash
+   gcloud run deploy creo \
+     --source . \
+     --region us-central1 \
+     --allow-unauthenticated \
+     --set-env-vars GEMINI_API_KEY=your-gemini-key,PINECONE_API_KEY=your-pinecone-key
+   ```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+#### Option 2: Railway (No Credit Card)
+
+**Free Tier:** $5 credit/month
+
+1. Sign up at https://railway.app
+2. New Project → Deploy from GitHub
+3. Select repository and add `GEMINI_API_KEY` env var
+4. Deploy automatically!
+
+#### Option 3: Render (Completely Free)
+
+**Free Tier:** Unlimited (with cold starts)
+
+1. Sign up at https://render.com
+2. New → Web Service
+3. Connect GitHub and configure Docker environment
+4. Add `GEMINI_API_KEY` env var
+5. Deploy!
+
+### Environment Variables for Deployment
+
+Required:
+- `GEMINI_API_KEY` - Your Google Gemini API key (get from https://aistudio.google.com/app/apikey)
+- `PINECONE_API_KEY` - Your Pinecone API key (get from https://app.pinecone.io/)
+
+Optional:
+- `GCP_PROJECT_ID` - Google Cloud project ID (auto-detected if not set)
+- `PORT` - Server port (Cloud Run sets this automatically)
+
+## Automated Deployment (CI/CD)
+
+The project uses GitHub Actions for continuous deployment. When you create a git tag, it automatically:
+
+1. ✅ Runs tests and linting
+2. ✅ Evaluates all agents
+3. ✅ Deploys to Google Cloud Run
+4. ✅ Creates a GitHub Release
+
+### Creating a Release
+
+```bash
+# Make sure all changes are committed
+git add .
+git commit -m "Your changes"
+git push origin main
+
+# Create and push a version tag (triggers deployment)
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow will automatically deploy to Cloud Run and create a release with the deployment URL.
+
+See [RELEASE.md](RELEASE.md) for detailed release process documentation.
+
 ## Questions?
 
 If you have questions or need help, please open an issue or reach out to the maintainers.

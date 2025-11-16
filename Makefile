@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge server
+.PHONY: help install test lint format clean run-agent web venv scaffold-agent generate-tests judge server docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
 
 # Virtual environment path
 VENV = venv
@@ -20,6 +20,18 @@ help:
 	@echo "  make generate-tests - Generate synthetic test data for all agents"
 	@echo "  make judge AGENT=\"Agent-folder-name\""
 	@echo "  make server       - Start FastAPI server (exposes orchestrator agent)"
+	@echo ""
+	@echo "Docker commands:"
+	@echo "  make docker-build - Build Docker image"
+	@echo "  make docker-run   - Run Docker container locally"
+	@echo "  make docker-test  - Build and test Docker container"
+	@echo "  make docker-stop  - Stop running Docker container"
+	@echo "  make docker-clean - Remove Docker images and containers"
+	@echo ""
+	@echo "Environment:"
+	@echo "  make verify-env     - Verify all environment variables are configured"
+	@echo "  make sync-secrets   - Sync secrets from .env to Google Secret Manager"
+	@echo "  make verify-secrets - Verify secrets in Google Secret Manager"
 
 # Create virtual environment
 venv:
@@ -31,8 +43,7 @@ venv:
 # Install dependencies
 install: venv
 	$(PIP) install --upgrade pip
-	$(PIP) install google-adk==1.18.0 google-generativeai==0.8.2 python-multipart fastapi uvicorn
-	@if [ -f requirements.txt ]; then $(PIP) install -r requirements.txt; fi
+	$(PIP) install -r requirements.txt
 	@echo "Installation complete. Activate venv with: source $(VENV)/bin/activate"
 
 # Run tests
@@ -92,3 +103,84 @@ server: venv
 	@echo "Starting FastAPI server on http://localhost:8000"
 	@echo "API Documentation: http://localhost:8000/docs"
 	$(VENV)/bin/uvicorn server:app --reload --host 0.0.0.0 --port 8000
+
+# Docker commands
+DOCKER_IMAGE = creo-agent-api
+DOCKER_CONTAINER = creo-container
+PORT = 8000
+
+# Build Docker image
+docker-build:
+	@echo "Building Docker image..."
+	@if [ ! -f .env ]; then \
+		echo "Warning: .env file not found. Make sure to pass GEMINI_API_KEY when running."; \
+	fi
+	docker build -t $(DOCKER_IMAGE):latest .
+	@echo "✓ Docker image built: $(DOCKER_IMAGE):latest"
+
+# Run Docker container locally
+docker-run:
+	@echo "Starting Docker container on http://localhost:$(PORT)"
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file not found. Create one with GEMINI_API_KEY=your-key"; \
+		exit 1; \
+	fi
+	docker run -d \
+		--name $(DOCKER_CONTAINER) \
+		-p $(PORT):8080 \
+		--env-file .env \
+		$(DOCKER_IMAGE):latest
+	@echo "✓ Container started: $(DOCKER_CONTAINER)"
+	@echo "  Visit: http://localhost:$(PORT)"
+	@echo "  API Docs: http://localhost:$(PORT)/docs"
+	@echo "  Logs: docker logs -f $(DOCKER_CONTAINER)"
+
+# Build and test Docker container
+docker-test: docker-build
+	@echo "Testing Docker container..."
+	@echo "Starting container..."
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file not found. Create one with GEMINI_API_KEY=your-key"; \
+		exit 1; \
+	fi
+	@docker run -d --name $(DOCKER_CONTAINER)-test -p 8001:8080 --env-file .env $(DOCKER_IMAGE):latest
+	@echo "Waiting for container to start..."
+	@sleep 5
+	@echo "Testing health endpoint..."
+	@curl -f http://localhost:8001/health || (echo "❌ Health check failed" && docker logs $(DOCKER_CONTAINER)-test && docker stop $(DOCKER_CONTAINER)-test && docker rm $(DOCKER_CONTAINER)-test && exit 1)
+	@echo "✓ Health check passed!"
+	@echo "Testing API endpoint..."
+	@curl -f -X POST http://localhost:8001/api/chat \
+		-H "Content-Type: application/json" \
+		-d '{"message":"test","user_id":"test"}' > /dev/null || (echo "❌ API test failed" && docker logs $(DOCKER_CONTAINER)-test && docker stop $(DOCKER_CONTAINER)-test && docker rm $(DOCKER_CONTAINER)-test && exit 1)
+	@echo "✓ API test passed!"
+	@docker stop $(DOCKER_CONTAINER)-test
+	@docker rm $(DOCKER_CONTAINER)-test
+	@echo "✓ All tests passed! Docker container is ready for deployment."
+
+# Stop running Docker container
+docker-stop:
+	@echo "Stopping Docker container..."
+	@docker stop $(DOCKER_CONTAINER) 2>/dev/null || echo "Container not running"
+	@docker rm $(DOCKER_CONTAINER) 2>/dev/null || echo "Container already removed"
+	@echo "✓ Container stopped"
+
+# Clean up Docker images and containers
+docker-clean: docker-stop
+	@echo "Cleaning up Docker resources..."
+	@docker rmi $(DOCKER_IMAGE):latest 2>/dev/null || echo "Image already removed"
+	@docker system prune -f
+	@echo "✓ Docker cleanup complete"
+
+# Verify environment variables
+verify-env: venv
+	@$(PYTHON) scripts/verify_env.py
+
+# Sync secrets to Google Secret Manager
+sync-secrets:
+	@echo "Syncing secrets to Google Secret Manager..."
+	@bash scripts/setup_secrets.sh
+
+# Verify secrets in Google Secret Manager
+verify-secrets:
+	@bash scripts/verify_secrets.sh

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  # Main application
+  app:
+    build: .
+    ports:
+      - "8000:8080"
+    env_file:
+      - .env
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-gen-lang-client-0751221742}

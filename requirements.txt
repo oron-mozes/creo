@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+google-adk
+google-generativeai
+python-multipart
+pydantic
+google-cloud-firestore
+pinecone-client

@@ -42,13 +42,16 @@ def load_agent_env(agent_name: Union[AgentName, str], project_root: Optional[Pat
                 project_root = current
                 break
             current = current.parent
-        
+
+        # If no .env file found (e.g., in Docker), use environment variables directly
         if project_root is None:
-            raise FileNotFoundError("Could not find project root with .env file")
-    
+            # Return empty dict - env vars are already set by Docker/Cloud Run
+            return {}
+
     env_file = project_root / '.env'
     if not env_file.exists():
-        raise FileNotFoundError(f".env file not found at {env_file}")
+        # No .env file (e.g., in Docker), use environment variables directly
+        return {}
     
     # Read .env file manually to get all variables
     env_vars = {}
