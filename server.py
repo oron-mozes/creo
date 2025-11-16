@@ -92,6 +92,9 @@ except Exception as e:
     print("Using in-memory storage for development.")
     db = None
 
+# Import AgentName enum for agent identification
+from agents.utils import AgentName
+
 # Import orchestrator agent (handle hyphenated directory name)
 import importlib.util
 agent_path = PROJECT_ROOT / "agents" / "orchestrator-agent" / "agent.py"
@@ -334,6 +337,10 @@ def chat(request: ChatRequest):
             session_id=session_id,
             new_message=new_message,
         ):
+            # Log which agent is being triggered
+            if event.author:
+                print(f"[AGENT_TRIGGERED] Agent: {event.author} | Session: {session_id}")
+
             # Collect all text responses
             candidate = content_to_text(event.content)
             if candidate:
@@ -425,38 +432,88 @@ async def join_session(sid, data):
 
             # Stream agent responses
             response_chunks = []
+            all_chunks = []  # Collect all chunks as fallback
+            message_id = str(uuid.uuid4())  # Unique ID for this response
             print(f"[JOIN_SESSION] Starting agent processing")
+
+            got_final_response = False
 
             for event in runner.run(
                 user_id=user_id,
                 session_id=session_id,
                 new_message=new_message,
             ):
+                # Log which agent is being triggered
+                if event.author:
+                    print(f"[AGENT_TRIGGERED] Agent: {event.author} | Session: {session_id} | is_final: {event.is_final_response()}")
+
                 chunk = content_to_text(event.content)
+
+                # Collect ALL chunks for fallback
                 if chunk:
+                    all_chunks.append((event.author, chunk))
+
+                # Only emit chunks from frontdesk_agent (the final agent that formats for users)
+                # This prevents intermediate agent responses from being sent to the UI
+                if chunk and event.author == AgentName.FRONTDESK_AGENT.value:
                     response_chunks.append(chunk)
-                    print(f"[JOIN_SESSION] Streaming chunk: '{chunk[:50]}...'")
-                    # Emit chunk to client
+                    print(f"[JOIN_SESSION] Streaming chunk from frontdesk: '{chunk[:50]}...'")
+                    # Emit chunk to client with message ID
                     await sio.emit('message_chunk', {
                         'chunk': chunk,
-                        'session_id': session_id
+                        'session_id': session_id,
+                        'message_id': message_id
                     }, room=session_id)
+                elif chunk:
+                    print(f"[JOIN_SESSION] Received chunk from {event.author} (not streaming to client)")
 
-                # Check if final response
+                # Check if final response from root_agent (orchestrator completed the flow)
                 if event.author == root_agent.name and event.is_final_response():
+                    got_final_response = True
                     final_text = content_to_text(event.content)
                     if final_text:
-                        print(f"[JOIN_SESSION] Got final response, saving to storage")
+                        print(f"[JOIN_SESSION] Got final response from root_agent, saving to storage")
                         # Store assistant message in Firestore
                         save_message_to_firestore(session_id, "assistant", final_text, user_id)
 
-                        # Emit final message
+                        # Emit final message with message ID
                         print(f"[JOIN_SESSION] Emitting message_complete")
                         await sio.emit('message_complete', {
                             'message': final_text,
-                            'session_id': session_id
+                            'session_id': session_id,
+                            'message_id': message_id
                         }, room=session_id)
                         break
+
+            # Fallback: If orchestrator didn't complete properly, save what we got
+            if not got_final_response:
+                if response_chunks:
+                    # Prefer frontdesk chunks if available (already streamed to client)
+                    final_text = ''.join(response_chunks)
+                    print(f"[JOIN_SESSION] WARNING: No final response from root_agent, but saving {len(response_chunks)} frontdesk chunks")
+                    save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                    await sio.emit('message_complete', {
+                        'message': final_text,
+                        'session_id': session_id,
+                        'message_id': message_id
+                    }, room=session_id)
+                    # Don't emit chunk again - frontdesk already streamed it
+                elif all_chunks:
+                    # Fallback to any chunks we collected (from specialized agents)
+                    final_text = ''.join([chunk for _, chunk in all_chunks])
+                    print(f"[JOIN_SESSION] WARNING: No frontdesk chunks, saving {len(all_chunks)} chunks from other agents")
+                    save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                    # These weren't streamed, so emit them now
+                    await sio.emit('message_chunk', {
+                        'chunk': final_text,
+                        'session_id': session_id,
+                        'message_id': message_id
+                    }, room=session_id)
+                    await sio.emit('message_complete', {
+                        'message': final_text,
+                        'session_id': session_id,
+                        'message_id': message_id
+                    }, room=session_id)
 
             print(f"[JOIN_SESSION] Initial message processing complete")
 
@@ -500,34 +557,85 @@ async def send_message(sid, data):
 
         # Stream agent responses
         response_chunks = []
+        all_chunks = []  # Collect all chunks as fallback
+        message_id = str(uuid.uuid4())  # Unique ID for this response
+        got_final_response = False
 
         for event in runner.run(
             user_id=user_id,
             session_id=session_id,
             new_message=new_message,
         ):
+            # Log which agent is being triggered
+            if event.author:
+                print(f"[AGENT_TRIGGERED] Agent: {event.author} | Session: {session_id} | is_final: {event.is_final_response()}")
+
             chunk = content_to_text(event.content)
+
+            # Collect ALL chunks for fallback
             if chunk:
+                all_chunks.append((event.author, chunk))
+
+            # Only emit chunks from frontdesk_agent (the final agent that formats for users)
+            # This prevents intermediate agent responses from being sent to the UI
+            if chunk and event.author == AgentName.FRONTDESK_AGENT.value:
                 response_chunks.append(chunk)
-                # Emit chunk to client
+                print(f"[SEND_MESSAGE] Streaming chunk from frontdesk: '{chunk[:50]}...'")
+                # Emit chunk to client with message ID
                 await sio.emit('message_chunk', {
                     'chunk': chunk,
-                    'session_id': session_id
+                    'session_id': session_id,
+                    'message_id': message_id
                 }, room=session_id)
+            elif chunk:
+                print(f"[SEND_MESSAGE] Received chunk from {event.author} (not streaming to client)")
 
-            # Check if final response
+            # Check if final response from root_agent (orchestrator completed the flow)
             if event.author == root_agent.name and event.is_final_response():
+                got_final_response = True
                 final_text = content_to_text(event.content)
                 if final_text:
+                    print(f"[SEND_MESSAGE] Got final response from root_agent, saving to storage")
                     # Store assistant message in Firestore
                     save_message_to_firestore(session_id, "assistant", final_text, user_id)
 
-                    # Emit final message
+                    # Emit final message with message ID
                     await sio.emit('message_complete', {
                         'message': final_text,
-                        'session_id': session_id
+                        'session_id': session_id,
+                        'message_id': message_id
                     }, room=session_id)
                     break
+
+        # Fallback: If orchestrator didn't complete properly, save what we got
+        if not got_final_response:
+            if response_chunks:
+                # Prefer frontdesk chunks if available (already streamed to client)
+                final_text = ''.join(response_chunks)
+                print(f"[SEND_MESSAGE] WARNING: No final response from root_agent, but saving {len(response_chunks)} frontdesk chunks")
+                save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                await sio.emit('message_complete', {
+                    'message': final_text,
+                    'session_id': session_id,
+                    'message_id': message_id
+                }, room=session_id)
+                # Don't emit chunk again - frontdesk already streamed it
+            elif all_chunks:
+                # Fallback to any chunks we collected (from specialized agents)
+                final_text = ''.join([chunk for _, chunk in all_chunks])
+                print(f"[SEND_MESSAGE] WARNING: No frontdesk chunks, saving {len(all_chunks)} chunks from other agents")
+                save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                # These weren't streamed, so emit them now
+                await sio.emit('message_chunk', {
+                    'chunk': final_text,
+                    'session_id': session_id,
+                    'message_id': message_id
+                }, room=session_id)
+                await sio.emit('message_complete', {
+                    'message': final_text,
+                    'session_id': session_id,
+                    'message_id': message_id
+                }, room=session_id)
 
     except Exception as e:
         print(f"Error in send_message: {str(e)}")

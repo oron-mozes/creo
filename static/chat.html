@@ -141,6 +141,7 @@
         let socket = null;
         let currentLoadingDiv = null;
         let currentResponseDiv = null;
+        let currentMessageId = null;
 
         // Get session ID from URL
         function getSessionId() {
@@ -399,7 +400,13 @@
             });
 
             socket.on('message_chunk', (data) => {
-                if (!currentResponseDiv) {
+                // If message_id changed, start a new response div
+                if (!currentResponseDiv || (data.message_id && data.message_id !== currentMessageId)) {
+                    // Finish the previous response if it exists
+                    if (currentResponseDiv) {
+                        finishStreamingResponse();
+                    }
+                    currentMessageId = data.message_id;
                     startStreamingResponse();
                 }
                 appendToStreamingResponse(data.chunk);
@@ -408,6 +415,7 @@
             socket.on('message_complete', (data) => {
                 finishStreamingResponse();
                 hideLoading();
+                currentMessageId = null; // Reset for next message
             });
 
             socket.on('error', (data) => {
