@@ -21,4 +21,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Run the application
-CMD exec uvicorn server:app --host 0.0.0.0 --port ${PORT}
+CMD exec uvicorn server:socket_app --host 0.0.0.0 --port ${PORT}
