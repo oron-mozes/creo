@@ -338,7 +338,16 @@ class Judge:
     def __init__(self, model_name: str = "gemini-2.5-flash") -> None:
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         if not api_key:
-            raise RuntimeError("Set GEMINI_API_KEY (or GOOGLE_API_KEY) before running the judge.")
+            error_msg = (
+                "GEMINI_API_KEY environment variable not set.\n\n"
+                "For local development:\n"
+                "  export GEMINI_API_KEY=your-api-key\n\n"
+                "For GitHub Actions:\n"
+                "  Add GEMINI_API_KEY to repository secrets:\n"
+                "  https://github.com/<owner>/<repo>/settings/secrets/actions\n\n"
+                "Get your API key from: https://makersuite.google.com/app/apikey"
+            )
+            raise RuntimeError(error_msg)
         genai.configure(api_key=api_key)
         self._model = genai.GenerativeModel(model_name)
         self._last_request_time = 0.0
