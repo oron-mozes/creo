@@ -26,7 +26,8 @@ _AGENT_ENUMS = [
 def _load_agent(agent_enum: AgentName) -> Agent:
     """Import an agent module dynamically and return the Agent instance."""
     agent_name = agent_enum.value
-    agent_dir = agent_name.replace('_', '-')
+    # Agent directories now use underscores (Python package naming convention)
+    agent_dir = agent_name
     agent_path = _AGENTS_DIR / agent_dir / 'agent.py'
     spec = importlib.util.spec_from_file_location(agent_name, agent_path)
     module = importlib.util.module_from_spec(spec)

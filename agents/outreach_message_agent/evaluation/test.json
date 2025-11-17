@@ -1,0 +1,289 @@
+[
+  {
+    "name": "tech_reviewer_outreach",
+    "description": "Create outreach message for tech reviewer",
+    "user_message": "Write an outreach message to @techreviewer (Tech YouTuber, 500K subscribers) for a product review of our new smartphone. Tone should be professional but friendly. Key points: early access, honest review, creative freedom.",
+    "session_context": {
+      "business_card": {
+        "name": "Tech Gadgets Inc",
+        "service_type": "Technology products"
+      }
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_include_value_proposition": true,
+      "should_maintain_professional_tone": true
+    }
+  },
+  {
+    "name": "fashion_influencer_outreach",
+    "description": "Create outreach message for fashion influencer",
+    "user_message": "Draft an outreach message to @fashionista (Fashion Instagram Influencer, 200K followers) for sponsored posts about our sustainable clothing brand. Casual and approachable tone. Focus on sustainability and long-term partnership.",
+    "session_context": {
+      "business_card": {
+        "name": "Fashion Brand Co",
+        "service_type": "Fashion retail"
+      }
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_align_with_brand_values": true,
+      "should_propose_partnership": true
+    }
+  },
+  {
+    "name": "fitness_creator_outreach",
+    "description": "Create outreach message for fitness creator",
+    "user_message": "Create outreach for @fitnessguru (Fitness Content Creator, 150K followers) for brand ambassadorship of our fitness app. Motivational and authentic tone. Emphasize authentic partnership and user testimonials.",
+    "session_context": {
+      "business_card": {
+        "name": "FitLife App",
+        "service_type": "Fitness technology"
+      }
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_propose_ambassadorship": true,
+      "should_emphasize_authenticity": true
+    }
+  },
+  {
+    "name": "happy_path_tech_review",
+    "description": "Tests the happy path for a tech review collaboration with a YouTuber.",
+    "user_message": "I need to reach out to @techguru (Tech YouTuber, 1M subscribers) for a product review of our new noise-canceling headphones. Key points: early access, honest review, affiliate link. Tone: Professional and enthusiastic.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_include_key_points": true,
+      "should_match_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "techguru",
+      "noise-canceling headphones",
+      "early access",
+      "affiliate link"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "fashion_influencer_sustainability",
+    "description": "Tests collaboration with a fashion influencer for a sustainable brand.",
+    "user_message": "Write an outreach message to @eco_chic (Fashion Instagram influencer, 300K followers) for a sponsored post about our sustainable activewear. Key points: eco-friendly materials, ethical production, brand values. Tone: Casual and friendly, emphasizing shared values.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_emphasize_sustainability": true,
+      "should_match_casual_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "eco_chic",
+      "sustainable activewear",
+      "eco-friendly",
+      "ethical production",
+      "brand values"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "ambiguous_creator_description",
+    "description": "Tests handling of an ambiguous creator description.",
+    "user_message": "Reach out to @randomguy who posts 'stuff' on TikTok, 10k followers. It's for a new energy drink. Key points: fun, energetic, try the drink. Tone: Very casual, like you're already friends.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_adapt_to_limited_info": true,
+      "should_use_casual_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "randomguy",
+      "energy drink",
+      "fun",
+      "energetic"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "missing_tone_information",
+    "description": "Tests handling of missing tone information.",
+    "user_message": "Contact @gamergirl (Gaming Twitch streamer, 50K followers) for a sponsored stream of our new indie game. Key points: unique gameplay, engaging story, community interaction.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_default_to_appropriate_tone": true,
+      "should_include_key_points": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "gamergirl",
+      "indie game",
+      "unique gameplay",
+      "engaging story",
+      "Twitch"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "negative_constraints",
+    "description": "Tests handling of negative constraints (what NOT to do).",
+    "user_message": "Reach out to @chef_joe (Food Instagrammer, 100K followers) for a recipe collaboration. Key points: use our olive oil, healthy recipe, don't mention competitors. Tone: Professional and respectful.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_avoid_mentioning_competitors": true,
+      "should_include_key_points": true,
+      "should_match_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "chef_joe",
+      "olive oil",
+      "healthy recipe"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "complex_key_points",
+    "description": "Tests handling of complex and detailed key points.",
+    "user_message": "Contact @travel_vlogger (Travel YouTuber, 200K subscribers) for a sponsored video of our luxury resort. Key points: highlight the spa, mention the Michelin-star restaurant, show the ocean view, emphasize the exclusivity, use drone footage. Tone: Sophisticated and aspirational.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_include_all_key_points": true,
+      "should_match_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "travel_vlogger",
+      "luxury resort",
+      "spa",
+      "Michelin-star restaurant",
+      "ocean view",
+      "exclusivity"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "non_standard_platform",
+    "description": "Tests outreach to a creator on a less common platform.",
+    "user_message": "Reach out to @musician (SoundCloud artist, 5K followers) for a collaboration on a jingle for our new ad. Key points: catchy tune, positive message, use our brand name. Tone: Energetic and creative.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_adapt_to_platform": true,
+      "should_include_key_points": true,
+      "should_match_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "musician",
+      "SoundCloud",
+      "jingle",
+      "catchy tune",
+      "positive message"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "follow_up_message",
+    "description": "Tests creating a follow-up message to a previous outreach.",
+    "user_message": "Create a follow up message for @techguru, referencing that we contacted them last week about reviewing our headphones.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": "Hi @techguru,\n\nI've been following your channel for a while and really appreciate your honest, in-depth tech reviews. Your recent video on smartphone audio was particularly insightful!\n\nWe're launching new noise-canceling headphones next month and would love to send you an early unit for review. We're looking for creators who value authenticity and creative freedom - no scripted talking points, just your genuine thoughts and experience.  We can offer an affiliate link for any sales generated.\n\nWould you be interested in checking them out? I'd be happy to share more details about the device and answer any questions you might have.\n\nLooking forward to hearing from you!\n\nBest,\n[Your Name]"
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_reference_previous_contact": true,
+      "should_maintain_original_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "techguru",
+      "headphones",
+      "last week",
+      "review"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "creator_with_multiple_platforms",
+    "description": "Tests identifying the best platform for outreach when the creator is on multiple platforms.",
+    "user_message": "Reach out to @artist who is on Instagram (100k followers) and TikTok (50k followers). We want them to promote our new art supplies. Key points: vibrant colors, high quality, inspiring creativity. Tone: Enthusiastic and encouraging.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_prioritize_instagram": true,
+      "should_include_key_points": true,
+      "should_match_tone": true,
+      "should_include_call_to_action": true
+    },
+    "expected_response_contains": [
+      "artist",
+      "Instagram",
+      "art supplies",
+      "vibrant colors",
+      "high quality",
+      "inspiring creativity"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "vague_campaign_description",
+    "description": "Tests how the agent handles a vague campaign description with few details.",
+    "user_message": "Contact @influencer about a 'thing'. They have 20k followers. Just make it sound good. Tone: positive",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_request_more_information": true,
+      "should_maintain_positive_tone": true,
+      "should_include_call_to_action": false
+    },
+    "expected_response_contains": [
+      "influencer",
+      "thing",
+      "more information",
+      "campaign"
+    ],
+    "expected_business_card": {}
+  }
+]

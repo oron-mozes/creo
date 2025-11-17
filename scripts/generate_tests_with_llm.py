@@ -144,15 +144,15 @@ def get_golden_tests(agent_name: str) -> List[Dict[str, Any]]:
         sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
         import test_utils
 
-        # Map agent folder name to enum value
+        # Map agent folder name to enum value (directories now use underscores)
         agent_enum_map = {
-            "onboarding-agent": "onboarding_agent",
-            "frontdesk-agent": "frontdesk_agent",
-            "creator-finder-agent": "creator_finder_agent",
-            "campaign-brief-agent": "campaign_brief_agent",
-            "outreach-message-agent": "outreach_message_agent",
-            "campaign-builder-agent": "campaign_builder_agent",
-            "orchestrator-agent": "root_agent"
+            "onboarding_agent": "onboarding_agent",
+            "frontdesk_agent": "frontdesk_agent",
+            "creator_finder_agent": "creator_finder_agent",
+            "campaign_brief_agent": "campaign_brief_agent",
+            "outreach_message_agent": "outreach_message_agent",
+            "campaign_builder_agent": "campaign_builder_agent",
+            "orchestrator_agent": "root_agent"
         }
 
         enum_value = agent_enum_map.get(agent_name)
@@ -237,13 +237,13 @@ def main():
         agents_dir = Path(__file__).parent.parent / "agents"
 
         testable_agents = [
-            "onboarding-agent",
-            "frontdesk-agent",
-            "creator-finder-agent",
-            "campaign-brief-agent",
-            "outreach-message-agent",
-            "campaign-builder-agent",
-            "orchestrator-agent"
+            "onboarding_agent",
+            "frontdesk_agent",
+            "creator_finder_agent",
+            "campaign_brief_agent",
+            "outreach_message_agent",
+            "campaign_builder_agent",
+            "orchestrator_agent"
         ]
 
         for agent_name in testable_agents:

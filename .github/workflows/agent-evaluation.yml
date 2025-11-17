@@ -1,0 +1,195 @@
+name: Agent Evaluation
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  evaluate-agents:
+    name: Evaluate All Agents
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'  # Use 3.10+ for better compatibility
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Evaluate onboarding_agent
+      id: eval_onboarding
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=onboarding_agent 2>&1 | tee onboarding_output.txt
+        if [ -f agents/onboarding_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/onboarding_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate frontdesk_agent
+      id: eval_frontdesk
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=frontdesk_agent 2>&1 | tee frontdesk_output.txt
+        if [ -f agents/frontdesk_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/frontdesk_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate creator_finder_agent
+      id: eval_creator_finder
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=creator_finder_agent 2>&1 | tee creator_finder_output.txt
+        if [ -f agents/creator_finder_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/creator_finder_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate campaign_brief_agent
+      id: eval_campaign_brief
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=campaign_brief_agent 2>&1 | tee campaign_brief_output.txt
+        if [ -f agents/campaign_brief_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/campaign_brief_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate outreach_message_agent
+      id: eval_outreach_message
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=outreach_message_agent 2>&1 | tee outreach_message_output.txt
+        if [ -f agents/outreach_message_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/outreach_message_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate campaign_builder_agent
+      id: eval_campaign_builder
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=campaign_builder_agent 2>&1 | tee campaign_builder_output.txt
+        if [ -f agents/campaign_builder_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/campaign_builder_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Evaluate orchestrator_agent
+      id: eval_orchestrator
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=orchestrator_agent 2>&1 | tee orchestrator_output.txt
+        if [ -f agents/orchestrator_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/orchestrator_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload evaluation reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: evaluation-reports
+        path: |
+          agents/*/evaluation/report.json
+          *_output.txt
+
+    - name: Comment on PR with scores
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const scores = {
+            'onboarding_agent': '${{ steps.eval_onboarding.outputs.score }}',
+            'frontdesk_agent': '${{ steps.eval_frontdesk.outputs.score }}',
+            'creator_finder_agent': '${{ steps.eval_creator_finder.outputs.score }}',
+            'campaign_brief_agent': '${{ steps.eval_campaign_brief.outputs.score }}',
+            'outreach_message_agent': '${{ steps.eval_outreach_message.outputs.score }}',
+            'campaign_builder_agent': '${{ steps.eval_campaign_builder.outputs.score }}',
+            'orchestrator_agent': '${{ steps.eval_orchestrator.outputs.score }}'
+          };
+
+          // Build score table
+          let table = '| Agent | Score |\n|-------|-------|\n';
+          let hasScores = false;
+          for (const [agent, score] of Object.entries(scores)) {
+            if (score !== 'N/A') {
+              hasScores = true;
+              const emoji = parseFloat(score) >= 0.8 ? '✅' : parseFloat(score) >= 0.6 ? '⚠️' : '❌';
+              table += `| ${agent.replace('_', ' ')} | ${emoji} ${score} |\n`;
+            }
+          }
+
+          if (!hasScores) {
+            table = 'No evaluation scores were generated. Check workflow logs for details.';
+          }
+
+          const body = `## 🤖 Agent Evaluation Results\n\n${table}\n\n**Legend:**\n- ✅ Score ≥ 0.8 (Good)\n- ⚠️ Score 0.6-0.8 (Needs Improvement)\n- ❌ Score < 0.6 (Failing)\n\n📊 [View detailed reports in artifacts](${context.payload.pull_request.html_url}/checks)`;
+
+          github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: body
+          });
+
+    - name: Create evaluation summary
+      if: always()
+      run: |
+        echo "# Agent Evaluation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Agent | Score |" >> $GITHUB_STEP_SUMMARY
+        echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| onboarding_agent | ${{ steps.eval_onboarding.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| frontdesk_agent | ${{ steps.eval_frontdesk.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| creator_finder_agent | ${{ steps.eval_creator_finder.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| campaign_brief_agent | ${{ steps.eval_campaign_brief.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| outreach_message_agent | ${{ steps.eval_outreach_message.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| campaign_builder_agent | ${{ steps.eval_campaign_builder.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| orchestrator_agent | ${{ steps.eval_orchestrator.outputs.score }} |" >> $GITHUB_STEP_SUMMARY

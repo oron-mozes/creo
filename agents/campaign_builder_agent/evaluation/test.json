@@ -1,0 +1,273 @@
+[
+  {
+    "name": "eco_skincare_launch_campaign",
+    "description": "Build comprehensive campaign for eco-friendly skincare launch",
+    "user_message": "Build a full campaign to launch our new eco-friendly skincare product targeting environmentally conscious millennials (25-40), primarily female. Budget is $50k, 3 months timeline. Use Instagram, TikTok, YouTube, and influencer partnerships.",
+    "session_context": {
+      "business_card": {
+        "name": "EcoBeauty Co",
+        "service_type": "Skincare products",
+        "location": "Los Angeles, CA"
+      }
+    },
+    "expected_behavior": {
+      "should_create_comprehensive_plan": true,
+      "should_define_channels": true,
+      "should_include_budget_allocation": true,
+      "should_include_timeline": true
+    }
+  },
+  {
+    "name": "b2b_saas_lead_generation",
+    "description": "Build B2B SaaS lead generation campaign",
+    "user_message": "Create a campaign to increase B2B SaaS product sign-ups targeting small business owners and marketing managers. Budget $30k, 2 months. Use LinkedIn, email, webinars, and content marketing.",
+    "session_context": {
+      "business_card": {
+        "name": "MarketingTech SaaS",
+        "service_type": "B2B Software",
+        "location": "Austin, TX"
+      }
+    },
+    "expected_behavior": {
+      "should_create_comprehensive_plan": true,
+      "should_target_b2b_audience": true,
+      "should_include_lead_generation_strategy": true,
+      "should_allocate_budget_per_channel": true
+    }
+  },
+  {
+    "name": "eco_friendly_skincare_launch",
+    "description": "Tests the agent's ability to create a marketing plan for an eco-friendly skincare product launch targeting millennials.",
+    "user_message": "I want to launch a new eco-friendly skincare product targeting environmentally conscious millennials (25-40), primarily female. My budget is $50,000 and the timeline is 3 months. I want to use Instagram, TikTok, YouTube, and Influencer partnerships.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Instagram",
+      "TikTok",
+      "YouTube",
+      "Influencer",
+      "Sustainability",
+      "Millennials",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "luxury_watch_brand_awareness",
+    "description": "Tests the agent's ability to create a marketing plan for a luxury watch brand targeting high-net-worth individuals.",
+    "user_message": "I want to increase brand awareness for a luxury watch brand targeting high-net-worth individuals (45-65), both male and female. My budget is $100,000 and the timeline is 6 months. I'm thinking of using print ads in exclusive magazines, sponsorships of high-profile events, and targeted online advertising.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Luxury",
+      "Watches",
+      "High-Net-Worth",
+      "Print Ads",
+      "Sponsorships",
+      "Online Advertising",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "local_restaurant_promotion",
+    "description": "Tests the agent's ability to create a marketing plan for a local restaurant targeting nearby residents.",
+    "user_message": "I need a marketing campaign to promote my local restaurant to nearby residents. My budget is $5,000 and the timeline is 1 month. I want to use social media, local newspaper ads, and flyers.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Restaurant",
+      "Local",
+      "Social Media",
+      "Newspaper Ads",
+      "Flyers",
+      "Residents",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "mobile_game_user_acquisition",
+    "description": "Tests the agent's ability to create a marketing plan for a mobile game targeting casual gamers.",
+    "user_message": "I want to acquire more users for my mobile game. My target audience is casual gamers (18-35). My budget is $20,000 and the timeline is 2 months. I'm thinking of using in-app advertising, social media ads, and influencer marketing.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Mobile Game",
+      "User Acquisition",
+      "In-App Advertising",
+      "Social Media Ads",
+      "Influencer Marketing",
+      "Casual Gamers",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "political_campaign_get_out_the_vote",
+    "description": "Tests the agent's ability to create a get-out-the-vote campaign for a political candidate.",
+    "user_message": "I need a get-out-the-vote campaign for a political candidate targeting registered voters (18-45). My budget is $10,000 and the timeline is 1 month. I want to use social media, email marketing, and phone banking.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Political Campaign",
+      "Get-Out-The-Vote",
+      "Social Media",
+      "Email Marketing",
+      "Phone Banking",
+      "Registered Voters",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "nonprofit_fundraising_campaign",
+    "description": "Tests the agent's ability to create a fundraising campaign for a nonprofit organization.",
+    "user_message": "I need a fundraising campaign for a nonprofit organization. My target audience is previous donors and potential new donors. My budget is $15,000 and the timeline is 3 months. I want to use email marketing, social media, and direct mail.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Nonprofit",
+      "Fundraising",
+      "Email Marketing",
+      "Social Media",
+      "Direct Mail",
+      "Donors",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "book_launch_campaign",
+    "description": "Tests the agent's ability to create a marketing plan for a book launch.",
+    "user_message": "I need a marketing plan to launch my new book. My target audience is readers interested in historical fiction. My budget is $8,000 and the timeline is 2 months. I want to use social media, book reviews, and author interviews.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Book Launch",
+      "Historical Fiction",
+      "Social Media",
+      "Book Reviews",
+      "Author Interviews",
+      "Readers",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "real_estate_lead_generation",
+    "description": "Tests the agent's ability to create a lead generation campaign for a real estate agent.",
+    "user_message": "I need a lead generation campaign for my real estate business. My target audience is first-time homebuyers and experienced investors. My budget is $12,000 and the timeline is 3 months. I want to use online advertising, open houses, and email marketing.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Real Estate",
+      "Lead Generation",
+      "Online Advertising",
+      "Open Houses",
+      "Email Marketing",
+      "Homebuyers",
+      "Investors",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "new_podcast_launch",
+    "description": "Tests the agent's ability to create a marketing plan for launching a new podcast.",
+    "user_message": "I want to launch a new podcast and need a marketing plan. The podcast is about true crime. My target audience is true crime enthusiasts (25-55). My budget is $3,000 and the timeline is 1 month. I want to use social media, podcast directories, and cross-promotion with other podcasts.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_marketing_plan": true,
+      "should_allocate_budget_across_channels": true,
+      "should_define_kpis": true,
+      "should_include_timeline": true
+    },
+    "expected_response_contains": [
+      "Podcast",
+      "True Crime",
+      "Social Media",
+      "Podcast Directories",
+      "Cross-Promotion",
+      "Enthusiasts",
+      "KPIs"
+    ],
+    "expected_business_card": {}
+  }
+]

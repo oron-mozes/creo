@@ -1,0 +1,255 @@
+[
+  {
+    "name": "summer_fashion_launch",
+    "description": "Create a campaign brief for summer fashion launch",
+    "user_message": "I need a campaign brief for Summer Fashion Launch 2024 targeting fashion-conscious millennials (25-40), budget $50k, 3 months timeline. Focus on sustainable fashion, summer collection, limited edition.",
+    "session_context": {
+      "business_card": {
+        "name": "Fashion Brand Co",
+        "service_type": "Fashion retail",
+        "location": "New York, NY"
+      }
+    },
+    "expected_behavior": {
+      "should_create_campaign_brief": true,
+      "should_include_objectives": true,
+      "should_define_target_audience": true,
+      "should_include_budget": true
+    }
+  },
+  {
+    "name": "tech_product_launch",
+    "description": "Create a campaign brief for tech product launch",
+    "user_message": "Create a campaign brief for Tech Product Launch targeting tech early adopters, $100k budget, 2 months. Focus on product education, pre-orders, reviews. Key messages: innovation, performance, early access.",
+    "session_context": {
+      "business_card": {
+        "name": "Tech Gadgets Inc",
+        "service_type": "Technology products",
+        "location": "San Francisco, CA"
+      }
+    },
+    "expected_behavior": {
+      "should_create_campaign_brief": true,
+      "should_include_timeline": true,
+      "should_define_key_messages": true,
+      "should_include_objectives": true
+    }
+  },
+  {
+    "name": "no_business_card_hard_gate",
+    "description": "Tests the hard gate when no business card is present.",
+    "user_message": "I want to promote my new product.",
+    "session_context": {
+      "business_card": null
+    },
+    "expected_behavior": {
+      "should_stop_immediately": true,
+      "should_not_ask_campaign_questions": true,
+      "should_request_business_info": true
+    },
+    "expected_response_contains": [
+      "I need to know more about your business first"
+    ]
+  },
+  {
+    "name": "extract_all_info_from_one_message",
+    "description": "Tests extraction of all campaign details from a single user message.",
+    "user_message": "I want to find 5 Instagram influencers in Austin, TX to promote my new vegan cookies. Budget is $150 per creator.",
+    "session_context": {
+      "business_card": {
+        "name": "Austin Vegan Bakery",
+        "location": "Austin, TX",
+        "service_type": "Bakery",
+        "website": "https://austinveganbakery.com",
+        "social_links": "@austinveganbakery"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_all_fields": true,
+      "should_not_ask_further_questions": true,
+      "should_present_confirmation": true
+    },
+    "expected_response_contains": [
+      "Campaign Goal: Promote new vegan cookies",
+      "Platform: Instagram",
+      "Budget per Creator: $150",
+      "Number of Creators: 5"
+    ]
+  },
+  {
+    "name": "budget_range_extraction",
+    "description": "Tests budget range extraction, ensuring the upper value is used.",
+    "user_message": "I want to promote my new app. My budget is $200-400 per creator.",
+    "session_context": {
+      "business_card": {
+        "name": "AppDev Inc",
+        "location": "San Francisco, CA",
+        "service_type": "Software Development",
+        "website": "https://appdev.com",
+        "social_links": null
+      }
+    },
+    "expected_behavior": {
+      "should_extract_budget_upper_value": true,
+      "should_extract_goal": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "budget in mind per creator"
+    ]
+  },
+  {
+    "name": "location_override",
+    "description": "Tests location override when the user specifies a different target location.",
+    "user_message": "I want to promote my product to customers in Canada.",
+    "session_context": {
+      "business_card": {
+        "name": "GlobalGadgets",
+        "location": "New York, NY",
+        "service_type": "Electronics Retail",
+        "website": "https://globalgadgets.com",
+        "social_links": "@globalgadgets"
+      }
+    },
+    "expected_behavior": {
+      "should_override_business_location": true,
+      "should_extract_goal": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "promote my product to customers in Canada"
+    ]
+  },
+  {
+    "name": "number_of_creators_specified",
+    "description": "Tests handling when the user specifies the number of creators.",
+    "user_message": "I need 3 influencers to promote my new service.",
+    "session_context": {
+      "business_card": {
+        "name": "Service Solutions",
+        "location": "London, UK",
+        "service_type": "Consulting",
+        "website": "https://servicesolutions.com",
+        "social_links": null
+      }
+    },
+    "expected_behavior": {
+      "should_extract_num_creators": true,
+      "should_not_ask_num_creators_again": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "Which platform would you like to focus on"
+    ]
+  },
+  {
+    "name": "goal_detection_promotion_pattern",
+    "description": "Tests goal detection using a promotion pattern in the user message.",
+    "user_message": "I want to promote my new organic coffee.",
+    "session_context": {
+      "business_card": {
+        "name": "Coffee Bliss",
+        "location": "Seattle, WA",
+        "service_type": "Cafe",
+        "website": "https://coffeebliss.com",
+        "social_links": "@coffeebliss"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_goal_automatically": true,
+      "should_not_ask_goal_again": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "Which platform do you want to focus on"
+    ]
+  },
+  {
+    "name": "goal_detection_goal_oriented_pattern",
+    "description": "Tests goal detection using a goal-oriented pattern in the user message.",
+    "user_message": "Looking for influencers to increase brand awareness.",
+    "session_context": {
+      "business_card": {
+        "name": "BrandBoost Agency",
+        "location": "Los Angeles, CA",
+        "service_type": "Marketing Agency",
+        "website": "https://brandboost.com",
+        "social_links": "@brandboost"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_goal_automatically": true,
+      "should_not_ask_goal_again": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "Which platform do you want to focus on"
+    ]
+  },
+  {
+    "name": "platform_extraction_from_message",
+    "description": "Tests platform extraction when the user mentions it directly.",
+    "user_message": "I need some TikTok creators to promote my new dance studio.",
+    "session_context": {
+      "business_card": {
+        "name": "Dance Mania",
+        "location": "Miami, FL",
+        "service_type": "Dance Studio",
+        "website": "https://dancemania.com",
+        "social_links": "@dancemania"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_platform": true,
+      "should_extract_goal": true,
+      "should_not_ask_platform_again": true,
+      "should_ask_audience": true
+    },
+    "expected_response_contains": [
+      "Any specific audience you want to reach?"
+    ]
+  },
+  {
+    "name": "audience_extraction_from_message",
+    "description": "Tests audience extraction when the user mentions it directly.",
+    "user_message": "I want to promote my product to young professionals.",
+    "session_context": {
+      "business_card": {
+        "name": "OfficeSupplies",
+        "location": "Chicago, IL",
+        "service_type": "Office Supplies",
+        "website": "https://officesupplies.com",
+        "social_links": null
+      }
+    },
+    "expected_behavior": {
+      "should_extract_audience": true,
+      "should_extract_goal": true,
+      "should_ask_platform": true
+    },
+    "expected_response_contains": [
+      "Which platform do you want to focus on"
+    ]
+  },
+  {
+    "name": "follow_up_question_priority",
+    "description": "Tests the correct order of follow-up questions when multiple fields are missing.",
+    "user_message": "I want to promote my cafe.",
+    "session_context": {
+      "business_card": {
+        "name": "The Cozy Cafe",
+        "location": "Paris, France",
+        "service_type": "Cafe",
+        "website": "https://thecozycafe.fr",
+        "social_links": "@thecozycafe"
+      }
+    },
+    "expected_behavior": {
+      "should_ask_platform_first": true,
+      "should_not_ask_goal_again": true
+    },
+    "expected_response_contains": [
+      "Which platform do you want to focus on"
+    ]
+  }
+]

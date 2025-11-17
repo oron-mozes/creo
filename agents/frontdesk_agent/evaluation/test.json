@@ -1,0 +1,371 @@
+[
+  {
+    "name": "transform_technical_creator_results",
+    "description": "Transform technical creator finder results into warm message",
+    "user_message": "Found 15 creators matching criteria: Fashion niche, 50K-500K followers, 3%+ engagement on Instagram and TikTok",
+    "session_context": {
+      "business_card": {
+        "name": "StyleHub Boutique",
+        "location": "Los Angeles, CA",
+        "service_type": "Fashion retail"
+      },
+      "context": "User asked to find fashion influencers"
+    },
+    "expected_behavior": {
+      "should_be_conversational": true,
+      "should_use_business_name": true,
+      "should_avoid_markdown": true,
+      "should_include_key_info": true
+    },
+    "expected_response_contains": [
+      "StyleHub Boutique",
+      "15 creators",
+      "fashion"
+    ]
+  },
+  {
+    "name": "handle_error_empathetically",
+    "description": "Transform error message into empathetic response",
+    "user_message": "Error: Unable to connect to creator database",
+    "session_context": {
+      "business_card": null,
+      "context": "User tried to search for creators"
+    },
+    "expected_behavior": {
+      "should_be_empathetic": true,
+      "should_explain_simply": true,
+      "should_provide_next_steps": true,
+      "should_avoid_technical_jargon": true
+    },
+    "forbidden_patterns": [
+      "database",
+      "connection failed",
+      "error code"
+    ]
+  },
+  {
+    "name": "personalize_with_business_card",
+    "description": "Use business card to personalize greeting",
+    "user_message": "Campaign brief created successfully",
+    "session_context": {
+      "business_card": {
+        "name": "Alma Cafe",
+        "location": "Rehovot, Israel",
+        "service_type": "Coffee shop"
+      },
+      "context": "User just completed onboarding"
+    },
+    "expected_behavior": {
+      "should_use_business_name": true,
+      "should_be_warm": true,
+      "should_guide_next_steps": true
+    },
+    "expected_response_contains": [
+      "Alma Cafe"
+    ]
+  },
+  {
+    "name": "generic_greeting_without_business_card",
+    "description": "Use generic friendly greeting when business card unavailable",
+    "user_message": "Ready to help you find creators",
+    "session_context": {
+      "business_card": null,
+      "context": "New user, no business card yet"
+    },
+    "expected_behavior": {
+      "should_be_friendly": true,
+      "should_not_assume_business_details": true
+    },
+    "forbidden_patterns": [
+      "[Business Name]",
+      "[location]",
+      "[service type]"
+    ]
+  },
+  {
+    "name": "no_markdown_in_output",
+    "description": "Ensure no markdown symbols in response",
+    "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
+    "session_context": {
+      "business_card": null,
+      "context": "User asked about campaign plan"
+    },
+    "expected_behavior": {
+      "should_avoid_markdown": true,
+      "should_use_plain_text": true
+    },
+    "forbidden_patterns": [
+      "**",
+      "*   ",
+      "# ",
+      "## ",
+      "___",
+      "---"
+    ]
+  },
+  {
+    "name": "hide_internal_agent_names",
+    "description": "Never expose internal agent names to user",
+    "user_message": "creator_finder_agent found 10 results",
+    "session_context": {
+      "business_card": null,
+      "context": "User asked to find creators"
+    },
+    "expected_behavior": {
+      "should_hide_agent_names": true,
+      "should_use_first_person": true
+    },
+    "forbidden_patterns": [
+      "agent",
+      "creator_finder",
+      "campaign_builder",
+      "orchestrator",
+      "forwarding",
+      "redirecting"
+    ],
+    "expected_response_contains": [
+      "I found",
+      "we found",
+      "10 results"
+    ]
+  },
+  {
+    "name": "creator_search_results_happy_path",
+    "description": "Validates the agent's response to successful creator search results, focusing on clarity and conciseness.",
+    "user_message": "Find me some food bloggers with 10k-50k followers in New York.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_present_top_creators": true,
+      "should_mention_follower_range": true,
+      "should_ask_for_further_action": true,
+      "should_not_expose_internal_agent_names": true
+    },
+    "expected_response_contains": [
+      "found",
+      "creators",
+      "New York",
+      "followers",
+      "details"
+    ]
+  },
+  {
+    "name": "campaign_brief_created_with_business_card",
+    "description": "Tests the agent's confirmation message after a campaign brief is created, including business card personalization.",
+    "user_message": "Create a campaign brief for my summer sale.",
+    "session_context": {
+      "business_card": {
+        "name": "Sunset Cafe",
+        "location": "Miami, FL",
+        "service_type": "Cafe"
+      },
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_confirm_brief_creation": true,
+      "should_personalize_with_business_name": true,
+      "should_mention_key_campaign_details": true,
+      "should_offer_next_steps": true
+    },
+    "expected_response_contains": [
+      "Perfect",
+      "Sunset Cafe",
+      "campaign",
+      "ready",
+      "adjust"
+    ]
+  },
+  {
+    "name": "error_handling_api_limit",
+    "description": "Tests the agent's handling of an API rate limit error, ensuring empathetic communication and clear next steps.",
+    "user_message": "Show me the analytics for @foodie_gal.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_acknowledge_the_issue": true,
+      "should_explain_the_error_simply": true,
+      "should_provide_a_timeframe_for_retry": true,
+      "should_offer_options_for_retry": true
+    },
+    "expected_response_contains": [
+      "snag",
+      "analytics",
+      "requests",
+      "wait",
+      "automatically"
+    ]
+  },
+  {
+    "name": "asking_for_more_information_vague_goals",
+    "description": "Validates the agent's ability to ask for clarification when campaign goals are vague, providing examples.",
+    "user_message": "I want to run a campaign to increase awareness.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_request_more_specific_information": true,
+      "should_provide_examples_of_KPIs": true,
+      "should_explain_the_reason_for_the_request": true
+    },
+    "expected_response_contains": [
+      "perfect",
+      "campaign",
+      "info",
+      "goals",
+      "awareness",
+      "engagement",
+      "conversions"
+    ]
+  },
+  {
+    "name": "outreach_update_initial_send",
+    "description": "Tests the agent's update message after sending outreach messages, including open rates and expected response time.",
+    "user_message": "Send the messages to those creators.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_confirm_messages_were_sent": true,
+      "should_provide_open_rate_information": true,
+      "should_mention_average_response_time": true,
+      "should_promise_future_updates": true
+    },
+    "expected_response_contains": [
+      "messages",
+      "sent",
+      "creators",
+      "opened",
+      "response",
+      "let you know"
+    ]
+  },
+  {
+    "name": "campaign_performance_exceeding_benchmark",
+    "description": "Validates the agent's presentation of campaign performance data, including comparisons to benchmarks, with business card personalization.",
+    "user_message": "How is my campaign doing?",
+    "session_context": {
+      "business_card": {
+        "name": "Green Grocer",
+        "location": "Austin, TX",
+        "service_type": "Grocery Store"
+      },
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_present_key_performance_metrics": true,
+      "should_compare_performance_to_benchmarks": true,
+      "should_personalize_with_business_name": true
+    },
+    "expected_response_contains": [
+      "Green Grocer",
+      "campaign",
+      "doing",
+      "reached",
+      "engagements",
+      "better",
+      "niche"
+    ]
+  },
+  {
+    "name": "budget_validation_failed_creator_tier",
+    "description": "Tests the agent's handling of a budget validation failure due to selecting creators beyond the budget, offering alternative solutions.",
+    "user_message": "Select all the premium creators.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_inform_user_of_budget_mismatch": true,
+      "should_explain_minimum_budget_requirements": true,
+      "should_offer_alternative_solutions": true
+    },
+    "expected_response_contains": [
+      "heads up",
+      "typically",
+      "budget",
+      "options",
+      "similar",
+      "increase"
+    ]
+  },
+  {
+    "name": "welcome_back_returning_user",
+    "description": "Validates the agent's welcome message for returning users, referencing previous campaigns and prompting for next steps, with business card personalization.",
+    "user_message": "Hi!",
+    "session_context": {
+      "business_card": {
+        "name": "Pizza Palace",
+        "location": "Chicago, IL",
+        "service_type": "Restaurant"
+      },
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_provide_a_friendly_greeting": true,
+      "should_personalize_with_business_name": true,
+      "should_reference_previous_campaigns": true,
+      "should_prompt_for_next_steps": true
+    },
+    "expected_response_contains": [
+      "Welcome back",
+      "Pizza Palace",
+      "campaign",
+      "different"
+    ]
+  },
+  {
+    "name": "onboarding_complete_business_card",
+    "description": "Tests the agent's confirmation message after onboarding is complete, including business card details and campaign planning prompt, with business card personalization.",
+    "user_message": "I've finished setting up my account.",
+    "session_context": {
+      "business_card": {
+        "name": "Craft Coffee Roasters",
+        "location": "Seattle, WA",
+        "service_type": "Coffee Roastery"
+      },
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_confirm_onboarding_completion": true,
+      "should_acknowledge_business_details": true,
+      "should_prompt_for_campaign_planning": true,
+      "should_personalize_with_business_name": true
+    },
+    "expected_response_contains": [
+      "Perfect",
+      "Craft Coffee Roasters",
+      "influencers",
+      "campaign",
+      "promote",
+      "brand awareness"
+    ]
+  },
+  {
+    "name": "creator_search_no_results",
+    "description": "Tests the agent's response when no creators match the specified criteria, ensuring a helpful and encouraging message.",
+    "user_message": "Find me TikTok dancers with over 1 million followers in Antarctica.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_acknowledge_no_results_were_found": true,
+      "should_offer_alternative_search_options": true,
+      "should_maintain_a_positive_and_helpful_tone": true
+    },
+    "expected_response_contains": [
+      "didn't find",
+      "match",
+      "adjust",
+      "criteria",
+      "location",
+      "niche"
+    ]
+  }
+]

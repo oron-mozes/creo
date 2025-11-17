@@ -243,186 +243,247 @@
     }
   },
   {
-    "name": "new_user_no_info_vague_query",
-    "description": "Tests a new user with a vague initial query, expecting the agent to ask for basic business information (name and industry).",
-    "user_message": "I need help with marketing.",
+    "name": "new_user_provides_name_and_incomplete_location",
+    "description": "Tests the scenario where a new user provides a business name and incomplete location information, requiring clarification.",
+    "user_message": "My business is called GreenThumb and we're in Brooklyn.",
     "session_context": {
       "business_card": null,
       "workflow_state": {},
       "last_agent_message": ""
     },
     "expected_behavior": {
-      "should_ask_for_name": true,
-      "should_ask_for_industry": true,
-      "should_not_search_yet": true,
-      "should_be_warm_and_welcoming": true
+      "should_search": true,
+      "should_ask_for_more_specific_location": true,
+      "should_not_generate_business_card": true
     },
     "expected_response_contains": [
-      "brand name",
-      "industry"
-    ]
+      "GreenThumb",
+      "Brooklyn",
+      "find more information",
+      "Let me search for"
+    ],
+    "expected_business_card": {}
   },
   {
-    "name": "existing_user_business_card_present",
-    "description": "Tests an existing user with a complete business card, expecting the agent to acknowledge the user and proceed with the original request.",
-    "user_message": "I want to find influencers for my brand.",
+    "name": "returning_user_with_complete_business_card",
+    "description": "Tests the scenario where a returning user with a complete business card initiates a request.",
+    "user_message": "I need to find fashion influencers.",
     "session_context": {
       "business_card": {
-        "name": "Alma Cafe",
-        "website": "https://www.almacafe.co.il/ourplaces/rehovot",
-        "social_links": "Not provided",
-        "location": "Rehovot, Israel",
-        "service_type": "Coffee shop"
+        "name": "EcoChic",
+        "website": "https://www.ecochic.com",
+        "social_links": "https://instagram.com/ecochic,https://facebook.com/ecochic",
+        "location": "Los Angeles, CA",
+        "service_type": "Sustainable Fashion"
       },
       "workflow_state": {},
       "last_agent_message": ""
     },
     "expected_behavior": {
-      "should_acknowledge_business_name": true,
-      "should_not_ask_for_information": true,
-      "should_proceed_with_request": true
+      "should_acknowledge_business_card": true,
+      "should_not_ask_for_business_info": true,
+      "should_not_search": true,
+      "should_not_generate_business_card": true
     },
     "expected_response_contains": [
-      "Alma Cafe",
+      "Welcome back",
+      "EcoChic",
       "Let's move forward"
-    ]
-  },
-  {
-    "name": "new_user_provides_name_and_location_search_success",
-    "description": "Tests a new user who provides business name and location, expecting the agent to search and confirm the details.",
-    "user_message": "My business is called TechSolutions and we're located in Austin, Texas.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_search_for_business": true,
-      "should_present_details_for_confirmation": true,
-      "should_not_ask_for_website": true,
-      "should_not_ask_for_service_type": true
-    },
-    "expected_response_contains": [
-      "TechSolutions",
-      "Austin, Texas",
-      "correct?"
-    ]
-  },
-  {
-    "name": "new_user_provides_instagram_handle",
-    "description": "Tests a new user who provides an Instagram handle, expecting the agent to search and confirm the details.",
-    "user_message": "My Instagram handle is @thebakerynyc",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_search_for_business_using_instagram": true,
-      "should_present_details_for_confirmation": true,
-      "should_include_instagram_link_in_confirmation": true
-    },
-    "expected_response_contains": [
-      "@thebakerynyc",
-      "correct?"
-    ]
-  },
-  {
-    "name": "new_user_provides_website_url",
-    "description": "Tests a new user who provides a website URL, expecting the agent to search and confirm the details.",
-    "user_message": "Yes, here is my website: https://www.exampleflowershop.com",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_search_for_business_using_website": true,
-      "should_present_details_for_confirmation": true
-    },
-    "expected_response_contains": [
-      "exampleflowershop.com",
-      "correct?"
-    ]
-  },
-  {
-    "name": "user_corrects_location",
-    "description": "Tests the scenario where the user corrects the location, expecting the agent to update the information and ask for re-confirmation.",
-    "user_message": "No, the location is wrong - we're actually in San Jose, not San Francisco",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": "Great! Let me confirm these details:\n\nBusiness Name: TechStart\nLocation: San Francisco, CA\nService Type: Tech startup\nWebsite: https://www.techstart.com\nSocial Links: Not provided\n\nDoes everything look correct?"
-    },
-    "expected_behavior": {
-      "should_acknowledge_correction": true,
-      "should_update_location": true,
-      "should_ask_for_reconfirmation": true,
-      "should_not_generate_confirmation_block_yet": true
-    },
-    "expected_response_contains": [
-      "San Jose",
-      "correct now?"
-    ]
-  },
-  {
-    "name": "new_user_provides_partial_url",
-    "description": "Tests a new user providing a partial URL (without protocol), expecting the agent to search and confirm.",
-    "user_message": "Our site is examplepetstore.com",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_search_for_business_using_url": true,
-      "should_construct_full_url": true,
-      "should_present_details_for_confirmation": true
-    },
-    "expected_response_contains": [
-      "examplepetstore.com",
-      "correct?"
-    ]
-  },
-  {
-    "name": "new_user_provides_comprehensive_info_upfront",
-    "description": "Tests a new user providing all information in the first message, expecting the agent to extract and search.",
-    "user_message": "I run a bakery in Chicago called Sweet Treats.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_extract_name": true,
-      "should_extract_location": true,
-      "should_extract_service_type": true,
-      "should_search_for_business": true,
-      "should_present_details_for_confirmation": true
-    },
-    "expected_response_contains": [
-      "Sweet Treats",
-      "Chicago",
-      "correct?"
-    ]
+    ],
+    "expected_business_card": {}
   },
   {
     "name": "new_user_provides_tiktok_handle",
-    "description": "Tests a new user who provides a TikTok handle, expecting the agent to search and confirm the details.",
-    "user_message": "Check out our TikTok @digitalmarketingagency",
+    "description": "Tests the scenario where a new user provides a TikTok handle for their business.",
+    "user_message": "Check out our TikTok @sweetTreatsBakery",
     "session_context": {
       "business_card": null,
       "workflow_state": {},
       "last_agent_message": ""
     },
     "expected_behavior": {
-      "should_search_for_business_using_tiktok": true,
-      "should_present_details_for_confirmation": true,
-      "should_include_tiktok_link_in_confirmation": true
+      "should_search": true,
+      "should_extract_info_from_search": true,
+      "should_generate_business_card": true
     },
     "expected_response_contains": [
-      "@digitalmarketingagency",
-      "correct?"
-    ]
+      "search for your business",
+      "Sweet Treats Bakery",
+      "tiktok.com/@sweetTreatsBakery"
+    ],
+    "expected_business_card": {
+      "name": "Sweet Treats Bakery",
+      "website": "Not provided",
+      "social_links": "https://tiktok.com/@sweetTreatsBakery",
+      "location": "SomeCity, State",
+      "service_type": "Bakery"
+    }
+  },
+  {
+    "name": "user_provides_linkedin_and_confirms",
+    "description": "Tests the scenario where a user provides a LinkedIn profile and then confirms the extracted information.",
+    "user_message": "Yes, that's correct!",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": "Great! Let me search for your business using your LinkedIn profile...\n\nPerfect! I found your company details. Let me confirm:\n\nBusiness Name: Tech Solutions Inc\nLocation: New York, NY\nService Type: IT Services\nWebsite: https://www.techsolutions.com\nSocial Links: https://linkedin.com/company/techsolutions\n\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "should_generate_business_card": true,
+      "should_not_search": true
+    },
+    "expected_response_contains": [
+      "Perfect! Thanks for confirming",
+      "Tech Solutions Inc",
+      "Let's get started"
+    ],
+    "expected_business_card": {
+      "name": "Tech Solutions Inc",
+      "website": "https://www.techsolutions.com",
+      "social_links": "https://linkedin.com/company/techsolutions",
+      "location": "New York, NY",
+      "service_type": "IT Services"
+    }
+  },
+  {
+    "name": "new_user_corrects_location_and_confirms",
+    "description": "Tests the scenario where a new user corrects the location information and then confirms the corrected details.",
+    "user_message": "No, we are actually located in Austin, TX.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": "Great! Let me search for Urban Eats in Dallas to find more details...\n\nPerfect! I found your business. Let me confirm these details:\n\nBusiness Name: Urban Eats\nLocation: Dallas, TX\nService Type: Restaurant\nWebsite: https://www.urbaneats.com\nSocial Links: Not provided\n\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "should_update_location": true,
+      "should_ask_for_reconfirmation": true,
+      "should_not_generate_business_card_yet": true
+    },
+    "expected_response_contains": [
+      "Thanks for catching that",
+      "Austin, TX",
+      "Does this look correct now?"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "new_user_provides_website_with_typo",
+    "description": "Tests the scenario where a new user provides a website URL with a typo.",
+    "user_message": "Our website is https://www.examplebiz.cm",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_search": true,
+      "should_handle_potential_search_failure": true,
+      "should_ask_for_details_if_search_fails": true,
+      "should_not_generate_business_card": true
+    },
+    "expected_response_contains": [
+      "Let me look up your website",
+      "unable to find",
+      "What is your business name?",
+      "What type of business"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "new_user_provides_name_and_service",
+    "description": "Tests the scenario where a new user provides a business name and service type.",
+    "user_message": "I run a bakery called Sweet Delights.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_search": true,
+      "should_ask_for_location": true,
+      "should_not_generate_business_card": true
+    },
+    "expected_response_contains": [
+      "Sweet Delights",
+      "bakery",
+      "Let me search for",
+      "Where are you located?"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "user_asks_for_clarification_on_service_type",
+    "description": "Tests the scenario where a user asks for clarification on what is meant by 'service type'.",
+    "user_message": "What do you mean by service type?",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": "To make sure I find the best match for you, could you tell me a bit about your business? What's your brand name and what industry are you in?"
+    },
+    "expected_behavior": {
+      "should_provide_explanation": true,
+      "should_not_search": true,
+      "should_not_generate_business_card": true
+    },
+    "expected_response_contains": [
+      "By service type",
+      "industry",
+      "type of business",
+      "services you offer"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "user_provides_full_street_address",
+    "description": "Tests the scenario where a user provides a full street address as their location.",
+    "user_message": "We're at 456 Oak Avenue, Suite 200, Anytown, CA 91234",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_extract_city_state": true,
+      "should_search": true,
+      "should_generate_business_card": true
+    },
+    "expected_response_contains": [
+      "Anytown, CA",
+      "search for",
+      "456 Oak Avenue"
+    ],
+    "expected_business_card": {
+      "name": "Some Business",
+      "website": "Not provided",
+      "social_links": "Not provided",
+      "location": "Anytown, CA",
+      "service_type": "Some Service"
+    }
+  },
+  {
+    "name": "new_user_provides_partial_website_and_confirms",
+    "description": "Tests the scenario where a new user provides a partial website URL (without https://) and confirms the extracted information.",
+    "user_message": "yes",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": "Perfect! Let me look up your website...\n\nGreat! I found your cafe. Let me confirm these details:\n\nBusiness Name: Alma Cafe\nLocation: Rehovot, Israel\nService Type: Coffee shop\nWebsite: https://www.almacafe.co.il\nSocial Links: Not provided\n\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "should_generate_business_card": true,
+      "should_not_search": true
+    },
+    "expected_response_contains": [
+      "Perfect! Thanks for confirming",
+      "Alma Cafe",
+      "Let's get started"
+    ],
+    "expected_business_card": {
+      "name": "Alma Cafe",
+      "website": "https://www.almacafe.co.il",
+      "social_links": "Not provided",
+      "location": "Rehovot, Israel",
+      "service_type": "Coffee shop"
+    }
   }
 ]

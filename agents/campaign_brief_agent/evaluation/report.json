@@ -1,0 +1,66 @@
+{
+  "average_confidence_score": 0.808,
+  "total_cases": 12,
+  "test_results": [
+    {
+      "description": "Create a campaign brief for summer fashion launch",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the business name (implying a business card was present), extracts all relevant details from the user's request, and then appropriately asks for the explicit campaign objective, which was the most critical missing piece, without overwhelming the user."
+    },
+    {
+      "description": "Create a campaign brief for tech product launch",
+      "score": 0.0,
+      "rationale": "The agent critically failed to follow the 'Precondition - Business Card Required' instruction. It proceeded to collect campaign information and even hallucinated a business name ('Tech Gadgets Inc.') despite the business_card being MISSING from the session context, which should have triggered a stop and a specific message for redirection."
+    },
+    {
+      "description": "Test case when no business card exists, agent should request business information.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that business card information was missing and returned the exact message specified in the instructions, fulfilling all expected behaviors for this test case."
+    },
+    {
+      "description": "Test case where the user provides a clear campaign goal in the first message.",
+      "score": 1.0,
+      "rationale": "The agent correctly inferred the business name ('BarkBites') from the session context (implying a business card was present), extracted the campaign goal from the user's initial request without asking for it again, and then appropriately asked for the next piece of missing information (platform) in a conversational manner, adhering to all critical instructions and expected behaviors."
+    },
+    {
+      "description": "Test case where the user specifies the platform in the first message.",
+      "score": 0.4,
+      "rationale": "The agent correctly extracted the platform and used the business name, but critically failed by asking for the campaign goal ('promote my new skincare product') which was explicitly stated in the user's first message, violating a key instruction and common mistake to avoid."
+    },
+    {
+      "description": "Test case where the user mentions a budget, agent should extract and include in confirmation.",
+      "score": 1.0,
+      "rationale": "The agent successfully extracted the campaign goal and budget from the user's request, acknowledged the business name, and correctly asked for the missing platform information without re-asking for details already provided. It followed all instructions and exhibited the expected behaviors."
+    },
+    {
+      "description": "Test case where the agent asks about target audience and the user provides it.",
+      "score": 1.0,
+      "rationale": "The agent correctly inferred the campaign goal and business details from the user request and (assumed) business card. It then followed the instruction's priority order by asking for the platform next, without overwhelming the user or asking for information already known."
+    },
+    {
+      "description": "Test case with multiple turns to clarify the campaign goal.",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the business name (implying business card presence) and asks for clarification on the campaign goal, which is appropriate given the user's very general request 'I want to find influencers.' This aligns with the instructions to prioritize collecting the goal if not clear and matches the expected behavior."
+    },
+    {
+      "description": "Test case where the user specifies a target location different from the business location.",
+      "score": 0.7,
+      "rationale": "The agent correctly identifies the business and acknowledges the target location (Canada), fulfilling the expected behaviors. However, it re-asks for the campaign goal ('What's the main goal for this campaign?') despite the user clearly stating it ('I want to promote my online store'), which violates the critical instruction to extract the goal from the initial message and not ask for information already provided."
+    },
+    {
+      "description": "Test case where the user specifies the number of creators.",
+      "score": 1.0,
+      "rationale": "The agent correctly extracted the campaign goal and the number of creators from the user's request. It acknowledged the business name (FitLife Academy, implying it came from a business card) and then appropriately asked for the next missing piece of information (platform) without asking for details already provided, following the 'smart, context-aware collection' instructions."
+    },
+    {
+      "description": "Test case with ambiguous budget range, agent should extract the upper limit.",
+      "score": 0.6,
+      "rationale": "The agent correctly used business card information and identified the missing campaign goal. However, it failed to extract the upper limit of the budget range as a specific value, instead repeating the range, which violates the 'should_extract_upper_budget' expected behavior."
+    },
+    {
+      "description": "Test case where the user provides all information in the first message.",
+      "score": 1.0,
+      "rationale": "The agent perfectly extracted all information from the user's first message, inferred details from the implied business card, and immediately presented a comprehensive summary for confirmation without asking any redundant questions, fully adhering to all instructions and expected behaviors."
+    }
+  ]
+}
