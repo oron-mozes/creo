@@ -1,36 +1,81 @@
 {
-  "average_confidence_score": 0.892,
-  "total_cases": 6,
+  "average_confidence_score": 0.943,
+  "total_cases": 15,
   "test_results": [
     {
-      "description": "User provides a website URL, agent should search and extract business info",
+      "description": "Tests the scenario where a new user provides very little information upfront.",
       "score": 1.0,
-      "rationale": "The agent perfectly followed the instructions for handling a provided website URL, including acknowledging the search, extracting relevant business information, presenting it for confirmation, and generating the BUSINESS_CARD_CONFIRMATION block with all details."
+      "rationale": "The agent provides a warm welcome, acknowledges the user's request, and correctly asks for the business name and service type without overwhelming the user or attempting to search prematurely, aligning perfectly with all instructions and expected behaviors for minimal initial input."
     },
     {
-      "description": "User provides business name and location, agent should search for details",
-      "score": 0.85,
-      "rationale": "The agent correctly extracted information, initiated a search, presented findings, and asked for confirmation in the correct format. However, it failed to include the inferred 'Service Type' (tech startup, SaaS, etc.) in the BUSINESS_CARD_CONFIRMATION block, marking it as 'Not provided' despite presenting it to the user."
-    },
-    {
-      "description": "Business card already exists in session, should skip onboarding",
+      "description": "Tests the scenario where a user provides a business name and a vague location.",
       "score": 1.0,
-      "rationale": "The agent correctly identified that a business card already exists in the session, acknowledged the user warmly using the business name 'Alma Cafe', and confirmed that onboarding is complete, exactly as instructed for this scenario. It also correctly avoided asking for information, using Google Search, or generating a confirmation block."
+      "rationale": "The agent correctly extracts the business name and vague location, proactively attempts a Google search, and gracefully handles the ambiguous search results by asking for a more specific location, aligning perfectly with all instructions and expected behaviors."
     },
     {
-      "description": "User confirms the business details presented",
-      "score": 0.5,
-      "rationale": "The agent correctly generated the critical BUSINESS_CARD_CONFIRMATION block, which is mandatory upon user confirmation. However, the conversational text ('Welcome back! I see we already have your details...') is inappropriate for a confirmation step and fails to warmly thank the user for confirming, as explicitly required by the instructions for this scenario. It incorrectly uses text meant for when the business card was already complete at the start of the session."
-    },
-    {
-      "description": "New user provides minimal information, agent should ask for more",
+      "description": "Tests the scenario where a user provides a LinkedIn URL.",
       "score": 1.0,
-      "rationale": "The agent correctly inferred the service type ('coffee shop'), provided a warm welcome, and asked for the essential missing information (business name and location) in a conversational, non-overwhelming manner, aligning perfectly with all instructions and expected behaviors."
+      "rationale": "The agent correctly identified the LinkedIn URL, stated it would search, simulated a Google search with the URL, and then, finding ambiguous results, appropriately asked for clarifying information (industry and location) to proceed, extracting the business name 'ACME Corp' from the URL. This aligns with all instructions and expected behaviors for handling an ambiguous search result."
     },
     {
-      "description": "User provides Instagram handle, agent should search for business info",
+      "description": "Tests the scenario where a user confirms the business details.",
       "score": 1.0,
-      "rationale": "The agent correctly identified the Instagram handle, indicated it would search, extracted all relevant business information (name, location, service type, social link), presented it for confirmation, and included the mandatory BUSINESS_CARD_CONFIRMATION block, perfectly following the instructions and example flow."
+      "rationale": "The agent correctly identified that the user confirmed the business details. It thanked the user warmly and immediately generated the mandatory BUSINESS_CARD_CONFIRMATION block, following all critical instructions and exhibiting the expected behaviors."
+    },
+    {
+      "description": "Tests the scenario where a business card already exists in the session.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that a business card already exists in the session, did not ask for business information, warmly acknowledged the user using a business name, and confirmed onboarding was complete, perfectly matching the instructions for this scenario. The `expected_behavior` JSON's `should_not_ask_for_business_info: false` appears to be a misconfiguration, as the instructions explicitly state 'DO NOT ask for business information again' when a card exists."
+    },
+    {
+      "description": "Tests the scenario where a user provides only a website URL.",
+      "score": 0.95,
+      "rationale": "The agent correctly identified the website, indicated it would search, extracted relevant information (name, service type, website), and correctly identified missing information (location). It then asked for the missing piece and generated the BUSINESS_CARD_CONFIRMATION block with the current details. The only minor deviation is that it directly asked for the missing location rather than first asking a general 'Does everything look correct?' for the information it found, as suggested by an example in the instructions."
+    },
+    {
+      "description": "Tests the scenario where a user provides an Instagram handle.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the Instagram handle, stated it was searching, extracted relevant information (business name, service type, social link), identified missing information (location), and asked for it. It then presented the collected information and the BUSINESS_CARD_CONFIRMATION block as per instructions and examples."
+    },
+    {
+      "description": "Tests the scenario where a user corrects the location provided by the agent.",
+      "score": 1.0,
+      "rationale": "The agent correctly acknowledged the user's correction, updated the location, and re-presented the full business card information for confirmation in the specified format. It appropriately did not generate the BUSINESS_CARD_CONFIRMATION block, as the user had not yet confirmed the updated details, aligning perfectly with all instructions and expected behaviors."
+    },
+    {
+      "description": "Tests the scenario where a user provides a TikTok handle.",
+      "score": 1.0,
+      "rationale": "The agent correctly acknowledged the TikTok handle, stated it was searching, inferred the business name and service type, presented the found information for confirmation, and then asked for the specific missing piece of information (location) in a conversational manner, adhering to all instructions and expected behaviors."
+    },
+    {
+      "description": "Tests the scenario where a user provides a business name and website.",
+      "score": 1.0,
+      "rationale": "The agent correctly extracted the business name and website, stated it was looking up the website, and then presented the information for confirmation, including a plausible inferred service type ('Book Store'). It followed the instructions for presenting the user-friendly confirmation and the structured data block."
+    },
+    {
+      "description": "Tests the scenario where a user asks for clarification about what is meant by service type.",
+      "score": 1.0,
+      "rationale": "The agent correctly explains what 'service type' means, provides relevant examples as requested by the expected behavior, and then asks for the information, aligning with the goal of collecting business card details."
+    },
+    {
+      "description": "Tests the scenario where the user provides a full address instead of just the city.",
+      "score": 0.9,
+      "rationale": "The agent correctly extracted 'Springfield, IL' as the location and asked for the business name, following instructions and expected behaviors. However, it redundantly asked for the business name twice."
+    },
+    {
+      "description": "Tests the scenario where the user provides a URL without the protocol (http/https).",
+      "score": 0.3,
+      "rationale": "The agent correctly added the HTTPS protocol and indicated it was looking up the website. However, it critically failed to extract any business information (name, location, service type) from the provided website URL, which is a core instruction. It also failed to include the mandatory BUSINESS_CARD_CONFIRMATION block after presenting the collected (or attempted to collect) information."
+    },
+    {
+      "description": "Tests the scenario where the user has already onboarded and attempts to start again.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that the user had already onboarded, acknowledged their existing business details using the business name, and confirmed that onboarding was complete, exactly as specified in the 'CRITICAL: Check Business Card First' instruction for existing users. The output matches the example provided in the instructions for this scenario."
+    },
+    {
+      "description": "Tests the scenario where the user only provides the business name.",
+      "score": 1.0,
+      "rationale": "The agent correctly extracted the business name, proactively initiated a Google search, identified ambiguity in the search results, and appropriately asked for the missing location information to clarify, all while maintaining a conversational tone and following the instructions."
     }
   ]
 }

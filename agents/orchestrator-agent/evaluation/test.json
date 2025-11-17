@@ -1,289 +1,303 @@
 [
   {
-    "name": "new_user_no_business_card",
-    "description": "New user with no business card should be routed to onboarding_agent",
-    "user_message": "I have a local coffee shop",
+    "name": "new_user_onboarding",
+    "description": "Tests the onboarding process for a new user with a simple introductory message.",
+    "user_message": "Hi, I'm starting a new bakery.",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
-      "business_card": null
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_onboarding_agent": true,
-      "should_call_frontdesk_agent": true,
-      "should_NOT_call_campaign_brief": true,
-      "should_NOT_ask_questions_directly": true,
-      "should_NOT_search_google": true
-    }
+      "should_not_call_campaign_brief_agent": true,
+      "should_call_frontdesk_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "onboarding_stage_active",
-    "description": "When stage is 'onboarding', should stay with onboarding_agent",
-    "user_message": "Alma cafe",
+    "name": "onboarding_follow_up",
+    "description": "Tests a follow-up question during the onboarding process.",
+    "user_message": "What kind of information do you need?",
     "session_context": {
+      "business_card": null,
       "workflow_state": {
         "stage": "onboarding"
       },
-      "business_card": null
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_onboarding_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_switch_to_campaign_brief": true,
-      "should_NOT_search_google": true,
-      "should_NOT_assume_location": true
-    }
-  },
-  {
-    "name": "onboarding_with_url",
-    "description": "User provides URL during onboarding, should delegate to onboarding_agent",
-    "user_message": "this is us https://www.almacafe.co.il/ourplaces/rehovot",
-    "session_context": {
-      "workflow_state": {
-        "stage": "onboarding"
-      },
-      "business_card": null
+      "should_not_call_campaign_brief_agent": true
     },
-    "expected_behavior": {
-      "should_call_onboarding_agent": true,
-      "should_call_frontdesk_agent": true,
-      "should_NOT_extract_info_itself": true,
-      "should_delegate_url_to_onboarding": true
-    }
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "business_card_exists_find_influencers",
-    "description": "Business card exists, user wants influencers - should route to campaign_brief_agent",
-    "user_message": "I want to find influencers for my cafe",
+    "name": "influencer_request_with_business_card",
+    "description": "Tests a request for influencers with an existing business card.",
+    "user_message": "Find fashion influencers for my brand.",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
       "business_card": {
-        "name": "Alma Cafe",
-        "website": "https://www.almacafe.co.il",
-        "location": "Brooklyn, NY",
-        "service_type": "Coffee shop"
-      }
+        "business_name": "StylishThreads",
+        "business_type": "Fashion",
+        "location": "New York"
+      },
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_call_onboarding_agent": true,
-      "should_use_existing_business_card": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "campaign_brief_stage_active",
-    "description": "When stage is 'campaign_brief', should stay with campaign_brief_agent",
-    "user_message": "I want to reach young professionals who love specialty coffee",
+    "name": "campaign_brief_stage_follow_up",
+    "description": "Tests a follow-up question during the campaign brief stage.",
+    "user_message": "What are some good campaign goals?",
     "session_context": {
+      "business_card": {
+        "business_name": "StylishThreads",
+        "business_type": "Fashion",
+        "location": "New York"
+      },
       "workflow_state": {
         "stage": "campaign_brief"
       },
-      "business_card": {
-        "name": "Alma Cafe",
-        "location": "Brooklyn, NY",
-        "service_type": "Coffee shop"
-      }
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_switch_to_creator_finder": true,
-      "should_stay_in_current_stage": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
     "name": "vague_question_no_business_card",
-    "description": "Vague marketing question with no business card - should start onboarding first",
-    "user_message": "Can you help me with marketing?",
+    "description": "Tests a vague marketing question without an existing business card, ensuring onboarding is triggered.",
+    "user_message": "How can I improve my social media?",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
-      "business_card": null
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_onboarding_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_answer_directly": true,
-      "should_collect_business_info_first": true
-    }
+      "should_not_call_campaign_brief_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "business_card_exists_wants_campaign",
-    "description": "User with business card wants to create a campaign - should route to campaign_brief_agent",
-    "user_message": "I want to create a marketing campaign to promote my new menu",
+    "name": "marketing_campaign_request_with_business_card",
+    "description": "Tests a request to create a marketing campaign with an existing business card.",
+    "user_message": "I want to launch a new marketing campaign.",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
       "business_card": {
-        "name": "TechStart",
-        "location": "San Francisco, CA",
-        "service_type": "Tech startup"
-      }
+        "business_name": "TechSolutions",
+        "business_type": "Technology",
+        "location": "San Francisco"
+      },
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_call_onboarding_agent": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "business_card_exists_wants_outreach",
-    "description": "User with business card wants help writing outreach message - should route to outreach_message_agent",
-    "user_message": "Can you help me write a message to reach out to @fitness_guru_sarah?",
+    "name": "outreach_message_request_with_business_card",
+    "description": "Tests a request to write an outreach message with an existing business card.",
+    "user_message": "Can you write a message to a potential influencer?",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
       "business_card": {
-        "name": "FitLife Gym",
-        "location": "Austin, TX",
-        "service_type": "Fitness center"
-      }
+        "business_name": "FitnessFirst",
+        "business_type": "Fitness",
+        "location": "Los Angeles"
+      },
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_outreach_message_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_call_onboarding_agent": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "creator_finder_stage_active",
-    "description": "When stage is 'creator_finder', should stay with creator_finder_agent",
-    "user_message": "I want creators with at least 100K followers",
+    "name": "creator_finder_stage_follow_up",
+    "description": "Tests a follow-up question during the creator finder stage.",
+    "user_message": "Show me more creators in the food niche.",
     "session_context": {
+      "business_card": {
+        "business_name": "HealthyBites",
+        "business_type": "Food",
+        "location": "Chicago"
+      },
       "workflow_state": {
         "stage": "creator_finder"
       },
-      "business_card": {
-        "name": "GreenEats",
-        "location": "Portland, OR",
-        "service_type": "Vegan restaurant"
-      }
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_creator_finder_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_switch_to_different_stage": true,
-      "should_stay_in_current_stage": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "outreach_message_stage_active",
-    "description": "When stage is 'outreach_message', should stay with outreach_message_agent",
-    "user_message": "Make it more personal and mention our sustainable practices",
+    "name": "outreach_message_stage_follow_up",
+    "description": "Tests a follow-up question during the outreach message stage.",
+    "user_message": "Make it sound more professional.",
     "session_context": {
+      "business_card": {
+        "business_name": "LuxuryWatches",
+        "business_type": "Luxury Goods",
+        "location": "Geneva"
+      },
       "workflow_state": {
         "stage": "outreach_message"
       },
-      "business_card": {
-        "name": "EcoWear",
-        "location": "Seattle, WA",
-        "service_type": "Sustainable clothing"
-      }
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_outreach_message_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_stay_in_current_stage": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "campaign_builder_stage_active",
-    "description": "When stage is 'campaign_builder', should stay with campaign_builder_agent",
-    "user_message": "Add more Instagram posts to the campaign",
+    "name": "campaign_builder_stage_follow_up",
+    "description": "Tests a follow-up question during the campaign builder stage.",
+    "user_message": "What kind of budget should I allocate?",
     "session_context": {
+      "business_card": {
+        "business_name": "TravelAdventures",
+        "business_type": "Travel",
+        "location": "London"
+      },
       "workflow_state": {
         "stage": "campaign_builder"
       },
-      "business_card": {
-        "name": "StyleHub",
-        "location": "Miami, FL",
-        "service_type": "Fashion boutique"
-      }
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_builder_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_stay_in_current_stage": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "multiple_business_info_pieces_no_business_card",
-    "description": "User provides multiple pieces of business info upfront - should route to onboarding_agent",
-    "user_message": "I run a yoga studio called ZenFlow in Boulder, Colorado",
+    "name": "multiple_info_pieces_onboarding",
+    "description": "Tests onboarding with multiple pieces of business information in the initial message.",
+    "user_message": "I own a vegan restaurant in Austin called Green Eats.",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
-      "business_card": null
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_onboarding_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_ask_for_already_provided_info": true
-    }
+      "should_not_call_campaign_brief_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
-    "name": "general_question_with_business_card",
-    "description": "User asks general question but has business card - should provide helpful response without switching stages",
-    "user_message": "What's the best way to reach millennials?",
+    "name": "general_marketing_question_with_business_card",
+    "description": "Tests a general marketing question with an existing business card, ensuring campaign brief is triggered.",
+    "user_message": "What's the best platform for advertising?",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
       "business_card": {
-        "name": "ModernEats",
-        "location": "Chicago, IL",
-        "service_type": "Restaurant"
-      }
+        "business_name": "OnlineCourses",
+        "business_type": "Education",
+        "location": "Anywhere"
+      },
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_provide_helpful_response": true
-    }
-  },
-  {
-    "name": "follow_up_question_during_onboarding",
-    "description": "User asks clarifying question during onboarding - should stay with onboarding_agent",
-    "user_message": "What do you mean by service type?",
-    "session_context": {
-      "workflow_state": {
-        "stage": "onboarding"
-      },
-      "business_card": null
+      "should_not_call_onboarding_agent": true
     },
-    "expected_behavior": {
-      "should_call_onboarding_agent": true,
-      "should_call_frontdesk_agent": true,
-      "should_help_user_understand": true,
-      "should_NOT_switch_stages": true
-    }
+    "expected_response_contains": [],
+    "expected_business_card": {}
   },
   {
     "name": "specific_creator_request_with_business_card",
-    "description": "User asks to find specific type of creators with existing business card",
-    "user_message": "Find me food bloggers in Los Angeles with 50K+ followers",
+    "description": "Tests a specific creator request (food bloggers with followers) with an existing business card, triggering campaign brief.",
+    "user_message": "Find me food bloggers in NYC with over 100k followers.",
     "session_context": {
-      "workflow_state": {
-        "stage": null
-      },
       "business_card": {
-        "name": "TacoTime",
-        "location": "Los Angeles, CA",
-        "service_type": "Mexican restaurant"
-      }
+        "business_name": "GourmetDelights",
+        "business_type": "Food",
+        "location": "New York"
+      },
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent": true,
       "should_call_frontdesk_agent": true,
-      "should_NOT_call_onboarding_agent": true
-    }
+      "should_not_call_onboarding_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
+  },
+  {
+    "name": "onboarding_with_url",
+    "description": "Tests onboarding with a URL included in the initial message.",
+    "user_message": "We are a local bookstore https://www.examplebookstore.com",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_call_onboarding_agent": true,
+      "should_call_frontdesk_agent": true,
+      "should_not_call_campaign_brief_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
+  },
+  {
+    "name": "invalid_input_onboarding",
+    "description": "Tests onboarding with gibberish input to check error handling.",
+    "user_message": "asdfjkl; qwertyuiop",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_call_onboarding_agent": true,
+      "should_call_frontdesk_agent": true,
+      "should_not_call_campaign_brief_agent": true
+    },
+    "expected_response_contains": [],
+    "expected_business_card": {}
   }
 ]

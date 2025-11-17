@@ -314,6 +314,150 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
                 "should_use_google_search": True,
                 "should_extract_business_info": True
             }
+        },
+        {
+            "name": "vague_generic_question_no_context",
+            "description": "User asks vague question with no business context clues",
+            "user_message": "Can you help me with marketing?",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_ask_for_business_name": True,
+                "should_ask_for_industry_or_service_type": True,
+                "should_not_generate_confirmation_block": True,
+                "should_be_conversational_and_welcoming": True
+            },
+            "expected_response_contains": [
+                "business",
+                "brand"
+            ]
+        },
+        {
+            "name": "user_provides_comprehensive_info_upfront",
+            "description": "User volunteers multiple pieces of info in one sentence",
+            "user_message": "I run a sustainable fashion brand in LA called EcoWear",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_extract_name": True,
+                "should_extract_location": True,
+                "should_extract_service_type": True,
+                "should_use_google_search": True,
+                "should_generate_confirmation_block": True
+            },
+            "expected_business_card_contains": {
+                "name": "EcoWear",
+                "location": "LA",
+                "service_type": "sustainable fashion"
+            }
+        },
+        {
+            "name": "user_asks_clarifying_question",
+            "description": "User confused about what agent is asking, seeks clarification",
+            "user_message": "What do you mean by location?",
+            "session_context": {
+                "business_card": None,
+                "last_agent_message": "What's your brand name and where is your business located?"
+            },
+            "expected_behavior": {
+                "should_provide_clarification": True,
+                "should_give_location_examples": True,
+                "should_not_generate_confirmation_block": True,
+                "should_remain_patient_and_helpful": True
+            },
+            "expected_response_contains": [
+                "city",
+                "example"
+            ]
+        },
+        {
+            "name": "user_provides_business_name_only",
+            "description": "User provides only business name, no location or other context",
+            "user_message": "My business is called StyleHub",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_ask_for_location_if_search_fails": True,
+                "should_not_generate_confirmation_block_yet": True
+            }
+        },
+        {
+            "name": "user_provides_tiktok_handle",
+            "description": "User provides TikTok handle, agent should search for business info",
+            "user_message": "Check out our TikTok @ecowear_official",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_extract_business_info": True,
+                "should_mention_searching_tiktok": True
+            }
+        },
+        {
+            "name": "user_corrects_information_during_confirmation",
+            "description": "User corrects details when asked for confirmation",
+            "user_message": "No, the location is wrong - we're actually in San Jose, not San Francisco",
+            "session_context": {
+                "business_card": None,
+                "last_agent_message": "Business Name: TechStart\\nLocation: San Francisco, CA\\nService Type: Tech startup\\n\\nDoes everything look correct?"
+            },
+            "expected_behavior": {
+                "should_acknowledge_correction": True,
+                "should_update_location": True,
+                "should_present_updated_info_for_confirmation": True,
+                "should_not_generate_confirmation_block_yet": True
+            },
+            "expected_response_contains": [
+                "San Jose"
+            ]
+        },
+        {
+            "name": "user_provides_linkedin_profile",
+            "description": "User provides LinkedIn company profile URL",
+            "user_message": "Here's our LinkedIn: linkedin.com/company/techstart-inc",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_extract_business_info": True,
+                "should_include_linkedin_in_social_links": True
+            }
+        },
+        {
+            "name": "user_provides_partial_url",
+            "description": "User provides domain without https protocol",
+            "user_message": "Our site is almacafe.co.il",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_construct_full_url": True,
+                "should_extract_business_info": True
+            }
+        },
+        {
+            "name": "user_gives_address_instead_of_location",
+            "description": "User provides full street address instead of city",
+            "user_message": "We're at 123 Main Street, Suite 400, New York, NY 10001",
+            "session_context": {
+                "business_card": None,
+                "last_agent_message": "What's your brand name and where is your business located?"
+            },
+            "expected_behavior": {
+                "should_extract_city_and_state": True,
+                "should_simplify_location_format": True,
+                "should_not_include_full_street_address": True
+            },
+            "expected_business_card_contains": {
+                "location": "New York, NY"
+            }
         }
     ]
 

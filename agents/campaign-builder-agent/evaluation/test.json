@@ -1,38 +1,373 @@
 [
   {
-    "name": "eco_skincare_launch_campaign",
-    "description": "Build comprehensive campaign for eco-friendly skincare launch",
-    "user_message": "Build a full campaign to launch our new eco-friendly skincare product targeting environmentally conscious millennials (25-40), primarily female. Budget is $50k, 3 months timeline. Use Instagram, TikTok, YouTube, and influencer partnerships.",
+    "name": "launch_organic_coffee_brand",
+    "description": "Tests campaign creation for a new organic coffee brand targeting Gen Z.",
+    "user_message": "I want to launch a marketing campaign for a new organic coffee brand targeting Gen Z. My budget is $20,000 and the timeline is 2 months. I want to use Instagram, TikTok, and YouTube.",
     "session_context": {
-      "business_card": {
-        "name": "EcoBeauty Co",
-        "service_type": "Skincare products",
-        "location": "Los Angeles, CA"
-      }
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
-      "should_create_comprehensive_plan": true,
-      "should_define_channels": true,
-      "should_include_budget_allocation": true,
-      "should_include_timeline": true
-    }
+      "should_create_campaign_plan": true,
+      "should_focus_on_social_media": true,
+      "should_target_gen_z": true,
+      "should_allocate_budget": true,
+      "should_define_kpis": true
+    },
+    "expected_response_contains": [
+      "Instagram",
+      "TikTok",
+      "YouTube",
+      "Gen Z",
+      "organic coffee"
+    ],
+    "expected_business_card": {}
   },
   {
-    "name": "b2b_saas_lead_generation",
-    "description": "Build B2B SaaS lead generation campaign",
-    "user_message": "Create a campaign to increase B2B SaaS product sign-ups targeting small business owners and marketing managers. Budget $30k, 2 months. Use LinkedIn, email, webinars, and content marketing.",
+    "name": "b2b_lead_generation_no_budget",
+    "description": "Tests campaign creation for B2B lead generation with no specified budget.",
+    "user_message": "Create a B2B lead generation campaign for my SaaS product. Target audience is marketing managers and small business owners. Use LinkedIn, Email, and Content Marketing. Timeline is 3 months.",
     "session_context": {
-      "business_card": {
-        "name": "MarketingTech SaaS",
-        "service_type": "B2B Software",
-        "location": "Austin, TX"
-      }
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
     },
     "expected_behavior": {
-      "should_create_comprehensive_plan": true,
-      "should_target_b2b_audience": true,
-      "should_include_lead_generation_strategy": true,
-      "should_allocate_budget_per_channel": true
-    }
+      "should_create_campaign_plan": true,
+      "should_request_budget_information": true,
+      "should_focus_on_b2b": true,
+      "should_target_marketing_managers": true,
+      "should_mention_roi": true
+    },
+    "expected_response_contains": [
+      "LinkedIn",
+      "Email",
+      "Content Marketing",
+      "SaaS",
+      "budget"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "ecommerce_holiday_sale_campaign",
+    "description": "Tests campaign creation for an e-commerce holiday sale campaign.",
+    "user_message": "I need a marketing campaign for a holiday sale for my e-commerce store. My target audience is families and young adults. Budget is $50,000, timeline is 1 month. Use Facebook, Instagram, and Google Ads.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_holiday_sale": true,
+      "should_target_families_and_young_adults": true,
+      "should_allocate_budget": true,
+      "should_mention_discounts": true
+    },
+    "expected_response_contains": [
+      "Facebook",
+      "Instagram",
+      "Google Ads",
+      "holiday sale",
+      "e-commerce"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "local_restaurant_promotion",
+    "description": "Tests campaign creation for a local restaurant promotion.",
+    "user_message": "I need a marketing campaign to promote my local restaurant. Target audience is people within a 5-mile radius. Budget is $5,000, timeline is 2 weeks. Use Facebook, Instagram, and local newspapers.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_local_audience": true,
+      "should_target_nearby_residents": true,
+      "should_allocate_budget": true,
+      "should_mention_specials": true
+    },
+    "expected_response_contains": [
+      "Facebook",
+      "Instagram",
+      "local newspapers",
+      "restaurant",
+      "local"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "mobile_app_download_campaign",
+    "description": "Tests campaign creation for a mobile app download campaign.",
+    "user_message": "Create a marketing campaign to increase downloads of my mobile app. Target audience is tech-savvy millennials. Budget is $10,000, timeline is 1 month. Use Google Ads, Facebook Ads, and influencer marketing.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_app_downloads": true,
+      "should_target_tech_savvy_millennials": true,
+      "should_allocate_budget": true,
+      "should_mention_app_features": true
+    },
+    "expected_response_contains": [
+      "Google Ads",
+      "Facebook Ads",
+      "influencer marketing",
+      "mobile app",
+      "downloads"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "nonprofit_donation_drive",
+    "description": "Tests campaign creation for a nonprofit donation drive.",
+    "user_message": "I need a marketing campaign for a donation drive for my nonprofit organization. Target audience is socially conscious individuals. Budget is $2,000, timeline is 1 month. Use email marketing, social media, and local events.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_donations": true,
+      "should_target_socially_conscious_individuals": true,
+      "should_allocate_budget": true,
+      "should_mention_impact": true
+    },
+    "expected_response_contains": [
+      "email marketing",
+      "social media",
+      "local events",
+      "nonprofit",
+      "donations"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "new_book_launch",
+    "description": "Tests campaign creation for a new book launch.",
+    "user_message": "I want to launch a marketing campaign for my new book. Target audience is young adults interested in fantasy novels. Budget is $3,000, timeline is 2 months. Use social media, book blogs, and online advertising.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_book_sales": true,
+      "should_target_fantasy_novel_readers": true,
+      "should_allocate_budget": true,
+      "should_mention_author": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "book blogs",
+      "online advertising",
+      "book launch",
+      "fantasy"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "real_estate_listing_promotion",
+    "description": "Tests campaign creation for promoting a real estate listing.",
+    "user_message": "I need a marketing campaign to promote a real estate listing. Target audience is families looking to buy a new home. Budget is $1,000, timeline is 2 weeks. Use online advertising, social media, and local newspapers.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_property_sales": true,
+      "should_target_families": true,
+      "should_allocate_budget": true,
+      "should_mention_property_features": true
+    },
+    "expected_response_contains": [
+      "online advertising",
+      "social media",
+      "local newspapers",
+      "real estate",
+      "listing"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "music_album_release",
+    "description": "Tests campaign creation for a new music album release.",
+    "user_message": "Create a marketing campaign for my new music album. Target audience is fans of alternative rock. Budget is $5,000, timeline is 3 months. Use social media, music blogs, and online streaming platforms.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_album_sales": true,
+      "should_target_alternative_rock_fans": true,
+      "should_allocate_budget": true,
+      "should_mention_artist": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "music blogs",
+      "online streaming platforms",
+      "music album",
+      "alternative rock"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "political_campaign_awareness",
+    "description": "Tests campaign creation for a political campaign to increase awareness.",
+    "user_message": "I need a marketing campaign to increase awareness for my political campaign. Target audience is voters aged 18-35. Budget is $10,000, timeline is 2 months. Use social media, online advertising, and local events.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_awareness": true,
+      "should_target_young_voters": true,
+      "should_allocate_budget": true,
+      "should_mention_candidate": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "online advertising",
+      "local events",
+      "political campaign",
+      "voters"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "gym_membership_promotion",
+    "description": "Tests campaign creation for promoting gym memberships.",
+    "user_message": "Create a marketing campaign to promote gym memberships. Target audience is adults aged 25-55 interested in fitness. Budget is $3,000, timeline is 1 month. Use social media, local advertising, and email marketing.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_membership_sales": true,
+      "should_target_fitness_enthusiasts": true,
+      "should_allocate_budget": true,
+      "should_mention_gym_facilities": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "local advertising",
+      "email marketing",
+      "gym memberships",
+      "fitness"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "software_update_announcement",
+    "description": "Tests campaign creation for announcing a software update.",
+    "user_message": "I need a marketing campaign to announce a new software update. Target audience is existing users of the software. Budget is $500, timeline is 1 week. Use email marketing, in-app notifications, and social media.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_update_adoption": true,
+      "should_target_existing_users": true,
+      "should_allocate_budget": true,
+      "should_mention_new_features": true
+    },
+    "expected_response_contains": [
+      "email marketing",
+      "in-app notifications",
+      "social media",
+      "software update",
+      "users"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "university_open_day_promotion",
+    "description": "Tests campaign creation for promoting a university open day.",
+    "user_message": "Create a marketing campaign to promote a university open day. Target audience is prospective students aged 17-18. Budget is $2,000, timeline is 2 months. Use social media, online advertising, and school visits.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_attendance": true,
+      "should_target_prospective_students": true,
+      "should_allocate_budget": true,
+      "should_mention_courses": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "online advertising",
+      "school visits",
+      "university open day",
+      "students"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "charity_event_fundraising",
+    "description": "Tests campaign creation for fundraising for a charity event.",
+    "user_message": "I need a marketing campaign to raise funds for a charity event. Target audience is local community members. Budget is $1,000, timeline is 1 month. Use social media, local newspapers, and email marketing.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_create_campaign_plan": true,
+      "should_focus_on_fundraising": true,
+      "should_target_local_community": true,
+      "should_allocate_budget": true,
+      "should_mention_cause": true
+    },
+    "expected_response_contains": [
+      "social media",
+      "local newspapers",
+      "email marketing",
+      "charity event",
+      "fundraising"
+    ],
+    "expected_business_card": {}
+  },
+  {
+    "name": "unclear_objective_no_channels",
+    "description": "Tests campaign creation with an unclear objective and no specified channels.",
+    "user_message": "I need a marketing campaign. My target audience is everyone. Budget is $100,000, timeline is 1 year.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {},
+      "last_agent_message": ""
+    },
+    "expected_behavior": {
+      "should_request_clarification_on_objective": true,
+      "should_request_channel_preferences": true,
+      "should_highlight_broad_target_audience_concerns": true
+    },
+    "expected_response_contains": [
+      "objective",
+      "channels",
+      "target audience"
+    ],
+    "expected_business_card": {}
   }
 ]

@@ -22,7 +22,8 @@ help:
 	@echo "  make web-orchestrator      - Start ADK web interface (orchestrator agent only)"
 	@echo "  make venv         - Create virtual environment"
 	@echo "  make scaffold-agent NAME=\"Agent Name\" DESC=\"Description\" - Scaffold a new agent"
-	@echo "  make generate-tests - Generate synthetic test data for all agents"
+	@echo "  make generate-tests - Generate test data for all agents (golden + LLM hybrid)"
+	@echo "  make generate-tests AGENT=<agent-name> - Generate tests for specific agent"
 	@echo "  make judge AGENT=\"Agent-folder-name\""
 	@echo "  make server       - Start FastAPI server (exposes orchestrator agent)"
 	@echo "  make dev-reset    - Reset all dev data (sessions, business cards, messages)"
@@ -114,9 +115,15 @@ scaffold-agent: venv
 	fi
 	$(PYTHON) scripts/scaffold_agent.py "$(NAME)" "$(DESC)"
 
-# Generate synthetic test data for all agents
+# Generate test data for all agents (HYBRID: golden hardcoded + LLM generated)
 generate-tests: venv
-	$(PYTHON) agents/test_utils.py
+	@if [ -z "$(AGENT)" ]; then \
+		echo "Generating HYBRID tests (golden + LLM) for all agents..."; \
+		$(PYTHON) scripts/generate_tests_with_llm.py --hybrid; \
+	else \
+		echo "Generating HYBRID tests (golden + LLM) for $(AGENT)..."; \
+		$(PYTHON) scripts/generate_tests_with_llm.py --hybrid $(AGENT); \
+	fi
 
 judge: venv
 	@if [ -z "$(AGENT)" ]; then \

@@ -1,132 +1,306 @@
 [
   {
-    "name": "transform_technical_creator_results",
-    "description": "Transform technical creator finder results into warm message",
-    "user_message": "Found 15 creators matching criteria: Fashion niche, 50K-500K followers, 3%+ engagement on Instagram and TikTok",
+    "name": "creator_search_success",
+    "description": "Validates successful creator search and response formatting.",
+    "user_message": "Find me some food bloggers in NYC with 10k-50k followers.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_find_creators": true,
+      "should_respond_positively": true,
+      "should_provide_creator_examples": true
+    },
+    "expected_response_contains": [
+      "NYC",
+      "food",
+      "10K",
+      "50K"
+    ]
+  },
+  {
+    "name": "campaign_brief_confirmation",
+    "description": "Validates campaign brief confirmation and display of campaign details.",
+    "user_message": "Okay, create the campaign brief with these settings.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "campaign_name": "Holiday Promotion",
+        "target_audience": "Families with young children",
+        "budget": 5000,
+        "timeline": "4 weeks"
+      }
+    },
+    "expected_behavior": {
+      "should_confirm_brief_creation": true,
+      "should_display_campaign_details": true
+    },
+    "expected_response_contains": [
+      "Holiday Promotion",
+      "Families",
+      "5000",
+      "4 weeks"
+    ]
+  },
+  {
+    "name": "api_error_handling",
+    "description": "Tests error handling for API rate limit exceeding.",
+    "user_message": "Get me detailed analytics for @influencer123.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_acknowledge_error": true,
+      "should_explain_error_simply": true,
+      "should_offer_retry_option": true
+    },
+    "expected_response_contains": [
+      "snag",
+      "requests",
+      "try again"
+    ]
+  },
+  {
+    "name": "clarification_needed",
+    "description": "Validates asking for clarification on vague campaign goals.",
+    "user_message": "I want to increase brand awareness.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_ask_clarifying_questions": true,
+      "should_explain_reason_for_asking": true
+    },
+    "expected_response_contains": [
+      "goals",
+      "brand awareness",
+      "engagement",
+      "conversions"
+    ]
+  },
+  {
+    "name": "outreach_update",
+    "description": "Tests updating user on outreach message status.",
+    "user_message": "Send the outreach messages now.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "creators_selected": [
+          "@creator1",
+          "@creator2",
+          "@creator3"
+        ]
+      }
+    },
+    "expected_behavior": {
+      "should_confirm_messages_sent": true,
+      "should_provide_status_update": true,
+      "should_mention_response_time": true
+    },
+    "expected_response_contains": [
+      "messages are out",
+      "Creators typically respond",
+      "I'll let you know"
+    ]
+  },
+  {
+    "name": "campaign_performance_report",
+    "description": "Tests providing campaign performance report.",
+    "user_message": "How is the campaign performing?",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "campaign_running": true
+      }
+    },
+    "expected_behavior": {
+      "should_provide_performance_metrics": true,
+      "should_compare_to_benchmark": true
+    },
+    "expected_response_contains": [
+      "posts live",
+      "people reached",
+      "engagements",
+      "link clicks"
+    ]
+  },
+  {
+    "name": "budget_validation_failure",
+    "description": "Validates handling budget validation failure and offering alternatives.",
+    "user_message": "Select all creators from the premium tier.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "budget": 1000
+      }
+    },
+    "expected_behavior": {
+      "should_inform_of_budget_issue": true,
+      "should_offer_alternative_solutions": true
+    },
+    "expected_response_contains": [
+      "typically work",
+      "A few options here",
+      "What works best"
+    ]
+  },
+  {
+    "name": "business_card_personalization",
+    "description": "Tests personalization using business card information.",
+    "user_message": "Find me some influencers for my new product.",
     "session_context": {
       "business_card": {
-        "name": "StyleHub Boutique",
-        "location": "Los Angeles, CA",
-        "service_type": "Fashion retail"
+        "business_name": "Acme Corp",
+        "location": "New York",
+        "service_type": "Software"
       },
-      "context": "User asked to find fashion influencers"
+      "workflow_state": {}
     },
     "expected_behavior": {
-      "should_be_conversational": true,
-      "should_use_business_name": true,
-      "should_avoid_markdown": true,
-      "should_include_key_info": true
+      "should_use_business_name_in_greeting": true,
+      "should_reference_business_in_response": true
     },
     "expected_response_contains": [
-      "StyleHub Boutique",
-      "15 creators",
-      "fashion"
+      "Acme Corp",
+      "Software",
+      "New York"
     ]
   },
   {
-    "name": "handle_error_empathetically",
-    "description": "Transform error message into empathetic response",
-    "user_message": "Error: Unable to connect to creator database",
+    "name": "invalid_input_handling",
+    "description": "Tests handling of completely invalid user input.",
+    "user_message": "asdfghjkl",
     "session_context": {
       "business_card": null,
-      "context": "User tried to search for creators"
+      "workflow_state": {}
     },
     "expected_behavior": {
-      "should_be_empathetic": true,
-      "should_explain_simply": true,
-      "should_provide_next_steps": true,
-      "should_avoid_technical_jargon": true
-    },
-    "forbidden_patterns": [
-      "database",
-      "connection failed",
-      "error code"
-    ]
-  },
-  {
-    "name": "personalize_with_business_card",
-    "description": "Use business card to personalize greeting",
-    "user_message": "Campaign brief created successfully",
-    "session_context": {
-      "business_card": {
-        "name": "Alma Cafe",
-        "location": "Rehovot, Israel",
-        "service_type": "Coffee shop"
-      },
-      "context": "User just completed onboarding"
-    },
-    "expected_behavior": {
-      "should_use_business_name": true,
-      "should_be_warm": true,
-      "should_guide_next_steps": true
+      "should_acknowledge_invalid_input": true,
+      "should_prompt_for_valid_input": true
     },
     "expected_response_contains": [
-      "Alma Cafe"
+      "understand",
+      "help you",
+      "try again"
     ]
   },
   {
-    "name": "generic_greeting_without_business_card",
-    "description": "Use generic friendly greeting when business card unavailable",
-    "user_message": "Ready to help you find creators",
+    "name": "empty_search_results",
+    "description": "Tests handling of empty search results.",
+    "user_message": "Find me influencers in Antarctica who promote penguins.",
     "session_context": {
       "business_card": null,
-      "context": "New user, no business card yet"
+      "workflow_state": {}
     },
     "expected_behavior": {
-      "should_be_friendly": true,
-      "should_not_assume_business_details": true
+      "should_inform_of_no_results": true,
+      "should_suggest_alternative_search": true
     },
-    "forbidden_patterns": [
-      "[Business Name]",
-      "[location]",
-      "[service type]"
-    ]
-  },
-  {
-    "name": "no_markdown_in_output",
-    "description": "Ensure no markdown symbols in response",
-    "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
-    "session_context": {
-      "business_card": null,
-      "context": "User asked about campaign plan"
-    },
-    "expected_behavior": {
-      "should_avoid_markdown": true,
-      "should_use_plain_text": true
-    },
-    "forbidden_patterns": [
-      "**",
-      "*   ",
-      "# ",
-      "## ",
-      "___",
-      "---"
-    ]
-  },
-  {
-    "name": "hide_internal_agent_names",
-    "description": "Never expose internal agent names to user",
-    "user_message": "creator_finder_agent found 10 results",
-    "session_context": {
-      "business_card": null,
-      "context": "User asked to find creators"
-    },
-    "expected_behavior": {
-      "should_hide_agent_names": true,
-      "should_use_first_person": true
-    },
-    "forbidden_patterns": [
-      "agent",
-      "creator_finder",
-      "campaign_builder",
-      "orchestrator",
-      "forwarding",
-      "redirecting"
-    ],
     "expected_response_contains": [
-      "I found",
-      "we found",
-      "10 results"
+      "didn't find",
+      "adjust",
+      "search criteria"
+    ]
+  },
+  {
+    "name": "follow_up_question",
+    "description": "Tests answering a follow-up question about a specific creator.",
+    "user_message": "Tell me more about @techguru.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "last_agent_message": "Great news! We found 12 creators who match what you're looking for. Here are the top 3:\n\n\u2022 @techguru - 145K followers with 4.2% engagement\n\u2022 @gadgetqueen - 98K followers with 5.1% engagement\n\u2022 @codewithsarah - 156K followers with 3.8% engagement"
+      }
+    },
+    "expected_behavior": {
+      "should_provide_details_about_creator": true,
+      "should_remember_previous_conversation": true
+    },
+    "expected_response_contains": [
+      "@techguru",
+      "details",
+      "followers",
+      "engagement"
+    ]
+  },
+  {
+    "name": "correcting_misunderstanding",
+    "description": "Tests correcting a misunderstanding about campaign budget.",
+    "user_message": "I meant $10,000 total, not per creator!",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {
+        "budget": 100000
+      }
+    },
+    "expected_behavior": {
+      "should_acknowledge_correction": true,
+      "should_adjust_campaign_settings": true
+    },
+    "expected_response_contains": [
+      "Understood",
+      "adjusting",
+      "budget"
+    ]
+  },
+  {
+    "name": "unsupported_feature",
+    "description": "Tests handling a request for an unsupported feature.",
+    "user_message": "Can you integrate with TikTok ads?",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_inform_feature_is_not_supported": true,
+      "should_offer_alternative_solutions_if_possible": true
+    },
+    "expected_response_contains": [
+      "currently",
+      "not supported",
+      "alternatives"
+    ]
+  },
+  {
+    "name": "long_user_message",
+    "description": "Tests handling a very long user message.",
+    "user_message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. I want to find some tech influencers.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_extract_relevant_information": true,
+      "should_ignore_irrelevant_information": true
+    },
+    "expected_response_contains": [
+      "tech",
+      "influencers"
+    ]
+  },
+  {
+    "name": "complex_search_criteria",
+    "description": "Tests handling complex search criteria with multiple filters.",
+    "user_message": "Find me vegan food bloggers in London with 20k-80k followers, high engagement, and who have worked with sustainable brands before.",
+    "session_context": {
+      "business_card": null,
+      "workflow_state": {}
+    },
+    "expected_behavior": {
+      "should_apply_all_filters": true,
+      "should_prioritize_high_engagement": true
+    },
+    "expected_response_contains": [
+      "vegan",
+      "food",
+      "London",
+      "20K",
+      "80K",
+      "engagement",
+      "sustainable"
     ]
   }
 ]
