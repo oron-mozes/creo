@@ -40,26 +40,52 @@ Visit http://localhost:8000 to see the API running.
 
 ## Architecture
 
-```
-┌──────────────────┐
-│  FastAPI Server  │
-└────────┬─────────┘
-         │
-    ┌────┴────┐
-    │         │
-    ▼         ▼
-┌─────────┐ ┌──────────┐
-│Firestore│ │ Pinecone │
-│(NoSQL)  │ │ (Vector) │
-└─────────┘ └──────────┘
-         │
-    ┌────┴────┐
-    │         │
-    ▼         ▼         ▼         ▼
-┌──────┐ ┌────────┐ ┌───────┐ ┌─────────┐
-│Brief │ │Campaign│ │Creator│ │Outreach │
-│Agent │ │Builder │ │Finder │ │Message  │
-└──────┘ └────────┘ └───────┘ └─────────┘
+```mermaid
+flowchart TD
+    Client([Client/User])
+
+    subgraph Server [FastAPI Server]
+        API[API Endpoints]
+        Orchestrator[Orchestrator Agent]
+    end
+
+    subgraph Agents [AI Agents]
+        Brief[Brief Generator]
+        Campaign[Campaign Builder]
+        Creator[Creator Finder]
+        Outreach[Outreach Agent]
+    end
+
+    subgraph Data [Data Layer]
+        Firestore[(Firestore)]
+        Pinecone[(Pinecone)]
+    end
+
+    subgraph External [External Services]
+        Gemini[Google Gemini AI]
+        Secrets[Secret Manager]
+    end
+
+    Client -->|HTTP| API
+    API --> Orchestrator
+
+    Orchestrator --> Brief
+    Orchestrator --> Campaign
+    Orchestrator --> Creator
+    Orchestrator --> Outreach
+
+    Brief --> Gemini
+    Campaign --> Gemini
+    Creator --> Gemini
+    Outreach --> Gemini
+
+    Brief --> Firestore
+    Campaign --> Firestore
+    Creator --> Pinecone
+    Outreach --> Firestore
+
+    API --> Secrets
+
 ```
 
 ## Tech Stack

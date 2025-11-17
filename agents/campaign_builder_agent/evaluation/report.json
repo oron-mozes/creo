@@ -1,0 +1,61 @@
+{
+  "average_confidence_score": 1.0,
+  "total_cases": 11,
+  "test_results": [
+    {
+      "description": "Build comprehensive campaign for eco-friendly skincare launch",
+      "score": 1.0,
+      "rationale": "The agent meticulously followed all instructions, providing a comprehensive campaign plan that included strategy, channel allocation, content themes, timeline, budget distribution, KPIs, creative briefs, and risk mitigation, all aligned with the user's request and specified constraints."
+    },
+    {
+      "description": "Build B2B SaaS lead generation campaign",
+      "score": 1.0,
+      "rationale": "The agent provided a highly comprehensive and detailed campaign plan, meticulously addressing all instructions and exhibiting every expected behavior, including detailed budget allocation, specific channel strategies, and robust risk mitigation."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for an eco-friendly skincare product launch targeting millennials.",
+      "score": 1.0,
+      "rationale": "The agent perfectly followed all instructions, including creating a detailed campaign plan with all specified sections, and exhibited all expected behaviors by allocating budget, defining KPIs, and including a timeline. The response is highly appropriate for the given input."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for a luxury watch brand targeting high-net-worth individuals.",
+      "score": 1.0,
+      "rationale": "The agent meticulously followed all instructions, creating a comprehensive, detailed, and well-structured marketing plan that incorporated all specified sections and behaviors, tailored perfectly to the user's request and constraints."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for a local restaurant targeting nearby residents.",
+      "score": 1.0,
+      "rationale": "The agent perfectly followed all instructions, creating a comprehensive, detailed marketing plan that included all specified components like strategy, channel allocation, content, timeline, budget, KPIs, creative briefs, and risk mitigation. All expected behaviors were exhibited."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for a mobile game targeting casual gamers.",
+      "score": 1.0,
+      "rationale": "The agent followed all instructions, included every required section with detailed information, and exhibited all expected behaviors. The plan is comprehensive, well-structured, and directly addresses the user's request."
+    },
+    {
+      "description": "Tests the agent's ability to create a get-out-the-vote campaign for a political candidate.",
+      "score": 1.0,
+      "rationale": "The agent perfectly followed all instructions, exhibited all expected behaviors, and provided a highly detailed and appropriate campaign plan that directly addressed every aspect of the user's request."
+    },
+    {
+      "description": "Tests the agent's ability to create a fundraising campaign for a nonprofit organization.",
+      "score": 1.0,
+      "rationale": "The agent provided a comprehensive, well-structured fundraising campaign plan that meticulously followed all instructions and exhibited every expected behavior, directly addressing all aspects of the user's request."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for a book launch.",
+      "score": 1.0,
+      "rationale": "The agent meticulously followed all instructions, creating a comprehensive marketing plan that included every required section, allocated the budget, defined KPIs, and provided a detailed timeline, all while directly addressing the user's input."
+    },
+    {
+      "description": "Tests the agent's ability to create a lead generation campaign for a real estate agent.",
+      "score": 1.0,
+      "rationale": "The agent followed all instructions, exhibited all expected behaviors, and provided a highly detailed, comprehensive, and appropriate marketing plan that directly addressed all aspects of the user's request."
+    },
+    {
+      "description": "Tests the agent's ability to create a marketing plan for launching a new podcast.",
+      "score": 1.0,
+      "rationale": "The agent meticulously followed all instructions, creating a comprehensive marketing plan that included every required section. It successfully allocated the budget, defined KPIs, and provided a detailed timeline, demonstrating all expected behaviors. The plan is highly appropriate for the given input."
+    }
+  ]
+}
