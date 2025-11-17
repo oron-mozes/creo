@@ -120,9 +120,9 @@ except Exception as e:
     def extract_business_card_from_response(text: str):
         return {"business_card": None, "cleaned_text": text, "has_confirmation": False}
 
-# Import orchestrator agent (handle hyphenated directory name)
+# Import orchestrator agent
 import importlib.util
-agent_path = PROJECT_ROOT / "agents" / "orchestrator-agent" / "agent.py"
+agent_path = PROJECT_ROOT / "agents" / "orchestrator_agent" / "agent.py"
 spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
 orchestrator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(orchestrator_module)
@@ -130,7 +130,7 @@ root_agent = orchestrator_module.root_agent
 
 # Import suggestions agent
 try:
-    suggestions_path = PROJECT_ROOT / "agents" / "suggestions-agent" / "agent.py"
+    suggestions_path = PROJECT_ROOT / "agents" / "suggestions_agent" / "agent.py"
     if suggestions_path.exists():
         suggestions_spec = importlib.util.spec_from_file_location("suggestions_agent", suggestions_path)
         suggestions_module = importlib.util.module_from_spec(suggestions_spec)
@@ -963,6 +963,21 @@ async def join_session(sid, data):
                         'message': final_text,
                         'session_id': session_id,
                         'message_id': message_id
+                    }, room=session_id)
+                else:
+                    # No chunks at all - likely a 503 error or other service failure
+                    print(f"[JOIN_SESSION] ERROR: No response chunks received, showing service error message")
+                    error_message = (
+                        "⚠️ Our AI service is experiencing technical difficulties right now.\n\n"
+                        "This could be due to high traffic on Google's servers.\n\n"
+                        "Please try again in a few minutes, or contact support if this persists.\n\n"
+                        "We apologize for the inconvenience!"
+                    )
+                    await sio.emit('message_complete', {
+                        'message': error_message,
+                        'session_id': session_id,
+                        'message_id': message_id,
+                        'is_error': True
                     }, room=session_id)
 
             print(f"[JOIN_SESSION] Initial message processing complete")

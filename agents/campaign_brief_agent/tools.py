@@ -1,18 +1,19 @@
 """Tools for the campaign brief agent to save campaign information."""
+from typing import Optional
 from google.adk.tools import FunctionTool
 
 
 def save_campaign_brief_tool(
     goal: str,
     platform: str = "any",
-    location: str = None,
-    niche: str = None,
-    budget_per_creator: float = None,
+    location: Optional[str] = None,
+    niche: Optional[str] = None,
+    budget_per_creator: Optional[float] = None,
     num_creators: int = 1,
-    business_name: str = None,
-    product_info: str = None,
-    audience_demographics: str = None,
-    audience_interests: str = None
+    business_name: Optional[str] = None,
+    product_info: Optional[str] = None,
+    audience_demographics: Optional[str] = None,
+    audience_interests: Optional[str] = None
 ) -> str:
     """Save campaign brief information to the database.
 

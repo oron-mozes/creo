@@ -1,0 +1,5009 @@
+[
+  {
+    "id": "instagram_1000",
+    "platform": "instagram",
+    "username": "nathan.skinca",
+    "display_name": "Nathan's Skincare",
+    "bio": "\u2728 Content creator | Passionate creator | Austin | Join my community",
+    "category": "fashion_and_beauty",
+    "subcategory": "skincare",
+    "location_country": "USA",
+    "location_city": "Austin",
+    "languages": [
+      "en"
+    ],
+    "followers": 327204,
+    "engagement_rate": 4.62,
+    "avg_likes": 15116,
+    "avg_comments": 720,
+    "posts_count": 705,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.85,
+    "quality_score": 0.83,
+    "campaign_count": 20,
+    "avg_campaign_roi": 3.1,
+    "avg_conversion_rate": 0.059,
+    "last_campaign_date": "2025-11-13",
+    "performance_tier": "bronze",
+    "email": "oronmozes+nathanskinca@gmail.com",
+    "website": "https://nathanskinca.com",
+    "profile_url": "https://instagram.com/nathan.skinca",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1001",
+    "platform": "tiktok",
+    "username": "liam_coding",
+    "display_name": "Liam's Coding",
+    "bio": "\u2728 Content creator | Passionate creator | Seoul | Join my community",
+    "category": "tech_and_gaming",
+    "subcategory": "coding",
+    "location_country": "South Korea",
+    "location_city": "Seoul",
+    "languages": [
+      "ko",
+      "en"
+    ],
+    "followers": 67494,
+    "engagement_rate": 6.37,
+    "avg_likes": 4299,
+    "avg_comments": 128,
+    "posts_count": 409,
+    "authenticity_score": 0.93,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.88,
+    "campaign_count": 1,
+    "avg_campaign_roi": 3.9,
+    "avg_conversion_rate": 0.035,
+    "last_campaign_date": "2025-10-03",
+    "performance_tier": "gold",
+    "email": "oronmozes+liamcoding@gmail.com",
+    "website": "https://liamcoding.com",
+    "profile_url": "https://tiktok.com/@liam_coding",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "South Korea"
+    }
+  },
+  {
+    "id": "youtube_1002",
+    "platform": "youtube",
+    "username": "the_brooklyn_pregna",
+    "display_name": "Brooklyn's Pregnancy",
+    "bio": "\u2728 Content creator | Passionate creator | Bangkok | Join my community",
+    "category": "parenting_and_family",
+    "subcategory": "pregnancy",
+    "location_country": "Thailand",
+    "location_city": "Bangkok",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 76484,
+    "engagement_rate": 6.72,
+    "avg_likes": 5139,
+    "avg_comments": 260,
+    "posts_count": 743,
+    "authenticity_score": 0.87,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.85,
+    "campaign_count": 19,
+    "avg_campaign_roi": 2.5,
+    "avg_conversion_rate": 0.03,
+    "last_campaign_date": "2025-09-20",
+    "performance_tier": "silver",
+    "email": "oronmozes+thebrooklynpregna@gmail.com",
+    "website": "https://thebrooklynpregna.com",
+    "profile_url": "https://youtube.com/@the_brooklyn_pregna",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "instagram_1003",
+    "platform": "instagram",
+    "username": "mia.parent",
+    "display_name": "Mia's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Miami | Book a session",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "USA",
+    "location_city": "Miami",
+    "languages": [
+      "en"
+    ],
+    "followers": 72806,
+    "engagement_rate": 5.08,
+    "avg_likes": 3698,
+    "avg_comments": 149,
+    "posts_count": 386,
+    "authenticity_score": 0.96,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.9,
+    "campaign_count": 7,
+    "avg_campaign_roi": 4.2,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-09-20",
+    "performance_tier": "silver",
+    "email": "oronmozes+miaparent@gmail.com",
+    "website": "https://miaparent.com",
+    "profile_url": "https://instagram.com/mia.parent",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1004",
+    "platform": "instagram",
+    "username": "olivia.nutrit",
+    "display_name": "Olivia's Nutrition",
+    "bio": "\u2728 Content creator | Passionate creator | Singapore | Subscribe for more",
+    "category": "fitness_and_wellness",
+    "subcategory": "nutrition",
+    "location_country": "Singapore",
+    "location_city": "Singapore",
+    "languages": [
+      "en",
+      "zh"
+    ],
+    "followers": 266231,
+    "engagement_rate": 6.27,
+    "avg_likes": 16692,
+    "avg_comments": 502,
+    "posts_count": 154,
+    "authenticity_score": 0.93,
+    "brand_safety_score": 0.85,
+    "quality_score": 0.89,
+    "campaign_count": 19,
+    "avg_campaign_roi": 4.2,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-10-04",
+    "performance_tier": "gold",
+    "email": "oronmozes+olivianutrit@gmail.com",
+    "website": "https://olivianutrit.com",
+    "profile_url": "https://instagram.com/olivia.nutrit",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Singapore"
+    }
+  },
+  {
+    "id": "instagram_1005",
+    "platform": "instagram",
+    "username": "noah.art",
+    "display_name": "Noah's Art",
+    "bio": "\u2728 Content creator | Passionate creator | Lyon | Follow my journey",
+    "category": "entertainment",
+    "subcategory": "art",
+    "location_country": "France",
+    "location_city": "Lyon",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "followers": 14777,
+    "engagement_rate": 3.8,
+    "avg_likes": 561,
+    "avg_comments": 25,
+    "posts_count": 628,
+    "authenticity_score": 0.87,
+    "brand_safety_score": 0.97,
+    "quality_score": 0.92,
+    "campaign_count": 20,
+    "avg_campaign_roi": 2.5,
+    "avg_conversion_rate": 0.036,
+    "last_campaign_date": "2025-09-22",
+    "performance_tier": "bronze",
+    "email": "oronmozes+noahart@gmail.com",
+    "website": "https://noahart.com",
+    "profile_url": "https://instagram.com/noah.art",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "France"
+    }
+  },
+  {
+    "id": "tiktok_1006",
+    "platform": "tiktok",
+    "username": "logan_ai",
+    "display_name": "Logan's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Tel Aviv | Subscribe for more",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "Israel",
+    "location_city": "Tel Aviv",
+    "languages": [
+      "en",
+      "he"
+    ],
+    "followers": 30794,
+    "engagement_rate": 5.73,
+    "avg_likes": 1764,
+    "avg_comments": 47,
+    "posts_count": 297,
+    "authenticity_score": 0.79,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.84,
+    "campaign_count": 7,
+    "avg_campaign_roi": 4.4,
+    "avg_conversion_rate": 0.046,
+    "last_campaign_date": "2025-10-03",
+    "performance_tier": "silver",
+    "email": "oronmozes+loganai@gmail.com",
+    "website": "https://loganai.com",
+    "profile_url": "https://tiktok.com/@logan_ai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Israel"
+    }
+  },
+  {
+    "id": "instagram_1007",
+    "platform": "instagram",
+    "username": "the_aria_sustai",
+    "display_name": "Aria's Sustainable Fashion",
+    "bio": "\u2728 Content creator | Passionate creator | Vancouver | DM for collabs",
+    "category": "fashion_and_beauty",
+    "subcategory": "sustainable_fashion",
+    "location_country": "Canada",
+    "location_city": "Vancouver",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 360569,
+    "engagement_rate": 6.59,
+    "avg_likes": 23761,
+    "avg_comments": 1061,
+    "posts_count": 530,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.87,
+    "quality_score": 0.88,
+    "campaign_count": 1,
+    "avg_campaign_roi": 2.1,
+    "avg_conversion_rate": 0.047,
+    "last_campaign_date": "2025-10-03",
+    "performance_tier": "silver",
+    "email": "oronmozes+theariasustai@gmail.com",
+    "website": "https://theariasustai.com",
+    "profile_url": "https://instagram.com/the_aria_sustai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "tiktok_1008",
+    "platform": "tiktok",
+    "username": "ava.entrep",
+    "display_name": "Ava's Entrepreneurship",
+    "bio": "\ud83d\udcbc E-commerce | Business coach | Munich | DM for collabs",
+    "category": "business_and_finance",
+    "subcategory": "entrepreneurship",
+    "location_country": "Germany",
+    "location_city": "Munich",
+    "languages": [
+      "de",
+      "en"
+    ],
+    "followers": 475178,
+    "engagement_rate": 6.05,
+    "avg_likes": 28748,
+    "avg_comments": 1924,
+    "posts_count": 343,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.84,
+    "campaign_count": 20,
+    "avg_campaign_roi": 3.5,
+    "avg_conversion_rate": 0.056,
+    "last_campaign_date": "2025-10-14",
+    "performance_tier": "silver",
+    "email": "oronmozes+avaentrep@gmail.com",
+    "website": "https://avaentrep.com",
+    "profile_url": "https://tiktok.com/@ava.entrep",
+    "content_themes": [
+      "business tips",
+      "startup advice",
+      "productivity hacks",
+      "success stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "25-34",
+      "interests": [
+        "business",
+        "entrepreneurship",
+        "finance",
+        "productivity",
+        "leadership"
+      ],
+      "location": "Germany"
+    }
+  },
+  {
+    "id": "tiktok_1009",
+    "platform": "tiktok",
+    "username": "the_penelope_luxury",
+    "display_name": "Penelope's Luxury Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Mexico City | Shop my recommendations",
+    "category": "travel_and_lifestyle",
+    "subcategory": "luxury_travel",
+    "location_country": "Mexico",
+    "location_city": "Mexico City",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 126389,
+    "engagement_rate": 5.66,
+    "avg_likes": 7153,
+    "avg_comments": 560,
+    "posts_count": 241,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.88,
+    "campaign_count": 18,
+    "avg_campaign_roi": 3.6,
+    "avg_conversion_rate": 0.04,
+    "last_campaign_date": "2025-10-31",
+    "performance_tier": "silver",
+    "email": "oronmozes+thepenelopeluxury@gmail.com",
+    "website": "https://thepenelopeluxury.com",
+    "profile_url": "https://tiktok.com/@the_penelope_luxury",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Mexico"
+    }
+  },
+  {
+    "id": "instagram_1010",
+    "platform": "instagram",
+    "username": "isabella.garden",
+    "display_name": "Isabella's Gardening",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Book a session",
+    "category": "home_and_diy",
+    "subcategory": "gardening",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 138770,
+    "engagement_rate": 3.42,
+    "avg_likes": 4745,
+    "avg_comments": 341,
+    "posts_count": 142,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.96,
+    "quality_score": 0.89,
+    "campaign_count": 18,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.034,
+    "last_campaign_date": "2025-10-04",
+    "performance_tier": "bronze",
+    "email": "oronmozes+isabellagarden@gmail.com",
+    "website": "https://isabellagarden.com",
+    "profile_url": "https://instagram.com/isabella.garden",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1011",
+    "platform": "youtube",
+    "username": "layla_techre",
+    "display_name": "Layla's Tech Reviews",
+    "bio": "\ud83d\ude80 Tech reviewer | AI & ML | New York | Link in bio",
+    "category": "tech_and_gaming",
+    "subcategory": "tech_reviews",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 273076,
+    "engagement_rate": 2.57,
+    "avg_likes": 7018,
+    "avg_comments": 437,
+    "posts_count": 626,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.95,
+    "quality_score": 0.88,
+    "campaign_count": 2,
+    "avg_campaign_roi": 2.1,
+    "avg_conversion_rate": 0.035,
+    "last_campaign_date": "2025-11-11",
+    "performance_tier": "bronze",
+    "email": "oronmozes+laylatechre@gmail.com",
+    "website": "https://laylatechre.com",
+    "profile_url": "https://youtube.com/@layla_techre",
+    "content_themes": [
+      "product reviews",
+      "tech news",
+      "unboxing videos",
+      "tutorials"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 35,
+        "male": 65
+      },
+      "age_range": "25-34",
+      "interests": [
+        "technology",
+        "gadgets",
+        "innovation",
+        "gaming",
+        "science"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1012",
+    "platform": "youtube",
+    "username": "the_dylan_street",
+    "display_name": "Dylan's Streetwear",
+    "bio": "\u2728 Content creator | Passionate creator | New York | Follow my journey",
+    "category": "fashion_and_beauty",
+    "subcategory": "streetwear",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 319749,
+    "engagement_rate": 4.81,
+    "avg_likes": 15379,
+    "avg_comments": 1125,
+    "posts_count": 318,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.88,
+    "campaign_count": 16,
+    "avg_campaign_roi": 2.7,
+    "avg_conversion_rate": 0.051,
+    "last_campaign_date": "2025-09-24",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thedylanstreet@gmail.com",
+    "website": "https://thedylanstreet.com",
+    "profile_url": "https://youtube.com/@the_dylan_street",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1013",
+    "platform": "youtube",
+    "username": "john.baking",
+    "display_name": "John's Baking",
+    "bio": "\u2728 Content creator | Passionate creator | Dubai | Subscribe for more",
+    "category": "food_and_beverage",
+    "subcategory": "baking",
+    "location_country": "UAE",
+    "location_city": "Dubai",
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "followers": 179523,
+    "engagement_rate": 3.63,
+    "avg_likes": 6516,
+    "avg_comments": 327,
+    "posts_count": 455,
+    "authenticity_score": 0.77,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.85,
+    "campaign_count": 12,
+    "avg_campaign_roi": 3.4,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-10-09",
+    "performance_tier": "bronze",
+    "email": "oronmozes+johnbaking@gmail.com",
+    "website": "https://johnbaking.com",
+    "profile_url": "https://youtube.com/@john.baking",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UAE"
+    }
+  },
+  {
+    "id": "youtube_1014",
+    "platform": "youtube",
+    "username": "mia.family",
+    "display_name": "Mia's Family Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Mexico City | Book a session",
+    "category": "parenting_and_family",
+    "subcategory": "family_travel",
+    "location_country": "Mexico",
+    "location_city": "Mexico City",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 495903,
+    "engagement_rate": 5.32,
+    "avg_likes": 26382,
+    "avg_comments": 881,
+    "posts_count": 164,
+    "authenticity_score": 0.93,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.88,
+    "campaign_count": 11,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.017,
+    "last_campaign_date": "2025-09-27",
+    "performance_tier": "bronze",
+    "email": "oronmozes+miafamily@gmail.com",
+    "website": "https://miafamily.com",
+    "profile_url": "https://youtube.com/@mia.family",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Mexico"
+    }
+  },
+  {
+    "id": "tiktok_1015",
+    "platform": "tiktok",
+    "username": "lily.vanlif",
+    "display_name": "Lily's Van Life",
+    "bio": "\u2728 Content creator | Passionate creator | New York | Shop my recommendations",
+    "category": "travel_and_lifestyle",
+    "subcategory": "van_life",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 280249,
+    "engagement_rate": 3.01,
+    "avg_likes": 8435,
+    "avg_comments": 506,
+    "posts_count": 142,
+    "authenticity_score": 0.79,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.84,
+    "campaign_count": 6,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.033,
+    "last_campaign_date": "2025-09-17",
+    "performance_tier": "bronze",
+    "email": "oronmozes+lilyvanlif@gmail.com",
+    "website": "https://lilyvanlif.com",
+    "profile_url": "https://tiktok.com/@lily.vanlif",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1016",
+    "platform": "tiktok",
+    "username": "the_charles_makeup",
+    "display_name": "Charles's Makeup",
+    "bio": "\ud83d\udc84 Makeup artist | Glam looks tutorials | Bangalore | Join my community",
+    "category": "fashion_and_beauty",
+    "subcategory": "makeup",
+    "location_country": "India",
+    "location_city": "Bangalore",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 132027,
+    "engagement_rate": 4.0,
+    "avg_likes": 5281,
+    "avg_comments": 408,
+    "posts_count": 233,
+    "authenticity_score": 0.9,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.87,
+    "campaign_count": 10,
+    "avg_campaign_roi": 2.0,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-11-16",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thecharlesmakeup@gmail.com",
+    "website": "https://thecharlesmakeup.com",
+    "profile_url": "https://tiktok.com/@the_charles_makeup",
+    "content_themes": [
+      "makeup tutorials",
+      "product reviews",
+      "beauty hacks",
+      "skincare routines"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 70,
+        "male": 30
+      },
+      "age_range": "18-24",
+      "interests": [
+        "beauty",
+        "makeup",
+        "skincare",
+        "fashion",
+        "lifestyle"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "youtube_1017",
+    "platform": "youtube",
+    "username": "matthew.invest",
+    "display_name": "Matthew's Investing",
+    "bio": "\u2728 Content creator | Passionate creator | Sydney | Check my latest post",
+    "category": "business_and_finance",
+    "subcategory": "investing",
+    "location_country": "Australia",
+    "location_city": "Sydney",
+    "languages": [
+      "en"
+    ],
+    "followers": 408541,
+    "engagement_rate": 4.97,
+    "avg_likes": 20304,
+    "avg_comments": 867,
+    "posts_count": 728,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.87,
+    "quality_score": 0.88,
+    "campaign_count": 19,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.026,
+    "last_campaign_date": "2025-08-24",
+    "performance_tier": "bronze",
+    "email": "oronmozes+matthewinvest@gmail.com",
+    "website": "https://matthewinvest.com",
+    "profile_url": "https://youtube.com/@matthew.invest",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Australia"
+    }
+  },
+  {
+    "id": "tiktok_1018",
+    "platform": "tiktok",
+    "username": "wyatt_coding",
+    "display_name": "Wyatt's Coding",
+    "bio": "\u2728 Content creator | Passionate creator | Chiang Mai | Subscribe for more",
+    "category": "tech_and_gaming",
+    "subcategory": "coding",
+    "location_country": "Thailand",
+    "location_city": "Chiang Mai",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 195291,
+    "engagement_rate": 4.07,
+    "avg_likes": 7948,
+    "avg_comments": 226,
+    "posts_count": 749,
+    "authenticity_score": 0.82,
+    "brand_safety_score": 0.8,
+    "quality_score": 0.81,
+    "campaign_count": 10,
+    "avg_campaign_roi": 3.6,
+    "avg_conversion_rate": 0.044,
+    "last_campaign_date": "2025-09-13",
+    "performance_tier": "bronze",
+    "email": "oronmozes+wyattcoding@gmail.com",
+    "website": "https://wyattcoding.com",
+    "profile_url": "https://tiktok.com/@wyatt_coding",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 52,
+        "male": 48
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "tiktok_1019",
+    "platform": "tiktok",
+    "username": "the_theodore_nutrit",
+    "display_name": "Theodore's Nutrition",
+    "bio": "\u2728 Content creator | Passionate creator | Miami | Shop my recommendations",
+    "category": "fitness_and_wellness",
+    "subcategory": "nutrition",
+    "location_country": "USA",
+    "location_city": "Miami",
+    "languages": [
+      "en"
+    ],
+    "followers": 193040,
+    "engagement_rate": 2.16,
+    "avg_likes": 4169,
+    "avg_comments": 124,
+    "posts_count": 244,
+    "authenticity_score": 0.87,
+    "brand_safety_score": 0.8,
+    "quality_score": 0.83,
+    "campaign_count": 7,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-10-08",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thetheodorenutrit@gmail.com",
+    "website": "https://thetheodorenutrit.com",
+    "profile_url": "https://tiktok.com/@the_theodore_nutrit",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1020",
+    "platform": "instagram",
+    "username": "gadget_amelia",
+    "display_name": "Amelia's Gadgets",
+    "bio": "\u2728 Content creator | Passionate creator | Tel Aviv | Check my latest post",
+    "category": "tech_and_gaming",
+    "subcategory": "gadgets",
+    "location_country": "Israel",
+    "location_city": "Tel Aviv",
+    "languages": [
+      "en",
+      "he"
+    ],
+    "followers": 155563,
+    "engagement_rate": 6.56,
+    "avg_likes": 10204,
+    "avg_comments": 518,
+    "posts_count": 436,
+    "authenticity_score": 0.93,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.91,
+    "campaign_count": 14,
+    "avg_campaign_roi": 1.8,
+    "avg_conversion_rate": 0.04,
+    "last_campaign_date": "2025-09-01",
+    "performance_tier": "bronze",
+    "email": "oronmozes+gadgetamelia@gmail.com",
+    "website": "https://gadgetamelia.com",
+    "profile_url": "https://instagram.com/gadget_amelia",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Israel"
+    }
+  },
+  {
+    "id": "instagram_1021",
+    "platform": "instagram",
+    "username": "hannah_entrep",
+    "display_name": "Hannah's Entrepreneurship",
+    "bio": "\ud83d\udcbc E-commerce | Business coach | Jerusalem | Subscribe for more",
+    "category": "business_and_finance",
+    "subcategory": "entrepreneurship",
+    "location_country": "Israel",
+    "location_city": "Jerusalem",
+    "languages": [
+      "en",
+      "he"
+    ],
+    "followers": 392798,
+    "engagement_rate": 4.86,
+    "avg_likes": 19089,
+    "avg_comments": 717,
+    "posts_count": 722,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.95,
+    "quality_score": 0.9,
+    "campaign_count": 17,
+    "avg_campaign_roi": 1.5,
+    "avg_conversion_rate": 0.046,
+    "last_campaign_date": "2025-10-01",
+    "performance_tier": "bronze",
+    "email": "oronmozes+hannahentrep@gmail.com",
+    "website": "https://hannahentrep.com",
+    "profile_url": "https://instagram.com/hannah_entrep",
+    "content_themes": [
+      "business tips",
+      "startup advice",
+      "productivity hacks",
+      "success stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 32,
+        "male": 68
+      },
+      "age_range": "45-54",
+      "interests": [
+        "business",
+        "entrepreneurship",
+        "finance",
+        "productivity",
+        "leadership"
+      ],
+      "location": "Israel"
+    }
+  },
+  {
+    "id": "instagram_1022",
+    "platform": "instagram",
+    "username": "daniel.ai",
+    "display_name": "Daniel's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Miami | DM for collabs",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "USA",
+    "location_city": "Miami",
+    "languages": [
+      "en"
+    ],
+    "followers": 67768,
+    "engagement_rate": 4.35,
+    "avg_likes": 2947,
+    "avg_comments": 75,
+    "posts_count": 248,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.87,
+    "campaign_count": 9,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.047,
+    "last_campaign_date": "2025-10-31",
+    "performance_tier": "bronze",
+    "email": "oronmozes+danielai@gmail.com",
+    "website": "https://danielai.com",
+    "profile_url": "https://instagram.com/daniel.ai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1023",
+    "platform": "youtube",
+    "username": "anthony.coffee",
+    "display_name": "Anthony's Coffee",
+    "bio": "\u2615 Coffee enthusiast | Specialty coffee | Milan | Follow my journey",
+    "category": "food_and_beverage",
+    "subcategory": "coffee",
+    "location_country": "Italy",
+    "location_city": "Milan",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 261263,
+    "engagement_rate": 5.66,
+    "avg_likes": 14787,
+    "avg_comments": 400,
+    "posts_count": 741,
+    "authenticity_score": 0.94,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.94,
+    "campaign_count": 11,
+    "avg_campaign_roi": 3.1,
+    "avg_conversion_rate": 0.027,
+    "last_campaign_date": "2025-09-12",
+    "performance_tier": "silver",
+    "email": "oronmozes+anthonycoffee@gmail.com",
+    "website": "https://anthonycoffee.com",
+    "profile_url": "https://youtube.com/@anthony.coffee",
+    "content_themes": [
+      "coffee culture",
+      "cafe reviews",
+      "barista tips",
+      "coffee brewing"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "18-24",
+      "interests": [
+        "coffee",
+        "food",
+        "lifestyle",
+        "travel",
+        "photography"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "tiktok_1024",
+    "platform": "tiktok",
+    "username": "mateo_budget",
+    "display_name": "Mateo's Budget Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Mumbai | Link in bio",
+    "category": "travel_and_lifestyle",
+    "subcategory": "budget_travel",
+    "location_country": "India",
+    "location_city": "Mumbai",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 181878,
+    "engagement_rate": 2.51,
+    "avg_likes": 4565,
+    "avg_comments": 161,
+    "posts_count": 793,
+    "authenticity_score": 0.92,
+    "brand_safety_score": 0.89,
+    "quality_score": 0.91,
+    "campaign_count": 15,
+    "avg_campaign_roi": 1.9,
+    "avg_conversion_rate": 0.017,
+    "last_campaign_date": "2025-09-10",
+    "performance_tier": "bronze",
+    "email": "oronmozes+mateobudget@gmail.com",
+    "website": "https://mateobudget.com",
+    "profile_url": "https://tiktok.com/@mateo_budget",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "instagram_1025",
+    "platform": "instagram",
+    "username": "dylan_gym",
+    "display_name": "Dylan's Gym",
+    "bio": "\ud83d\udcaa HIIT workouts trainer | Fitness coach | Osaka | Link in bio",
+    "category": "fitness_and_wellness",
+    "subcategory": "gym",
+    "location_country": "Japan",
+    "location_city": "Osaka",
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "followers": 269829,
+    "engagement_rate": 5.76,
+    "avg_likes": 15542,
+    "avg_comments": 1104,
+    "posts_count": 405,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.87,
+    "campaign_count": 14,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.041,
+    "last_campaign_date": "2025-10-17",
+    "performance_tier": "bronze",
+    "email": "oronmozes+dylangym@gmail.com",
+    "website": "https://dylangym.com",
+    "profile_url": "https://instagram.com/dylan_gym",
+    "content_themes": [
+      "workout routines",
+      "fitness tips",
+      "nutrition advice",
+      "transformation stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 30,
+        "male": 70
+      },
+      "age_range": "25-34",
+      "interests": [
+        "fitness",
+        "health",
+        "sports",
+        "nutrition",
+        "lifestyle"
+      ],
+      "location": "Japan"
+    }
+  },
+  {
+    "id": "instagram_1026",
+    "platform": "instagram",
+    "username": "owen.gadget",
+    "display_name": "Owen's Gadgets",
+    "bio": "\u2728 Content creator | Passionate creator | Dubai | Follow my journey",
+    "category": "tech_and_gaming",
+    "subcategory": "gadgets",
+    "location_country": "UAE",
+    "location_city": "Dubai",
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "followers": 151258,
+    "engagement_rate": 5.77,
+    "avg_likes": 8727,
+    "avg_comments": 382,
+    "posts_count": 396,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.84,
+    "campaign_count": 6,
+    "avg_campaign_roi": 3.7,
+    "avg_conversion_rate": 0.018,
+    "last_campaign_date": "2025-09-20",
+    "performance_tier": "silver",
+    "email": "oronmozes+owengadget@gmail.com",
+    "website": "https://owengadget.com",
+    "profile_url": "https://instagram.com/owen.gadget",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UAE"
+    }
+  },
+  {
+    "id": "tiktok_1027",
+    "platform": "tiktok",
+    "username": "the_emma_gadget",
+    "display_name": "Emma's Gadgets",
+    "bio": "\u2728 Content creator | Passionate creator | Paris | Check my latest post",
+    "category": "tech_and_gaming",
+    "subcategory": "gadgets",
+    "location_country": "France",
+    "location_city": "Paris",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "followers": 281013,
+    "engagement_rate": 3.65,
+    "avg_likes": 10256,
+    "avg_comments": 353,
+    "posts_count": 88,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.84,
+    "campaign_count": 16,
+    "avg_campaign_roi": 4.4,
+    "avg_conversion_rate": 0.019,
+    "last_campaign_date": "2025-11-05",
+    "performance_tier": "silver",
+    "email": "oronmozes+theemmagadget@gmail.com",
+    "website": "https://theemmagadget.com",
+    "profile_url": "https://tiktok.com/@the_emma_gadget",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "France"
+    }
+  },
+  {
+    "id": "youtube_1028",
+    "platform": "youtube",
+    "username": "logan.gadget",
+    "display_name": "Logan's Gadgets",
+    "bio": "\u2728 Content creator | Passionate creator | Osaka | Join my community",
+    "category": "tech_and_gaming",
+    "subcategory": "gadgets",
+    "location_country": "Japan",
+    "location_city": "Osaka",
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "followers": 189602,
+    "engagement_rate": 3.43,
+    "avg_likes": 6503,
+    "avg_comments": 294,
+    "posts_count": 220,
+    "authenticity_score": 0.89,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.92,
+    "campaign_count": 11,
+    "avg_campaign_roi": 2.1,
+    "avg_conversion_rate": 0.061,
+    "last_campaign_date": "2025-11-08",
+    "performance_tier": "bronze",
+    "email": "oronmozes+logangadget@gmail.com",
+    "website": "https://logangadget.com",
+    "profile_url": "https://youtube.com/@logan.gadget",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Japan"
+    }
+  },
+  {
+    "id": "instagram_1029",
+    "platform": "instagram",
+    "username": "luxury_chloe",
+    "display_name": "Chloe's Luxury Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Dubai | Check my latest post",
+    "category": "travel_and_lifestyle",
+    "subcategory": "luxury_travel",
+    "location_country": "UAE",
+    "location_city": "Dubai",
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "followers": 407062,
+    "engagement_rate": 3.07,
+    "avg_likes": 12496,
+    "avg_comments": 275,
+    "posts_count": 403,
+    "authenticity_score": 0.84,
+    "brand_safety_score": 0.95,
+    "quality_score": 0.9,
+    "campaign_count": 16,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.025,
+    "last_campaign_date": "2025-11-08",
+    "performance_tier": "bronze",
+    "email": "oronmozes+luxurychloe@gmail.com",
+    "website": "https://luxurychloe.com",
+    "profile_url": "https://instagram.com/luxury_chloe",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UAE"
+    }
+  },
+  {
+    "id": "instagram_1030",
+    "platform": "instagram",
+    "username": "diy_victoria",
+    "display_name": "Victoria's Diy",
+    "bio": "\u2728 Content creator | Passionate creator | Los Angeles | Join my community",
+    "category": "home_and_diy",
+    "subcategory": "diy",
+    "location_country": "USA",
+    "location_city": "Los Angeles",
+    "languages": [
+      "en"
+    ],
+    "followers": 119225,
+    "engagement_rate": 2.01,
+    "avg_likes": 2396,
+    "avg_comments": 108,
+    "posts_count": 727,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.97,
+    "quality_score": 0.91,
+    "campaign_count": 12,
+    "avg_campaign_roi": 2.3,
+    "avg_conversion_rate": 0.021,
+    "last_campaign_date": "2025-08-21",
+    "performance_tier": "bronze",
+    "email": "oronmozes+diyvictoria@gmail.com",
+    "website": "https://diyvictoria.com",
+    "profile_url": "https://instagram.com/diy_victoria",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1031",
+    "platform": "youtube",
+    "username": "scarlett.reales",
+    "display_name": "Scarlett's Real Estate",
+    "bio": "\u2728 Content creator | Passionate creator | Bali | Link in bio",
+    "category": "business_and_finance",
+    "subcategory": "real_estate",
+    "location_country": "Indonesia",
+    "location_city": "Bali",
+    "languages": [
+      "id",
+      "en"
+    ],
+    "followers": 448405,
+    "engagement_rate": 2.94,
+    "avg_likes": 13183,
+    "avg_comments": 522,
+    "posts_count": 782,
+    "authenticity_score": 0.95,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.94,
+    "campaign_count": 12,
+    "avg_campaign_roi": 4.5,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-09-07",
+    "performance_tier": "silver",
+    "email": "oronmozes+scarlettreales@gmail.com",
+    "website": "https://scarlettreales.com",
+    "profile_url": "https://youtube.com/@scarlett.reales",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Indonesia"
+    }
+  },
+  {
+    "id": "tiktok_1032",
+    "platform": "tiktok",
+    "username": "the_stella_mental",
+    "display_name": "Stella's Mental Health",
+    "bio": "\u2728 Content creator | Passionate creator | Amsterdam | Book a session",
+    "category": "fitness_and_wellness",
+    "subcategory": "mental_health",
+    "location_country": "Netherlands",
+    "location_city": "Amsterdam",
+    "languages": [
+      "nl",
+      "en"
+    ],
+    "followers": 236833,
+    "engagement_rate": 2.96,
+    "avg_likes": 7010,
+    "avg_comments": 492,
+    "posts_count": 542,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.87,
+    "campaign_count": 10,
+    "avg_campaign_roi": 2.5,
+    "avg_conversion_rate": 0.061,
+    "last_campaign_date": "2025-09-22",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thestellamental@gmail.com",
+    "website": "https://thestellamental.com",
+    "profile_url": "https://tiktok.com/@the_stella_mental",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Netherlands"
+    }
+  },
+  {
+    "id": "instagram_1033",
+    "platform": "instagram",
+    "username": "ai_isaiah",
+    "display_name": "Isaiah's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Amsterdam | Follow my journey",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "Netherlands",
+    "location_city": "Amsterdam",
+    "languages": [
+      "nl",
+      "en"
+    ],
+    "followers": 435731,
+    "engagement_rate": 4.87,
+    "avg_likes": 21220,
+    "avg_comments": 840,
+    "posts_count": 704,
+    "authenticity_score": 0.92,
+    "brand_safety_score": 0.98,
+    "quality_score": 0.95,
+    "campaign_count": 16,
+    "avg_campaign_roi": 3.4,
+    "avg_conversion_rate": 0.034,
+    "last_campaign_date": "2025-09-03",
+    "performance_tier": "silver",
+    "email": "oronmozes+aiisaiah@gmail.com",
+    "website": "https://aiisaiah.com",
+    "profile_url": "https://instagram.com/ai_isaiah",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Netherlands"
+    }
+  },
+  {
+    "id": "tiktok_1034",
+    "platform": "tiktok",
+    "username": "layla.fashio",
+    "display_name": "Layla's Fashion",
+    "bio": "\ud83d\udc57 Fashion Luxury brands | Style tips | Toronto | Subscribe for more",
+    "category": "fashion_and_beauty",
+    "subcategory": "fashion",
+    "location_country": "Canada",
+    "location_city": "Toronto",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 146881,
+    "engagement_rate": 5.01,
+    "avg_likes": 7358,
+    "avg_comments": 401,
+    "posts_count": 402,
+    "authenticity_score": 0.76,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.81,
+    "campaign_count": 4,
+    "avg_campaign_roi": 4.0,
+    "avg_conversion_rate": 0.064,
+    "last_campaign_date": "2025-09-11",
+    "performance_tier": "silver",
+    "email": "oronmozes+laylafashio@gmail.com",
+    "website": "https://laylafashio.com",
+    "profile_url": "https://tiktok.com/@layla.fashio",
+    "content_themes": [
+      "outfit ideas",
+      "fashion trends",
+      "styling tips",
+      "brand reviews"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 77,
+        "male": 23
+      },
+      "age_range": "25-34",
+      "interests": [
+        "fashion",
+        "beauty",
+        "shopping",
+        "lifestyle",
+        "travel"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "tiktok_1035",
+    "platform": "tiktok",
+    "username": "the_scarlett_yoga",
+    "display_name": "Scarlett's Yoga",
+    "bio": "\ud83e\uddd8\u200d\u2640\ufe0f Yoga instructor | Mindfulness | Bangalore | Check my latest post",
+    "category": "fitness_and_wellness",
+    "subcategory": "yoga",
+    "location_country": "India",
+    "location_city": "Bangalore",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 21806,
+    "engagement_rate": 4.03,
+    "avg_likes": 878,
+    "avg_comments": 20,
+    "posts_count": 477,
+    "authenticity_score": 0.96,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.95,
+    "campaign_count": 10,
+    "avg_campaign_roi": 3.3,
+    "avg_conversion_rate": 0.017,
+    "last_campaign_date": "2025-09-19",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thescarlettyoga@gmail.com",
+    "website": "https://thescarlettyoga.com",
+    "profile_url": "https://tiktok.com/@the_scarlett_yoga",
+    "content_themes": [
+      "yoga flows",
+      "mindfulness",
+      "meditation",
+      "wellness tips"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 62,
+        "male": 38
+      },
+      "age_range": "35-44",
+      "interests": [
+        "yoga",
+        "wellness",
+        "meditation",
+        "fitness",
+        "health"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "tiktok_1036",
+    "platform": "tiktok",
+    "username": "runnin_avery",
+    "display_name": "Avery's Running",
+    "bio": "\u2728 Content creator | Passionate creator | Rio de Janeiro | DM for collabs",
+    "category": "fitness_and_wellness",
+    "subcategory": "running",
+    "location_country": "Brazil",
+    "location_city": "Rio de Janeiro",
+    "languages": [
+      "pt",
+      "en"
+    ],
+    "followers": 268906,
+    "engagement_rate": 3.73,
+    "avg_likes": 10030,
+    "avg_comments": 737,
+    "posts_count": 189,
+    "authenticity_score": 0.86,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.9,
+    "campaign_count": 0,
+    "avg_campaign_roi": 0,
+    "avg_conversion_rate": 0,
+    "last_campaign_date": null,
+    "performance_tier": "bronze",
+    "email": "oronmozes+runninavery@gmail.com",
+    "website": "https://runninavery.com",
+    "profile_url": "https://tiktok.com/@runnin_avery",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Brazil"
+    }
+  },
+  {
+    "id": "instagram_1037",
+    "platform": "instagram",
+    "username": "david_coding",
+    "display_name": "David's Coding",
+    "bio": "\u2728 Content creator | Passionate creator | London | DM for collabs",
+    "category": "tech_and_gaming",
+    "subcategory": "coding",
+    "location_country": "UK",
+    "location_city": "London",
+    "languages": [
+      "en"
+    ],
+    "followers": 467119,
+    "engagement_rate": 2.49,
+    "avg_likes": 11631,
+    "avg_comments": 483,
+    "posts_count": 591,
+    "authenticity_score": 0.96,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.92,
+    "campaign_count": 17,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.06,
+    "last_campaign_date": "2025-08-23",
+    "performance_tier": "bronze",
+    "email": "oronmozes+davidcoding@gmail.com",
+    "website": "https://davidcoding.com",
+    "profile_url": "https://instagram.com/david_coding",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UK"
+    }
+  },
+  {
+    "id": "tiktok_1038",
+    "platform": "tiktok",
+    "username": "aria_garden",
+    "display_name": "Aria's Gardening",
+    "bio": "\u2728 Content creator | Passionate creator | Madrid | Book a session",
+    "category": "home_and_diy",
+    "subcategory": "gardening",
+    "location_country": "Spain",
+    "location_city": "Madrid",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 409611,
+    "engagement_rate": 7.83,
+    "avg_likes": 32072,
+    "avg_comments": 2339,
+    "posts_count": 354,
+    "authenticity_score": 0.94,
+    "brand_safety_score": 0.82,
+    "quality_score": 0.88,
+    "campaign_count": 13,
+    "avg_campaign_roi": 2.0,
+    "avg_conversion_rate": 0.03,
+    "last_campaign_date": "2025-10-04",
+    "performance_tier": "silver",
+    "email": "oronmozes+ariagarden@gmail.com",
+    "website": "https://ariagarden.com",
+    "profile_url": "https://tiktok.com/@aria_garden",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Spain"
+    }
+  },
+  {
+    "id": "instagram_1039",
+    "platform": "instagram",
+    "username": "gaming_mateo",
+    "display_name": "Mateo's Gaming",
+    "bio": "\ud83c\udfae FPS gamer | Esports | Bali | Link in bio",
+    "category": "tech_and_gaming",
+    "subcategory": "gaming",
+    "location_country": "Indonesia",
+    "location_city": "Bali",
+    "languages": [
+      "id",
+      "en"
+    ],
+    "followers": 208731,
+    "engagement_rate": 3.73,
+    "avg_likes": 7785,
+    "avg_comments": 621,
+    "posts_count": 295,
+    "authenticity_score": 0.77,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.81,
+    "campaign_count": 11,
+    "avg_campaign_roi": 2.7,
+    "avg_conversion_rate": 0.017,
+    "last_campaign_date": "2025-09-03",
+    "performance_tier": "bronze",
+    "email": "oronmozes+gamingmateo@gmail.com",
+    "website": "https://gamingmateo.com",
+    "profile_url": "https://instagram.com/gaming_mateo",
+    "content_themes": [
+      "game reviews",
+      "gameplay",
+      "esports",
+      "gaming tips"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 30,
+        "male": 70
+      },
+      "age_range": "18-24",
+      "interests": [
+        "gaming",
+        "esports",
+        "technology",
+        "entertainment",
+        "streaming"
+      ],
+      "location": "Indonesia"
+    }
+  },
+  {
+    "id": "youtube_1040",
+    "platform": "youtube",
+    "username": "the_addison_reales",
+    "display_name": "Addison's Real Estate",
+    "bio": "\u2728 Content creator | Passionate creator | Toronto | Check my latest post",
+    "category": "business_and_finance",
+    "subcategory": "real_estate",
+    "location_country": "Canada",
+    "location_city": "Toronto",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 275018,
+    "engagement_rate": 6.17,
+    "avg_likes": 16968,
+    "avg_comments": 718,
+    "posts_count": 175,
+    "authenticity_score": 0.77,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.82,
+    "campaign_count": 18,
+    "avg_campaign_roi": 1.6,
+    "avg_conversion_rate": 0.052,
+    "last_campaign_date": "2025-11-09",
+    "performance_tier": "bronze",
+    "email": "oronmozes+theaddisonreales@gmail.com",
+    "website": "https://theaddisonreales.com",
+    "profile_url": "https://youtube.com/@the_addison_reales",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "tiktok_1041",
+    "platform": "tiktok",
+    "username": "the_evelyn_babypr",
+    "display_name": "Evelyn's Baby Products",
+    "bio": "\u2728 Content creator | Passionate creator | Singapore | Shop my recommendations",
+    "category": "parenting_and_family",
+    "subcategory": "baby_products",
+    "location_country": "Singapore",
+    "location_city": "Singapore",
+    "languages": [
+      "en",
+      "zh"
+    ],
+    "followers": 226800,
+    "engagement_rate": 5.16,
+    "avg_likes": 11702,
+    "avg_comments": 336,
+    "posts_count": 240,
+    "authenticity_score": 0.92,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.86,
+    "campaign_count": 3,
+    "avg_campaign_roi": 1.6,
+    "avg_conversion_rate": 0.051,
+    "last_campaign_date": "2025-11-07",
+    "performance_tier": "bronze",
+    "email": "oronmozes+theevelynbabypr@gmail.com",
+    "website": "https://theevelynbabypr.com",
+    "profile_url": "https://tiktok.com/@the_evelyn_babypr",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Singapore"
+    }
+  },
+  {
+    "id": "tiktok_1042",
+    "platform": "tiktok",
+    "username": "the_christopher_fashio",
+    "display_name": "Christopher's Fashion",
+    "bio": "\ud83d\udc57 Fashion Sustainable fashion | Style tips | Lyon | Join my community",
+    "category": "fashion_and_beauty",
+    "subcategory": "fashion",
+    "location_country": "France",
+    "location_city": "Lyon",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "followers": 88354,
+    "engagement_rate": 4.68,
+    "avg_likes": 4134,
+    "avg_comments": 311,
+    "posts_count": 439,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.97,
+    "quality_score": 0.9,
+    "campaign_count": 0,
+    "avg_campaign_roi": 0,
+    "avg_conversion_rate": 0,
+    "last_campaign_date": null,
+    "performance_tier": "bronze",
+    "email": "oronmozes+thechristopherfashio@gmail.com",
+    "website": "https://thechristopherfashio.com",
+    "profile_url": "https://tiktok.com/@the_christopher_fashio",
+    "content_themes": [
+      "outfit ideas",
+      "fashion trends",
+      "styling tips",
+      "brand reviews"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 64,
+        "male": 36
+      },
+      "age_range": "25-34",
+      "interests": [
+        "fashion",
+        "beauty",
+        "shopping",
+        "lifestyle",
+        "travel"
+      ],
+      "location": "France"
+    }
+  },
+  {
+    "id": "tiktok_1043",
+    "platform": "tiktok",
+    "username": "wyatt_gym",
+    "display_name": "Wyatt's Gym",
+    "bio": "\ud83d\udcaa HIIT workouts trainer | Fitness coach | Mumbai | Book a session",
+    "category": "fitness_and_wellness",
+    "subcategory": "gym",
+    "location_country": "India",
+    "location_city": "Mumbai",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 119904,
+    "engagement_rate": 2.61,
+    "avg_likes": 3129,
+    "avg_comments": 198,
+    "posts_count": 310,
+    "authenticity_score": 0.79,
+    "brand_safety_score": 0.95,
+    "quality_score": 0.87,
+    "campaign_count": 4,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.018,
+    "last_campaign_date": "2025-09-23",
+    "performance_tier": "bronze",
+    "email": "oronmozes+wyattgym@gmail.com",
+    "website": "https://wyattgym.com",
+    "profile_url": "https://tiktok.com/@wyatt_gym",
+    "content_themes": [
+      "workout routines",
+      "fitness tips",
+      "nutrition advice",
+      "transformation stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 42,
+        "male": 58
+      },
+      "age_range": "18-24",
+      "interests": [
+        "fitness",
+        "health",
+        "sports",
+        "nutrition",
+        "lifestyle"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "tiktok_1044",
+    "platform": "tiktok",
+    "username": "ellie_ai",
+    "display_name": "Ellie's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | New York | Link in bio",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 128545,
+    "engagement_rate": 2.76,
+    "avg_likes": 3547,
+    "avg_comments": 228,
+    "posts_count": 524,
+    "authenticity_score": 0.86,
+    "brand_safety_score": 0.89,
+    "quality_score": 0.88,
+    "campaign_count": 10,
+    "avg_campaign_roi": 4.0,
+    "avg_conversion_rate": 0.057,
+    "last_campaign_date": "2025-11-01",
+    "performance_tier": "bronze",
+    "email": "oronmozes+ellieai@gmail.com",
+    "website": "https://ellieai.com",
+    "profile_url": "https://tiktok.com/@ellie_ai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1045",
+    "platform": "instagram",
+    "username": "natalie.parent",
+    "display_name": "Natalie's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Bangkok | Follow my journey",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "Thailand",
+    "location_city": "Bangkok",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 378240,
+    "engagement_rate": 4.07,
+    "avg_likes": 15394,
+    "avg_comments": 653,
+    "posts_count": 503,
+    "authenticity_score": 0.97,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.95,
+    "campaign_count": 2,
+    "avg_campaign_roi": 3.8,
+    "avg_conversion_rate": 0.029,
+    "last_campaign_date": "2025-10-19",
+    "performance_tier": "silver",
+    "email": "oronmozes+natalieparent@gmail.com",
+    "website": "https://natalieparent.com",
+    "profile_url": "https://instagram.com/natalie.parent",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "tiktok_1046",
+    "platform": "tiktok",
+    "username": "john.luxury",
+    "display_name": "John's Luxury Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Sydney | Join my community",
+    "category": "travel_and_lifestyle",
+    "subcategory": "luxury_travel",
+    "location_country": "Australia",
+    "location_city": "Sydney",
+    "languages": [
+      "en"
+    ],
+    "followers": 170739,
+    "engagement_rate": 2.34,
+    "avg_likes": 3995,
+    "avg_comments": 284,
+    "posts_count": 238,
+    "authenticity_score": 0.94,
+    "brand_safety_score": 0.97,
+    "quality_score": 0.95,
+    "campaign_count": 6,
+    "avg_campaign_roi": 2.1,
+    "avg_conversion_rate": 0.052,
+    "last_campaign_date": "2025-11-14",
+    "performance_tier": "bronze",
+    "email": "oronmozes+johnluxury@gmail.com",
+    "website": "https://johnluxury.com",
+    "profile_url": "https://tiktok.com/@john.luxury",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Australia"
+    }
+  },
+  {
+    "id": "youtube_1047",
+    "platform": "youtube",
+    "username": "skylar.ai",
+    "display_name": "Skylar's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Milan | Subscribe for more",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "Italy",
+    "location_city": "Milan",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 455974,
+    "engagement_rate": 5.98,
+    "avg_likes": 27267,
+    "avg_comments": 1441,
+    "posts_count": 559,
+    "authenticity_score": 0.78,
+    "brand_safety_score": 0.85,
+    "quality_score": 0.81,
+    "campaign_count": 15,
+    "avg_campaign_roi": 2.7,
+    "avg_conversion_rate": 0.062,
+    "last_campaign_date": "2025-09-02",
+    "performance_tier": "bronze",
+    "email": "oronmozes+skylarai@gmail.com",
+    "website": "https://skylarai.com",
+    "profile_url": "https://youtube.com/@skylar.ai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "tiktok_1048",
+    "platform": "tiktok",
+    "username": "hannah.organi",
+    "display_name": "Hannah's Organization",
+    "bio": "\u2728 Content creator | Passionate creator | Milan | DM for collabs",
+    "category": "home_and_diy",
+    "subcategory": "organization",
+    "location_country": "Italy",
+    "location_city": "Milan",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 133721,
+    "engagement_rate": 3.6,
+    "avg_likes": 4813,
+    "avg_comments": 250,
+    "posts_count": 413,
+    "authenticity_score": 0.84,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.84,
+    "campaign_count": 16,
+    "avg_campaign_roi": 3.9,
+    "avg_conversion_rate": 0.044,
+    "last_campaign_date": "2025-08-22",
+    "performance_tier": "bronze",
+    "email": "oronmozes+hannahorgani@gmail.com",
+    "website": "https://hannahorgani.com",
+    "profile_url": "https://tiktok.com/@hannah.organi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "tiktok_1049",
+    "platform": "tiktok",
+    "username": "the_victoria_babypr",
+    "display_name": "Victoria's Baby Products",
+    "bio": "\u2728 Content creator | Passionate creator | Chiang Mai | DM for collabs",
+    "category": "parenting_and_family",
+    "subcategory": "baby_products",
+    "location_country": "Thailand",
+    "location_city": "Chiang Mai",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 251053,
+    "engagement_rate": 3.92,
+    "avg_likes": 9841,
+    "avg_comments": 614,
+    "posts_count": 53,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.85,
+    "campaign_count": 19,
+    "avg_campaign_roi": 2.7,
+    "avg_conversion_rate": 0.023,
+    "last_campaign_date": "2025-08-22",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thevictoriababypr@gmail.com",
+    "website": "https://thevictoriababypr.com",
+    "profile_url": "https://tiktok.com/@the_victoria_babypr",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "youtube_1050",
+    "platform": "youtube",
+    "username": "photog_paisley",
+    "display_name": "Paisley's Photography",
+    "bio": "\u2728 Content creator | Passionate creator | London | DM for collabs",
+    "category": "travel_and_lifestyle",
+    "subcategory": "photography",
+    "location_country": "UK",
+    "location_city": "London",
+    "languages": [
+      "en"
+    ],
+    "followers": 21854,
+    "engagement_rate": 7.93,
+    "avg_likes": 1733,
+    "avg_comments": 58,
+    "posts_count": 451,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.85,
+    "quality_score": 0.83,
+    "campaign_count": 18,
+    "avg_campaign_roi": 3.8,
+    "avg_conversion_rate": 0.041,
+    "last_campaign_date": "2025-11-14",
+    "performance_tier": "gold",
+    "email": "oronmozes+photogpaisley@gmail.com",
+    "website": "https://photogpaisley.com",
+    "profile_url": "https://youtube.com/@photog_paisley",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 52,
+        "male": 48
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UK"
+    }
+  },
+  {
+    "id": "tiktok_1051",
+    "platform": "tiktok",
+    "username": "emily_interi",
+    "display_name": "Emily's Interior Design",
+    "bio": "\u2728 Content creator | Passionate creator | Mumbai | Shop my recommendations",
+    "category": "home_and_diy",
+    "subcategory": "interior_design",
+    "location_country": "India",
+    "location_city": "Mumbai",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 354173,
+    "engagement_rate": 4.84,
+    "avg_likes": 17141,
+    "avg_comments": 707,
+    "posts_count": 511,
+    "authenticity_score": 0.84,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.89,
+    "campaign_count": 4,
+    "avg_campaign_roi": 1.7,
+    "avg_conversion_rate": 0.028,
+    "last_campaign_date": "2025-10-09",
+    "performance_tier": "bronze",
+    "email": "oronmozes+emilyinteri@gmail.com",
+    "website": "https://emilyinteri.com",
+    "profile_url": "https://tiktok.com/@emily_interi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "youtube_1052",
+    "platform": "youtube",
+    "username": "alexander_nutrit",
+    "display_name": "Alexander's Nutrition",
+    "bio": "\u2728 Content creator | Passionate creator | Amsterdam | Follow my journey",
+    "category": "fitness_and_wellness",
+    "subcategory": "nutrition",
+    "location_country": "Netherlands",
+    "location_city": "Amsterdam",
+    "languages": [
+      "nl",
+      "en"
+    ],
+    "followers": 332597,
+    "engagement_rate": 5.75,
+    "avg_likes": 19124,
+    "avg_comments": 903,
+    "posts_count": 328,
+    "authenticity_score": 0.76,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.79,
+    "campaign_count": 4,
+    "avg_campaign_roi": 1.5,
+    "avg_conversion_rate": 0.018,
+    "last_campaign_date": "2025-09-23",
+    "performance_tier": "bronze",
+    "email": "oronmozes+alexandernutrit@gmail.com",
+    "website": "https://alexandernutrit.com",
+    "profile_url": "https://youtube.com/@alexander_nutrit",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Netherlands"
+    }
+  },
+  {
+    "id": "instagram_1053",
+    "platform": "instagram",
+    "username": "books_avery",
+    "display_name": "Avery's Books",
+    "bio": "\u2728 Content creator | Passionate creator | Amsterdam | Shop my recommendations",
+    "category": "entertainment",
+    "subcategory": "books",
+    "location_country": "Netherlands",
+    "location_city": "Amsterdam",
+    "languages": [
+      "nl",
+      "en"
+    ],
+    "followers": 105474,
+    "engagement_rate": 6.04,
+    "avg_likes": 6370,
+    "avg_comments": 167,
+    "posts_count": 244,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.92,
+    "quality_score": 0.86,
+    "campaign_count": 20,
+    "avg_campaign_roi": 4.2,
+    "avg_conversion_rate": 0.061,
+    "last_campaign_date": "2025-09-18",
+    "performance_tier": "silver",
+    "email": "oronmozes+booksavery@gmail.com",
+    "website": "https://booksavery.com",
+    "profile_url": "https://instagram.com/books_avery",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Netherlands"
+    }
+  },
+  {
+    "id": "tiktok_1054",
+    "platform": "tiktok",
+    "username": "restau_thomas",
+    "display_name": "Thomas's Restaurants",
+    "bio": "\ud83d\udc68\u200d\ud83c\udf73 Street food chef | Food lover | Mumbai | Subscribe for more",
+    "category": "food_and_beverage",
+    "subcategory": "restaurants",
+    "location_country": "India",
+    "location_city": "Mumbai",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 146694,
+    "engagement_rate": 7.51,
+    "avg_likes": 11016,
+    "avg_comments": 368,
+    "posts_count": 516,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.86,
+    "campaign_count": 3,
+    "avg_campaign_roi": 4.1,
+    "avg_conversion_rate": 0.028,
+    "last_campaign_date": "2025-08-20",
+    "performance_tier": "gold",
+    "email": "oronmozes+restauthomas@gmail.com",
+    "website": "https://restauthomas.com",
+    "profile_url": "https://tiktok.com/@restau_thomas",
+    "content_themes": [
+      "recipes",
+      "cooking tips",
+      "food photography",
+      "restaurant reviews"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "45-54",
+      "interests": [
+        "food",
+        "dining",
+        "cooking",
+        "travel",
+        "lifestyle"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "youtube_1055",
+    "platform": "youtube",
+    "username": "the_james_runnin",
+    "display_name": "James's Running",
+    "bio": "\u2728 Content creator | Passionate creator | Austin | Book a session",
+    "category": "fitness_and_wellness",
+    "subcategory": "running",
+    "location_country": "USA",
+    "location_city": "Austin",
+    "languages": [
+      "en"
+    ],
+    "followers": 102032,
+    "engagement_rate": 2.28,
+    "avg_likes": 2326,
+    "avg_comments": 107,
+    "posts_count": 766,
+    "authenticity_score": 0.94,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.89,
+    "campaign_count": 3,
+    "avg_campaign_roi": 4.3,
+    "avg_conversion_rate": 0.043,
+    "last_campaign_date": "2025-08-20",
+    "performance_tier": "bronze",
+    "email": "oronmozes+thejamesrunnin@gmail.com",
+    "website": "https://thejamesrunnin.com",
+    "profile_url": "https://youtube.com/@the_james_runnin",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1056",
+    "platform": "instagram",
+    "username": "benjamin_ai",
+    "display_name": "Benjamin's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Miami | Link in bio",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "USA",
+    "location_city": "Miami",
+    "languages": [
+      "en"
+    ],
+    "followers": 34521,
+    "engagement_rate": 2.71,
+    "avg_likes": 935,
+    "avg_comments": 50,
+    "posts_count": 800,
+    "authenticity_score": 0.93,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.93,
+    "campaign_count": 16,
+    "avg_campaign_roi": 2.3,
+    "avg_conversion_rate": 0.033,
+    "last_campaign_date": "2025-09-27",
+    "performance_tier": "bronze",
+    "email": "oronmozes+benjaminai@gmail.com",
+    "website": "https://benjaminai.com",
+    "profile_url": "https://instagram.com/benjamin_ai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1057",
+    "platform": "instagram",
+    "username": "the_mason_comedy",
+    "display_name": "Mason's Comedy",
+    "bio": "\u2728 Content creator | Passionate creator | Milan | Join my community",
+    "category": "entertainment",
+    "subcategory": "comedy",
+    "location_country": "Italy",
+    "location_city": "Milan",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 374777,
+    "engagement_rate": 2.79,
+    "avg_likes": 10456,
+    "avg_comments": 417,
+    "posts_count": 656,
+    "authenticity_score": 0.77,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.81,
+    "campaign_count": 15,
+    "avg_campaign_roi": 4.3,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-09-09",
+    "performance_tier": "bronze",
+    "email": "oronmozes+themasoncomedy@gmail.com",
+    "website": "https://themasoncomedy.com",
+    "profile_url": "https://instagram.com/the_mason_comedy",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "youtube_1058",
+    "platform": "youtube",
+    "username": "bella_parent",
+    "display_name": "Bella's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Guadalajara | Shop my recommendations",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "Mexico",
+    "location_city": "Guadalajara",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 462225,
+    "engagement_rate": 5.23,
+    "avg_likes": 24174,
+    "avg_comments": 1216,
+    "posts_count": 795,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.82,
+    "campaign_count": 10,
+    "avg_campaign_roi": 1.9,
+    "avg_conversion_rate": 0.043,
+    "last_campaign_date": "2025-08-29",
+    "performance_tier": "bronze",
+    "email": "oronmozes+bellaparent@gmail.com",
+    "website": "https://bellaparent.com",
+    "profile_url": "https://youtube.com/@bella_parent",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Mexico"
+    }
+  },
+  {
+    "id": "tiktok_1059",
+    "platform": "tiktok",
+    "username": "harper.baking",
+    "display_name": "Harper's Baking",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Shop my recommendations",
+    "category": "food_and_beverage",
+    "subcategory": "baking",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 163189,
+    "engagement_rate": 3.31,
+    "avg_likes": 5401,
+    "avg_comments": 284,
+    "posts_count": 221,
+    "authenticity_score": 0.97,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.94,
+    "campaign_count": 16,
+    "avg_campaign_roi": 2.7,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-11-02",
+    "performance_tier": "bronze",
+    "email": "oronmozes+harperbaking@gmail.com",
+    "website": "https://harperbaking.com",
+    "profile_url": "https://tiktok.com/@harper.baking",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1060",
+    "platform": "youtube",
+    "username": "wine_jackson",
+    "display_name": "Jackson's Wine",
+    "bio": "\u2728 Content creator | Passionate creator | Osaka | Subscribe for more",
+    "category": "food_and_beverage",
+    "subcategory": "wine",
+    "location_country": "Japan",
+    "location_city": "Osaka",
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "followers": 327756,
+    "engagement_rate": 7.69,
+    "avg_likes": 25204,
+    "avg_comments": 750,
+    "posts_count": 411,
+    "authenticity_score": 0.95,
+    "brand_safety_score": 0.89,
+    "quality_score": 0.92,
+    "campaign_count": 1,
+    "avg_campaign_roi": 2.9,
+    "avg_conversion_rate": 0.028,
+    "last_campaign_date": "2025-10-29",
+    "performance_tier": "gold",
+    "email": "oronmozes+winejackson@gmail.com",
+    "website": "https://winejackson.com",
+    "profile_url": "https://youtube.com/@wine_jackson",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Japan"
+    }
+  },
+  {
+    "id": "tiktok_1061",
+    "platform": "tiktok",
+    "username": "addison.interi",
+    "display_name": "Addison's Interior Design",
+    "bio": "\u2728 Content creator | Passionate creator | Bali | Follow my journey",
+    "category": "home_and_diy",
+    "subcategory": "interior_design",
+    "location_country": "Indonesia",
+    "location_city": "Bali",
+    "languages": [
+      "id",
+      "en"
+    ],
+    "followers": 69184,
+    "engagement_rate": 6.08,
+    "avg_likes": 4206,
+    "avg_comments": 282,
+    "posts_count": 610,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.84,
+    "campaign_count": 8,
+    "avg_campaign_roi": 1.7,
+    "avg_conversion_rate": 0.056,
+    "last_campaign_date": "2025-08-27",
+    "performance_tier": "bronze",
+    "email": "oronmozes+addisoninteri@gmail.com",
+    "website": "https://addisoninteri.com",
+    "profile_url": "https://tiktok.com/@addison.interi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Indonesia"
+    }
+  },
+  {
+    "id": "tiktok_1062",
+    "platform": "tiktok",
+    "username": "the_liam_sustai",
+    "display_name": "Liam's Sustainable Fashion",
+    "bio": "\u2728 Content creator | Passionate creator | Sydney | DM for collabs",
+    "category": "fashion_and_beauty",
+    "subcategory": "sustainable_fashion",
+    "location_country": "Australia",
+    "location_city": "Sydney",
+    "languages": [
+      "en"
+    ],
+    "followers": 274968,
+    "engagement_rate": 3.39,
+    "avg_likes": 9321,
+    "avg_comments": 341,
+    "posts_count": 761,
+    "authenticity_score": 0.77,
+    "brand_safety_score": 0.82,
+    "quality_score": 0.79,
+    "campaign_count": 9,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.044,
+    "last_campaign_date": "2025-11-03",
+    "performance_tier": "bronze",
+    "email": "oronmozes+theliamsustai@gmail.com",
+    "website": "https://theliamsustai.com",
+    "profile_url": "https://tiktok.com/@the_liam_sustai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Australia"
+    }
+  },
+  {
+    "id": "tiktok_1063",
+    "platform": "tiktok",
+    "username": "zoe.books",
+    "display_name": "Zoe's Books",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Follow my journey",
+    "category": "entertainment",
+    "subcategory": "books",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 484860,
+    "engagement_rate": 2.7,
+    "avg_likes": 13091,
+    "avg_comments": 782,
+    "posts_count": 206,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.89,
+    "campaign_count": 4,
+    "avg_campaign_roi": 1.9,
+    "avg_conversion_rate": 0.021,
+    "last_campaign_date": "2025-10-21",
+    "performance_tier": "bronze",
+    "email": "oronmozes+zoebooks@gmail.com",
+    "website": "https://zoebooks.com",
+    "profile_url": "https://tiktok.com/@zoe.books",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1064",
+    "platform": "youtube",
+    "username": "the_claire_parent",
+    "display_name": "Claire's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Barcelona | Subscribe for more",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "Spain",
+    "location_city": "Barcelona",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 336948,
+    "engagement_rate": 5.16,
+    "avg_likes": 17386,
+    "avg_comments": 653,
+    "posts_count": 361,
+    "authenticity_score": 0.79,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.86,
+    "campaign_count": 4,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.054,
+    "last_campaign_date": "2025-09-14",
+    "performance_tier": "bronze",
+    "email": "oronmozes+theclaireparent@gmail.com",
+    "website": "https://theclaireparent.com",
+    "profile_url": "https://youtube.com/@the_claire_parent",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Spain"
+    }
+  },
+  {
+    "id": "tiktok_1065",
+    "platform": "tiktok",
+    "username": "jayden.health",
+    "display_name": "Jayden's Healthy Eating",
+    "bio": "\u2728 Content creator | Passionate creator | Bangalore | Follow my journey",
+    "category": "food_and_beverage",
+    "subcategory": "healthy_eating",
+    "location_country": "India",
+    "location_city": "Bangalore",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 477445,
+    "engagement_rate": 7.84,
+    "avg_likes": 37431,
+    "avg_comments": 1851,
+    "posts_count": 571,
+    "authenticity_score": 0.96,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.9,
+    "campaign_count": 19,
+    "avg_campaign_roi": 3.1,
+    "avg_conversion_rate": 0.042,
+    "last_campaign_date": "2025-10-01",
+    "performance_tier": "gold",
+    "email": "oronmozes+jaydenhealth@gmail.com",
+    "website": "https://jaydenhealth.com",
+    "profile_url": "https://tiktok.com/@jayden.health",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "instagram_1066",
+    "platform": "instagram",
+    "username": "benjamin.runnin",
+    "display_name": "Benjamin's Running",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Shop my recommendations",
+    "category": "fitness_and_wellness",
+    "subcategory": "running",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 372221,
+    "engagement_rate": 7.4,
+    "avg_likes": 27544,
+    "avg_comments": 1501,
+    "posts_count": 691,
+    "authenticity_score": 0.89,
+    "brand_safety_score": 0.89,
+    "quality_score": 0.89,
+    "campaign_count": 11,
+    "avg_campaign_roi": 1.8,
+    "avg_conversion_rate": 0.063,
+    "last_campaign_date": "2025-08-30",
+    "performance_tier": "silver",
+    "email": "oronmozes+benjaminrunnin@gmail.com",
+    "website": "https://benjaminrunnin.com",
+    "profile_url": "https://instagram.com/benjamin.runnin",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1067",
+    "platform": "tiktok",
+    "username": "leah_budget",
+    "display_name": "Leah's Budget Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Bangalore | Book a session",
+    "category": "travel_and_lifestyle",
+    "subcategory": "budget_travel",
+    "location_country": "India",
+    "location_city": "Bangalore",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 83730,
+    "engagement_rate": 5.69,
+    "avg_likes": 4764,
+    "avg_comments": 366,
+    "posts_count": 651,
+    "authenticity_score": 0.95,
+    "brand_safety_score": 0.82,
+    "quality_score": 0.89,
+    "campaign_count": 0,
+    "avg_campaign_roi": 0,
+    "avg_conversion_rate": 0,
+    "last_campaign_date": null,
+    "performance_tier": "bronze",
+    "email": "oronmozes+leahbudget@gmail.com",
+    "website": "https://leahbudget.com",
+    "profile_url": "https://tiktok.com/@leah_budget",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "tiktok_1068",
+    "platform": "tiktok",
+    "username": "hazel.makeup",
+    "display_name": "Hazel's Makeup",
+    "bio": "\ud83d\udc84 Makeup artist | Glam looks tutorials | Mexico City | Shop my recommendations",
+    "category": "fashion_and_beauty",
+    "subcategory": "makeup",
+    "location_country": "Mexico",
+    "location_city": "Mexico City",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 379922,
+    "engagement_rate": 2.89,
+    "avg_likes": 10979,
+    "avg_comments": 796,
+    "posts_count": 622,
+    "authenticity_score": 0.78,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.8,
+    "campaign_count": 8,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.054,
+    "last_campaign_date": "2025-10-03",
+    "performance_tier": "bronze",
+    "email": "oronmozes+hazelmakeup@gmail.com",
+    "website": "https://hazelmakeup.com",
+    "profile_url": "https://tiktok.com/@hazel.makeup",
+    "content_themes": [
+      "makeup tutorials",
+      "product reviews",
+      "beauty hacks",
+      "skincare routines"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 77,
+        "male": 23
+      },
+      "age_range": "25-34",
+      "interests": [
+        "beauty",
+        "makeup",
+        "skincare",
+        "fashion",
+        "lifestyle"
+      ],
+      "location": "Mexico"
+    }
+  },
+  {
+    "id": "youtube_1069",
+    "platform": "youtube",
+    "username": "joshua_sustai",
+    "display_name": "Joshua's Sustainable Fashion",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Check my latest post",
+    "category": "fashion_and_beauty",
+    "subcategory": "sustainable_fashion",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 388642,
+    "engagement_rate": 2.18,
+    "avg_likes": 8472,
+    "avg_comments": 226,
+    "posts_count": 277,
+    "authenticity_score": 0.98,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.94,
+    "campaign_count": 16,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.039,
+    "last_campaign_date": "2025-08-20",
+    "performance_tier": "bronze",
+    "email": "oronmozes+joshuasustai@gmail.com",
+    "website": "https://joshuasustai.com",
+    "profile_url": "https://youtube.com/@joshua_sustai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1070",
+    "platform": "tiktok",
+    "username": "thomas.reales",
+    "display_name": "Thomas's Real Estate",
+    "bio": "\u2728 Content creator | Passionate creator | Vancouver | Follow my journey",
+    "category": "business_and_finance",
+    "subcategory": "real_estate",
+    "location_country": "Canada",
+    "location_city": "Vancouver",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 203780,
+    "engagement_rate": 7.73,
+    "avg_likes": 15752,
+    "avg_comments": 721,
+    "posts_count": 581,
+    "authenticity_score": 0.89,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.92,
+    "campaign_count": 2,
+    "avg_campaign_roi": 1.7,
+    "avg_conversion_rate": 0.018,
+    "last_campaign_date": "2025-08-23",
+    "performance_tier": "silver",
+    "email": "oronmozes+thomasreales@gmail.com",
+    "website": "https://thomasreales.com",
+    "profile_url": "https://tiktok.com/@thomas.reales",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "youtube_1071",
+    "platform": "youtube",
+    "username": "the_amelia_diy",
+    "display_name": "Amelia's Diy",
+    "bio": "\u2728 Content creator | Passionate creator | Austin | Link in bio",
+    "category": "home_and_diy",
+    "subcategory": "diy",
+    "location_country": "USA",
+    "location_city": "Austin",
+    "languages": [
+      "en"
+    ],
+    "followers": 83754,
+    "engagement_rate": 4.16,
+    "avg_likes": 3484,
+    "avg_comments": 170,
+    "posts_count": 426,
+    "authenticity_score": 0.87,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.85,
+    "campaign_count": 16,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-09-16",
+    "performance_tier": "bronze",
+    "email": "oronmozes+theameliadiy@gmail.com",
+    "website": "https://theameliadiy.com",
+    "profile_url": "https://youtube.com/@the_amelia_diy",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1072",
+    "platform": "youtube",
+    "username": "diy_alexander",
+    "display_name": "Alexander's Diy",
+    "bio": "\u2728 Content creator | Passionate creator | Rome | Join my community",
+    "category": "home_and_diy",
+    "subcategory": "diy",
+    "location_country": "Italy",
+    "location_city": "Rome",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 39996,
+    "engagement_rate": 5.28,
+    "avg_likes": 2111,
+    "avg_comments": 128,
+    "posts_count": 508,
+    "authenticity_score": 0.76,
+    "brand_safety_score": 0.96,
+    "quality_score": 0.86,
+    "campaign_count": 9,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.059,
+    "last_campaign_date": "2025-09-16",
+    "performance_tier": "bronze",
+    "email": "oronmozes+diyalexander@gmail.com",
+    "website": "https://diyalexander.com",
+    "profile_url": "https://youtube.com/@diy_alexander",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "tiktok_1073",
+    "platform": "tiktok",
+    "username": "the_joshua_organi",
+    "display_name": "Joshua's Organization",
+    "bio": "\u2728 Content creator | Passionate creator | Chiang Mai | Check my latest post",
+    "category": "home_and_diy",
+    "subcategory": "organization",
+    "location_country": "Thailand",
+    "location_city": "Chiang Mai",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 421621,
+    "engagement_rate": 4.82,
+    "avg_likes": 20322,
+    "avg_comments": 1547,
+    "posts_count": 314,
+    "authenticity_score": 0.94,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.88,
+    "campaign_count": 2,
+    "avg_campaign_roi": 3.7,
+    "avg_conversion_rate": 0.038,
+    "last_campaign_date": "2025-11-05",
+    "performance_tier": "silver",
+    "email": "oronmozes+thejoshuaorgani@gmail.com",
+    "website": "https://thejoshuaorgani.com",
+    "profile_url": "https://tiktok.com/@the_joshua_organi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "youtube_1074",
+    "platform": "youtube",
+    "username": "parent_michael",
+    "display_name": "Michael's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Bangalore | Check my latest post",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "India",
+    "location_city": "Bangalore",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 35628,
+    "engagement_rate": 5.45,
+    "avg_likes": 1941,
+    "avg_comments": 84,
+    "posts_count": 230,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.81,
+    "campaign_count": 5,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.057,
+    "last_campaign_date": "2025-11-16",
+    "performance_tier": "bronze",
+    "email": "oronmozes+parentmichael@gmail.com",
+    "website": "https://parentmichael.com",
+    "profile_url": "https://youtube.com/@parent_michael",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "instagram_1075",
+    "platform": "instagram",
+    "username": "david_dance",
+    "display_name": "David's Dance",
+    "bio": "\u2728 Content creator | Passionate creator | Toronto | Join my community",
+    "category": "entertainment",
+    "subcategory": "dance",
+    "location_country": "Canada",
+    "location_city": "Toronto",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 115566,
+    "engagement_rate": 7.06,
+    "avg_likes": 8158,
+    "avg_comments": 405,
+    "posts_count": 324,
+    "authenticity_score": 0.95,
+    "brand_safety_score": 0.84,
+    "quality_score": 0.9,
+    "campaign_count": 6,
+    "avg_campaign_roi": 3.9,
+    "avg_conversion_rate": 0.058,
+    "last_campaign_date": "2025-11-15",
+    "performance_tier": "gold",
+    "email": "oronmozes+daviddance@gmail.com",
+    "website": "https://daviddance.com",
+    "profile_url": "https://instagram.com/david_dance",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "youtube_1076",
+    "platform": "youtube",
+    "username": "alexander_gym",
+    "display_name": "Alexander's Gym",
+    "bio": "\ud83d\udcaa HIIT workouts trainer | Fitness coach | Los Angeles | DM for collabs",
+    "category": "fitness_and_wellness",
+    "subcategory": "gym",
+    "location_country": "USA",
+    "location_city": "Los Angeles",
+    "languages": [
+      "en"
+    ],
+    "followers": 127109,
+    "engagement_rate": 7.02,
+    "avg_likes": 8923,
+    "avg_comments": 196,
+    "posts_count": 232,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.92,
+    "quality_score": 0.9,
+    "campaign_count": 14,
+    "avg_campaign_roi": 2.6,
+    "avg_conversion_rate": 0.056,
+    "last_campaign_date": "2025-11-14",
+    "performance_tier": "silver",
+    "email": "oronmozes+alexandergym@gmail.com",
+    "website": "https://alexandergym.com",
+    "profile_url": "https://youtube.com/@alexander_gym",
+    "content_themes": [
+      "workout routines",
+      "fitness tips",
+      "nutrition advice",
+      "transformation stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 25,
+        "male": 75
+      },
+      "age_range": "18-24",
+      "interests": [
+        "fitness",
+        "health",
+        "sports",
+        "nutrition",
+        "lifestyle"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1077",
+    "platform": "tiktok",
+    "username": "budget_skylar",
+    "display_name": "Skylar's Budget Travel",
+    "bio": "\u2728 Content creator | Passionate creator | Austin | DM for collabs",
+    "category": "travel_and_lifestyle",
+    "subcategory": "budget_travel",
+    "location_country": "USA",
+    "location_city": "Austin",
+    "languages": [
+      "en"
+    ],
+    "followers": 39633,
+    "engagement_rate": 7.67,
+    "avg_likes": 3039,
+    "avg_comments": 143,
+    "posts_count": 527,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.81,
+    "campaign_count": 5,
+    "avg_campaign_roi": 1.8,
+    "avg_conversion_rate": 0.017,
+    "last_campaign_date": "2025-09-14",
+    "performance_tier": "silver",
+    "email": "oronmozes+budgetskylar@gmail.com",
+    "website": "https://budgetskylar.com",
+    "profile_url": "https://tiktok.com/@budget_skylar",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "youtube_1078",
+    "platform": "youtube",
+    "username": "comedy_elijah",
+    "display_name": "Elijah's Comedy",
+    "bio": "\u2728 Content creator | Passionate creator | Chiang Mai | Link in bio",
+    "category": "entertainment",
+    "subcategory": "comedy",
+    "location_country": "Thailand",
+    "location_city": "Chiang Mai",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 250268,
+    "engagement_rate": 6.29,
+    "avg_likes": 15741,
+    "avg_comments": 534,
+    "posts_count": 508,
+    "authenticity_score": 0.75,
+    "brand_safety_score": 0.87,
+    "quality_score": 0.81,
+    "campaign_count": 16,
+    "avg_campaign_roi": 2.4,
+    "avg_conversion_rate": 0.026,
+    "last_campaign_date": "2025-10-10",
+    "performance_tier": "bronze",
+    "email": "oronmozes+comedyelijah@gmail.com",
+    "website": "https://comedyelijah.com",
+    "profile_url": "https://youtube.com/@comedy_elijah",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "tiktok_1079",
+    "platform": "tiktok",
+    "username": "liam.makeup",
+    "display_name": "Liam's Makeup",
+    "bio": "\ud83d\udc84 Makeup artist | Natural makeup tutorials | Madrid | Book a session",
+    "category": "fashion_and_beauty",
+    "subcategory": "makeup",
+    "location_country": "Spain",
+    "location_city": "Madrid",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 265988,
+    "engagement_rate": 3.32,
+    "avg_likes": 8830,
+    "avg_comments": 422,
+    "posts_count": 102,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.82,
+    "quality_score": 0.83,
+    "campaign_count": 15,
+    "avg_campaign_roi": 2.3,
+    "avg_conversion_rate": 0.057,
+    "last_campaign_date": "2025-10-09",
+    "performance_tier": "bronze",
+    "email": "oronmozes+liammakeup@gmail.com",
+    "website": "https://liammakeup.com",
+    "profile_url": "https://tiktok.com/@liam.makeup",
+    "content_themes": [
+      "makeup tutorials",
+      "product reviews",
+      "beauty hacks",
+      "skincare routines"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 77,
+        "male": 23
+      },
+      "age_range": "18-24",
+      "interests": [
+        "beauty",
+        "makeup",
+        "skincare",
+        "fashion",
+        "lifestyle"
+      ],
+      "location": "Spain"
+    }
+  },
+  {
+    "id": "instagram_1080",
+    "platform": "instagram",
+    "username": "books_carter",
+    "display_name": "Carter's Books",
+    "bio": "\u2728 Content creator | Passionate creator | Chiang Mai | Subscribe for more",
+    "category": "entertainment",
+    "subcategory": "books",
+    "location_country": "Thailand",
+    "location_city": "Chiang Mai",
+    "languages": [
+      "th",
+      "en"
+    ],
+    "followers": 444131,
+    "engagement_rate": 6.11,
+    "avg_likes": 27136,
+    "avg_comments": 727,
+    "posts_count": 476,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.89,
+    "campaign_count": 4,
+    "avg_campaign_roi": 3.0,
+    "avg_conversion_rate": 0.023,
+    "last_campaign_date": "2025-09-13",
+    "performance_tier": "silver",
+    "email": "oronmozes+bookscarter@gmail.com",
+    "website": "https://bookscarter.com",
+    "profile_url": "https://instagram.com/books_carter",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Thailand"
+    }
+  },
+  {
+    "id": "tiktok_1081",
+    "platform": "tiktok",
+    "username": "emma_reales",
+    "display_name": "Emma's Real Estate",
+    "bio": "\u2728 Content creator | Passionate creator | Vancouver | Subscribe for more",
+    "category": "business_and_finance",
+    "subcategory": "real_estate",
+    "location_country": "Canada",
+    "location_city": "Vancouver",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 17446,
+    "engagement_rate": 5.42,
+    "avg_likes": 945,
+    "avg_comments": 28,
+    "posts_count": 212,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.96,
+    "quality_score": 0.9,
+    "campaign_count": 10,
+    "avg_campaign_roi": 2.9,
+    "avg_conversion_rate": 0.064,
+    "last_campaign_date": "2025-10-06",
+    "performance_tier": "bronze",
+    "email": "oronmozes+emmareales@gmail.com",
+    "website": "https://emmareales.com",
+    "profile_url": "https://tiktok.com/@emma_reales",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 49,
+        "male": 51
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "instagram_1082",
+    "platform": "instagram",
+    "username": "the_mason_sustai",
+    "display_name": "Mason's Sustainable Fashion",
+    "bio": "\u2728 Content creator | Passionate creator | Mumbai | Join my community",
+    "category": "fashion_and_beauty",
+    "subcategory": "sustainable_fashion",
+    "location_country": "India",
+    "location_city": "Mumbai",
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "followers": 343487,
+    "engagement_rate": 4.35,
+    "avg_likes": 14941,
+    "avg_comments": 682,
+    "posts_count": 112,
+    "authenticity_score": 0.84,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.87,
+    "campaign_count": 10,
+    "avg_campaign_roi": 3.6,
+    "avg_conversion_rate": 0.049,
+    "last_campaign_date": "2025-10-24",
+    "performance_tier": "bronze",
+    "email": "oronmozes+themasonsustai@gmail.com",
+    "website": "https://themasonsustai.com",
+    "profile_url": "https://instagram.com/the_mason_sustai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 55,
+        "male": 45
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "India"
+    }
+  },
+  {
+    "id": "instagram_1083",
+    "platform": "instagram",
+    "username": "gym_mia",
+    "display_name": "Mia's Gym",
+    "bio": "\ud83d\udcaa Bodybuilding trainer | Fitness coach | Paris | Check my latest post",
+    "category": "fitness_and_wellness",
+    "subcategory": "gym",
+    "location_country": "France",
+    "location_city": "Paris",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "followers": 30125,
+    "engagement_rate": 4.81,
+    "avg_likes": 1449,
+    "avg_comments": 67,
+    "posts_count": 459,
+    "authenticity_score": 0.97,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.9,
+    "campaign_count": 10,
+    "avg_campaign_roi": 3.4,
+    "avg_conversion_rate": 0.058,
+    "last_campaign_date": "2025-09-18",
+    "performance_tier": "silver",
+    "email": "oronmozes+gymmia@gmail.com",
+    "website": "https://gymmia.com",
+    "profile_url": "https://instagram.com/gym_mia",
+    "content_themes": [
+      "workout routines",
+      "fitness tips",
+      "nutrition advice",
+      "transformation stories"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 38,
+        "male": 62
+      },
+      "age_range": "18-24",
+      "interests": [
+        "fitness",
+        "health",
+        "sports",
+        "nutrition",
+        "lifestyle"
+      ],
+      "location": "France"
+    }
+  },
+  {
+    "id": "instagram_1084",
+    "platform": "instagram",
+    "username": "daniel_interi",
+    "display_name": "Daniel's Interior Design",
+    "bio": "\u2728 Content creator | Passionate creator | Tokyo | Shop my recommendations",
+    "category": "home_and_diy",
+    "subcategory": "interior_design",
+    "location_country": "Japan",
+    "location_city": "Tokyo",
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "followers": 324691,
+    "engagement_rate": 4.94,
+    "avg_likes": 16039,
+    "avg_comments": 1131,
+    "posts_count": 520,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.95,
+    "quality_score": 0.88,
+    "campaign_count": 2,
+    "avg_campaign_roi": 1.9,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-09-29",
+    "performance_tier": "bronze",
+    "email": "oronmozes+danielinteri@gmail.com",
+    "website": "https://danielinteri.com",
+    "profile_url": "https://instagram.com/daniel_interi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Japan"
+    }
+  },
+  {
+    "id": "tiktok_1085",
+    "platform": "tiktok",
+    "username": "organi_lillian",
+    "display_name": "Lillian's Organization",
+    "bio": "\u2728 Content creator | Passionate creator | S\u00e3o Paulo | Link in bio",
+    "category": "home_and_diy",
+    "subcategory": "organization",
+    "location_country": "Brazil",
+    "location_city": "S\u00e3o Paulo",
+    "languages": [
+      "pt",
+      "en"
+    ],
+    "followers": 354549,
+    "engagement_rate": 2.36,
+    "avg_likes": 8367,
+    "avg_comments": 463,
+    "posts_count": 694,
+    "authenticity_score": 0.95,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.88,
+    "campaign_count": 4,
+    "avg_campaign_roi": 2.0,
+    "avg_conversion_rate": 0.056,
+    "last_campaign_date": "2025-10-05",
+    "performance_tier": "bronze",
+    "email": "oronmozes+organilillian@gmail.com",
+    "website": "https://organilillian.com",
+    "profile_url": "https://tiktok.com/@organi_lillian",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Brazil"
+    }
+  },
+  {
+    "id": "instagram_1086",
+    "platform": "instagram",
+    "username": "aurora_fashio",
+    "display_name": "Aurora's Fashion",
+    "bio": "\ud83d\udc57 Fashion Thrift shopping | Style tips | Munich | Link in bio",
+    "category": "fashion_and_beauty",
+    "subcategory": "fashion",
+    "location_country": "Germany",
+    "location_city": "Munich",
+    "languages": [
+      "de",
+      "en"
+    ],
+    "followers": 352666,
+    "engagement_rate": 3.37,
+    "avg_likes": 11884,
+    "avg_comments": 920,
+    "posts_count": 73,
+    "authenticity_score": 0.81,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.81,
+    "campaign_count": 14,
+    "avg_campaign_roi": 2.0,
+    "avg_conversion_rate": 0.049,
+    "last_campaign_date": "2025-09-27",
+    "performance_tier": "bronze",
+    "email": "oronmozes+aurorafashio@gmail.com",
+    "website": "https://aurorafashio.com",
+    "profile_url": "https://instagram.com/aurora_fashio",
+    "content_themes": [
+      "outfit ideas",
+      "fashion trends",
+      "styling tips",
+      "brand reviews"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 62,
+        "male": 38
+      },
+      "age_range": "18-24",
+      "interests": [
+        "fashion",
+        "beauty",
+        "shopping",
+        "lifestyle",
+        "travel"
+      ],
+      "location": "Germany"
+    }
+  },
+  {
+    "id": "tiktok_1087",
+    "platform": "tiktok",
+    "username": "grace.interi",
+    "display_name": "Grace's Interior Design",
+    "bio": "\u2728 Content creator | Passionate creator | Rome | Join my community",
+    "category": "home_and_diy",
+    "subcategory": "interior_design",
+    "location_country": "Italy",
+    "location_city": "Rome",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 231437,
+    "engagement_rate": 2.62,
+    "avg_likes": 6063,
+    "avg_comments": 272,
+    "posts_count": 404,
+    "authenticity_score": 0.82,
+    "brand_safety_score": 0.86,
+    "quality_score": 0.84,
+    "campaign_count": 9,
+    "avg_campaign_roi": 4.0,
+    "avg_conversion_rate": 0.031,
+    "last_campaign_date": "2025-11-03",
+    "performance_tier": "bronze",
+    "email": "oronmozes+graceinteri@gmail.com",
+    "website": "https://graceinteri.com",
+    "profile_url": "https://tiktok.com/@grace.interi",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  },
+  {
+    "id": "youtube_1088",
+    "platform": "youtube",
+    "username": "the_dylan_diy",
+    "display_name": "Dylan's Diy",
+    "bio": "\u2728 Content creator | Passionate creator | Austin | Check my latest post",
+    "category": "home_and_diy",
+    "subcategory": "diy",
+    "location_country": "USA",
+    "location_city": "Austin",
+    "languages": [
+      "en"
+    ],
+    "followers": 82212,
+    "engagement_rate": 6.63,
+    "avg_likes": 5450,
+    "avg_comments": 298,
+    "posts_count": 158,
+    "authenticity_score": 0.92,
+    "brand_safety_score": 0.87,
+    "quality_score": 0.9,
+    "campaign_count": 15,
+    "avg_campaign_roi": 3.2,
+    "avg_conversion_rate": 0.056,
+    "last_campaign_date": "2025-08-23",
+    "performance_tier": "silver",
+    "email": "oronmozes+thedylandiy@gmail.com",
+    "website": "https://thedylandiy.com",
+    "profile_url": "https://youtube.com/@the_dylan_diy",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1089",
+    "platform": "instagram",
+    "username": "skylar_coding",
+    "display_name": "Skylar's Coding",
+    "bio": "\u2728 Content creator | Passionate creator | Vancouver | Book a session",
+    "category": "tech_and_gaming",
+    "subcategory": "coding",
+    "location_country": "Canada",
+    "location_city": "Vancouver",
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "followers": 400770,
+    "engagement_rate": 2.83,
+    "avg_likes": 11341,
+    "avg_comments": 746,
+    "posts_count": 433,
+    "authenticity_score": 0.96,
+    "brand_safety_score": 0.88,
+    "quality_score": 0.92,
+    "campaign_count": 0,
+    "avg_campaign_roi": 0,
+    "avg_conversion_rate": 0,
+    "last_campaign_date": null,
+    "performance_tier": "bronze",
+    "email": "oronmozes+skylarcoding@gmail.com",
+    "website": "https://skylarcoding.com",
+    "profile_url": "https://instagram.com/skylar_coding",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Canada"
+    }
+  },
+  {
+    "id": "tiktok_1090",
+    "platform": "tiktok",
+    "username": "emma.nutrit",
+    "display_name": "Emma's Nutrition",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Book a session",
+    "category": "fitness_and_wellness",
+    "subcategory": "nutrition",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 391279,
+    "engagement_rate": 6.5,
+    "avg_likes": 25433,
+    "avg_comments": 858,
+    "posts_count": 360,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.81,
+    "campaign_count": 8,
+    "avg_campaign_roi": 3.1,
+    "avg_conversion_rate": 0.018,
+    "last_campaign_date": "2025-10-24",
+    "performance_tier": "silver",
+    "email": "oronmozes+emmanutrit@gmail.com",
+    "website": "https://emmanutrit.com",
+    "profile_url": "https://tiktok.com/@emma.nutrit",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 46,
+        "male": 54
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "instagram_1091",
+    "platform": "instagram",
+    "username": "jaxon_babypr",
+    "display_name": "Jaxon's Baby Products",
+    "bio": "\u2728 Content creator | Passionate creator | Barcelona | Check my latest post",
+    "category": "parenting_and_family",
+    "subcategory": "baby_products",
+    "location_country": "Spain",
+    "location_city": "Barcelona",
+    "languages": [
+      "es",
+      "en"
+    ],
+    "followers": 295888,
+    "engagement_rate": 4.67,
+    "avg_likes": 13817,
+    "avg_comments": 472,
+    "posts_count": 469,
+    "authenticity_score": 0.89,
+    "brand_safety_score": 0.97,
+    "quality_score": 0.93,
+    "campaign_count": 14,
+    "avg_campaign_roi": 2.5,
+    "avg_conversion_rate": 0.058,
+    "last_campaign_date": "2025-08-20",
+    "performance_tier": "bronze",
+    "email": "oronmozes+jaxonbabypr@gmail.com",
+    "website": "https://jaxonbabypr.com",
+    "profile_url": "https://instagram.com/jaxon_babypr",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 53,
+        "male": 47
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Spain"
+    }
+  },
+  {
+    "id": "youtube_1092",
+    "platform": "youtube",
+    "username": "alexander.sustai",
+    "display_name": "Alexander's Sustainable Fashion",
+    "bio": "\u2728 Content creator | Passionate creator | Miami | Check my latest post",
+    "category": "fashion_and_beauty",
+    "subcategory": "sustainable_fashion",
+    "location_country": "USA",
+    "location_city": "Miami",
+    "languages": [
+      "en"
+    ],
+    "followers": 265410,
+    "engagement_rate": 3.23,
+    "avg_likes": 8572,
+    "avg_comments": 254,
+    "posts_count": 64,
+    "authenticity_score": 0.78,
+    "brand_safety_score": 0.9,
+    "quality_score": 0.84,
+    "campaign_count": 14,
+    "avg_campaign_roi": 1.6,
+    "avg_conversion_rate": 0.039,
+    "last_campaign_date": "2025-09-17",
+    "performance_tier": "bronze",
+    "email": "oronmozes+alexandersustai@gmail.com",
+    "website": "https://alexandersustai.com",
+    "profile_url": "https://youtube.com/@alexander.sustai",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 47,
+        "male": 53
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1093",
+    "platform": "tiktok",
+    "username": "aurora_produc",
+    "display_name": "Aurora's Productivity",
+    "bio": "\u2728 Content creator | Passionate creator | New York | Follow my journey",
+    "category": "business_and_finance",
+    "subcategory": "productivity",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 235912,
+    "engagement_rate": 3.42,
+    "avg_likes": 8068,
+    "avg_comments": 326,
+    "posts_count": 461,
+    "authenticity_score": 0.85,
+    "brand_safety_score": 0.96,
+    "quality_score": 0.91,
+    "campaign_count": 16,
+    "avg_campaign_roi": 4.3,
+    "avg_conversion_rate": 0.054,
+    "last_campaign_date": "2025-10-08",
+    "performance_tier": "bronze",
+    "email": "oronmozes+auroraproduc@gmail.com",
+    "website": "https://auroraproduc.com",
+    "profile_url": "https://tiktok.com/@aurora_produc",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1094",
+    "platform": "tiktok",
+    "username": "victoria.restau",
+    "display_name": "Victoria's Restaurants",
+    "bio": "\ud83d\udc68\u200d\ud83c\udf73 Street food chef | Food lover | New York | Shop my recommendations",
+    "category": "food_and_beverage",
+    "subcategory": "restaurants",
+    "location_country": "USA",
+    "location_city": "New York",
+    "languages": [
+      "en"
+    ],
+    "followers": 35709,
+    "engagement_rate": 7.41,
+    "avg_likes": 2646,
+    "avg_comments": 140,
+    "posts_count": 655,
+    "authenticity_score": 0.92,
+    "brand_safety_score": 0.87,
+    "quality_score": 0.9,
+    "campaign_count": 15,
+    "avg_campaign_roi": 2.1,
+    "avg_conversion_rate": 0.051,
+    "last_campaign_date": "2025-09-18",
+    "performance_tier": "silver",
+    "email": "oronmozes+victoriarestau@gmail.com",
+    "website": "https://victoriarestau.com",
+    "profile_url": "https://tiktok.com/@victoria.restau",
+    "content_themes": [
+      "recipes",
+      "cooking tips",
+      "food photography",
+      "restaurant reviews"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 54,
+        "male": 46
+      },
+      "age_range": "35-44",
+      "interests": [
+        "food",
+        "dining",
+        "cooking",
+        "travel",
+        "lifestyle"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1095",
+    "platform": "tiktok",
+    "username": "parent_ellie",
+    "display_name": "Ellie's Parenting",
+    "bio": "\u2728 Content creator | Passionate creator | Dubai | Subscribe for more",
+    "category": "parenting_and_family",
+    "subcategory": "parenting",
+    "location_country": "UAE",
+    "location_city": "Dubai",
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "followers": 448771,
+    "engagement_rate": 3.16,
+    "avg_likes": 14181,
+    "avg_comments": 803,
+    "posts_count": 217,
+    "authenticity_score": 0.8,
+    "brand_safety_score": 0.81,
+    "quality_score": 0.81,
+    "campaign_count": 0,
+    "avg_campaign_roi": 0,
+    "avg_conversion_rate": 0,
+    "last_campaign_date": null,
+    "performance_tier": "bronze",
+    "email": "oronmozes+parentellie@gmail.com",
+    "website": "https://parentellie.com",
+    "profile_url": "https://tiktok.com/@parent_ellie",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 51,
+        "male": 49
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "UAE"
+    }
+  },
+  {
+    "id": "tiktok_1096",
+    "platform": "tiktok",
+    "username": "matthew_travel",
+    "display_name": "Matthew's Travel",
+    "bio": "\ud83c\udf0d Van life traveler | 58 countries | Paris | Book a session",
+    "category": "travel_and_lifestyle",
+    "subcategory": "travel",
+    "location_country": "France",
+    "location_city": "Paris",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "followers": 398981,
+    "engagement_rate": 3.55,
+    "avg_likes": 14163,
+    "avg_comments": 743,
+    "posts_count": 190,
+    "authenticity_score": 0.83,
+    "brand_safety_score": 0.93,
+    "quality_score": 0.88,
+    "campaign_count": 13,
+    "avg_campaign_roi": 3.6,
+    "avg_conversion_rate": 0.045,
+    "last_campaign_date": "2025-10-02",
+    "performance_tier": "bronze",
+    "email": "oronmozes+matthewtravel@gmail.com",
+    "website": "https://matthewtravel.com",
+    "profile_url": "https://tiktok.com/@matthew_travel",
+    "content_themes": [
+      "travel guides",
+      "destination reviews",
+      "travel hacks",
+      "cultural experiences"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 45,
+        "male": 55
+      },
+      "age_range": "35-44",
+      "interests": [
+        "travel",
+        "adventure",
+        "photography",
+        "culture",
+        "food"
+      ],
+      "location": "France"
+    }
+  },
+  {
+    "id": "tiktok_1097",
+    "platform": "tiktok",
+    "username": "the_aurora_diy",
+    "display_name": "Aurora's Diy",
+    "bio": "\u2728 Content creator | Passionate creator | San Francisco | Subscribe for more",
+    "category": "home_and_diy",
+    "subcategory": "diy",
+    "location_country": "USA",
+    "location_city": "San Francisco",
+    "languages": [
+      "en"
+    ],
+    "followers": 309153,
+    "engagement_rate": 7.68,
+    "avg_likes": 23742,
+    "avg_comments": 1292,
+    "posts_count": 431,
+    "authenticity_score": 0.76,
+    "brand_safety_score": 0.94,
+    "quality_score": 0.85,
+    "campaign_count": 18,
+    "avg_campaign_roi": 2.9,
+    "avg_conversion_rate": 0.059,
+    "last_campaign_date": "2025-08-23",
+    "performance_tier": "silver",
+    "email": "oronmozes+theauroradiy@gmail.com",
+    "website": "https://theauroradiy.com",
+    "profile_url": "https://tiktok.com/@the_aurora_diy",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 48,
+        "male": 52
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "USA"
+    }
+  },
+  {
+    "id": "tiktok_1098",
+    "platform": "tiktok",
+    "username": "ai_ella",
+    "display_name": "Ella's Ai",
+    "bio": "\u2728 Content creator | Passionate creator | Sydney | Follow my journey",
+    "category": "tech_and_gaming",
+    "subcategory": "ai",
+    "location_country": "Australia",
+    "location_city": "Sydney",
+    "languages": [
+      "en"
+    ],
+    "followers": 44502,
+    "engagement_rate": 6.36,
+    "avg_likes": 2830,
+    "avg_comments": 140,
+    "posts_count": 200,
+    "authenticity_score": 0.78,
+    "brand_safety_score": 0.96,
+    "quality_score": 0.87,
+    "campaign_count": 12,
+    "avg_campaign_roi": 3.5,
+    "avg_conversion_rate": 0.051,
+    "last_campaign_date": "2025-08-24",
+    "performance_tier": "silver",
+    "email": "oronmozes+aiella@gmail.com",
+    "website": "https://aiella.com",
+    "profile_url": "https://tiktok.com/@ai_ella",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 52,
+        "male": 48
+      },
+      "age_range": "18-24",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Australia"
+    }
+  },
+  {
+    "id": "youtube_1099",
+    "platform": "youtube",
+    "username": "caleb_music",
+    "display_name": "Caleb's Music",
+    "bio": "\u2728 Content creator | Passionate creator | Rome | DM for collabs",
+    "category": "entertainment",
+    "subcategory": "music",
+    "location_country": "Italy",
+    "location_city": "Rome",
+    "languages": [
+      "it",
+      "en"
+    ],
+    "followers": 331760,
+    "engagement_rate": 5.61,
+    "avg_likes": 18611,
+    "avg_comments": 981,
+    "posts_count": 566,
+    "authenticity_score": 0.88,
+    "brand_safety_score": 0.83,
+    "quality_score": 0.85,
+    "campaign_count": 9,
+    "avg_campaign_roi": 2.3,
+    "avg_conversion_rate": 0.035,
+    "last_campaign_date": "2025-09-21",
+    "performance_tier": "bronze",
+    "email": "oronmozes+calebmusic@gmail.com",
+    "website": "https://calebmusic.com",
+    "profile_url": "https://youtube.com/@caleb_music",
+    "content_themes": [
+      "lifestyle content",
+      "daily vlogs",
+      "tips and tricks",
+      "inspiration"
+    ],
+    "audience_demographics": {
+      "gender": {
+        "female": 50,
+        "male": 50
+      },
+      "age_range": "25-34",
+      "interests": [
+        "lifestyle",
+        "entertainment",
+        "social media"
+      ],
+      "location": "Italy"
+    }
+  }
+]

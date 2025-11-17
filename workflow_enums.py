@@ -70,3 +70,16 @@ class CampaignBriefField(str, Enum):
     PRODUCT_INFO = "product_info"
     AUDIENCE_DEMOGRAPHICS = "audience_demographics"
     AUDIENCE_INTERESTS = "audience_interests"
+
+
+class OutreachStatus(str, Enum):
+    """Agent-specific status for the outreach message agent.
+
+    This represents the internal state of the outreach agent and is NOT
+    shared with other agents or the orchestrator.
+    """
+    PREPARING = "preparing"  # Crafting outreach message
+    EMAIL_SENT = "email_sent"  # Email sent to influencer
+    AWAITING_RESPONSE = "awaiting_response"  # Waiting for influencer response
+    RESPONSE_RECEIVED = "response_received"  # Influencer responded
+    COMPLETE = "complete"  # Outreach process finished

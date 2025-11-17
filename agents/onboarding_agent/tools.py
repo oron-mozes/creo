@@ -1,4 +1,5 @@
 """Tools for the onboarding agent to collect and save business information."""
+from typing import Optional
 from google.adk.tools import FunctionTool
 
 
@@ -6,8 +7,8 @@ def save_business_card_tool(
     name: str,
     location: str,
     service_type: str,
-    website: str = None,
-    social_links: str = None
+    website: Optional[str] = None,
+    social_links: Optional[str] = None
 ) -> str:
     """Save business card information to the database.
 

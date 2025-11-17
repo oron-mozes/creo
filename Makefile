@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server dev-reset docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
+.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server dev-reset docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets setup-gmail
 
 # Virtual environment path
 VENV = venv
@@ -39,6 +39,7 @@ help:
 	@echo "  make verify-env     - Verify all environment variables are configured"
 	@echo "  make sync-secrets   - Sync secrets from .env to Google Secret Manager"
 	@echo "  make verify-secrets - Verify secrets in Google Secret Manager"
+	@echo "  make setup-gmail    - Setup Gmail OAuth authentication for outreach emails"
 
 # Create virtual environment
 venv:
@@ -250,3 +251,9 @@ sync-secrets:
 # Verify secrets in Google Secret Manager
 verify-secrets:
 	@bash scripts/verify_secrets.sh
+
+# Setup Gmail OAuth authentication
+setup-gmail: venv
+	@echo "Setting up Gmail OAuth authentication..."
+	@echo "This will open your browser to authenticate with Google."
+	@$(PYTHON) -c "from utils.gmail_utils import gmail_service; gmail_service.authenticate(); print('✓ Gmail authentication successful!')"
