@@ -380,7 +380,7 @@
                 <!-- Chat Area -->
                 <div id="chat-main-area" class="space-y-6">
                     <!-- Messages Container -->
-                    <div id="chat-messages-wrapper" class="space-y-4">
+                    <div id="chat-messages-wrapper" class="space-y-4 relative">
                         <div id="chatMessages">
                             <!-- Loading indicator -->
                             <div id="loadingIndicator" class="flex gap-4 animate-fade-in">
@@ -400,6 +400,20 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- New Message Indicator -->
+                        <div id="newMessageIndicator" class="hidden fixed bottom-28 left-1/2 transform -translate-x-1/2 z-50">
+                            <button onclick="scrollToBottom()"
+                                class="flex items-center gap-2 px-4 py-2 rounded-full shadow-lg transition-all"
+                                style="background-color: rgb(0, 160, 235); color: white;"
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                </svg>
+                                New message
+                            </button>
                         </div>
                     </div>
 
@@ -853,8 +867,14 @@
                 });
 
                 socket.on('message_complete', (data) => {
-                    finishStreamingResponse();
-                    hideLoading();
+                    // If we were streaming, finish it
+                    if (currentResponseDiv) {
+                        finishStreamingResponse();
+                    } else if (data.message) {
+                        // No streaming occurred, display the complete message directly
+                        hideLoading();
+                        addChatBotMessage(data.message);
+                    }
                     currentMessageId = null;
                 });
             } else {
@@ -1004,7 +1024,7 @@
         function addChatUserMessage(message) {
             const messagesDiv = document.getElementById('chatMessages');
             const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all ml-12 md:ml-20';
+            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all ml-12 md:ml-20 mb-6';
             userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
             userMessageDiv.innerHTML = `
                 <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground" style="background-color: rgb(0, 160, 235); color: white;">
@@ -1026,7 +1046,7 @@
         function addChatBotMessage(message) {
             const messagesDiv = document.getElementById('chatMessages');
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20 mb-6';
             botMessageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
             botMessageDiv.style.backdropFilter = 'blur(4px)';
             botMessageDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
@@ -1048,7 +1068,13 @@
             `;
             messagesDiv.appendChild(botMessageDiv);
             gsap.from(botMessageDiv, { opacity: 0, x: -30, scale: 0.95, duration: 0.5, ease: "back.out(1.2)" });
-            scrollChatToBottom();
+
+            // Show indicator if user is not at bottom
+            if (!isUserAtBottom()) {
+                showNewMessageIndicator();
+            } else {
+                scrollChatToBottom();
+            }
         }
 
         function showLoading() {
@@ -1093,7 +1119,7 @@
             hideLoading();
             const messagesDiv = document.getElementById('chatMessages');
             currentResponseDiv = document.createElement('div');
-            currentResponseDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            currentResponseDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20 mb-6';
             currentResponseDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
             currentResponseDiv.style.backdropFilter = 'blur(4px)';
             currentResponseDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
@@ -1131,12 +1157,61 @@
             currentResponseDiv = null;
         }
 
-        function scrollChatToBottom() {
-            const container = document.getElementById('chatMessagesContainer');
-            if (container) {
-                container.scrollTop = container.scrollHeight;
+        function isUserAtBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return true;
+
+            const threshold = 150; // pixels from bottom to consider "at bottom"
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const bottomPosition = chatMessages.offsetTop + chatMessages.offsetHeight;
+
+            return bottomPosition - scrollPosition < threshold;
+        }
+
+        function showNewMessageIndicator() {
+            const indicator = document.getElementById('newMessageIndicator');
+            if (indicator) {
+                indicator.classList.remove('hidden');
+                gsap.from(indicator, { opacity: 0, y: 20, duration: 0.3, ease: "back.out(1.7)" });
             }
         }
+
+        function hideNewMessageIndicator() {
+            const indicator = document.getElementById('newMessageIndicator');
+            if (indicator) {
+                gsap.to(indicator, {
+                    opacity: 0,
+                    duration: 0.2,
+                    onComplete: () => indicator.classList.add('hidden')
+                });
+            }
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+            hideNewMessageIndicator();
+        }
+
+        function scrollChatToBottom() {
+            // Only auto-scroll if user is already near the bottom
+            if (isUserAtBottom()) {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+                hideNewMessageIndicator();
+            }
+        }
+
+        // Listen for scroll events to hide indicator when user scrolls to bottom
+        window.addEventListener('scroll', () => {
+            if (isUserAtBottom()) {
+                hideNewMessageIndicator();
+            }
+        });
 
         function loadQuickStartButtons() {
             const quickStartDiv = document.getElementById('quickStartButtons');

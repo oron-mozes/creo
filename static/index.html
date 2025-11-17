@@ -9,6 +9,8 @@
         content="Connect with the right influencers for your business. No complicated dashboards - just tell us what you need and we'll find your perfect match.">
     <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <!-- Auth utilities must be loaded first -->
     <script src="/static/auth-utils.js"></script>
     <script src="/static/user-utils.js"></script>
@@ -80,13 +82,17 @@
                 <div id="userProfile" class="hidden flex items-center gap-3">
                     <span id="userName" class="text-sm font-medium text-gray-700"></span>
                     <div class="relative">
-                        <button onclick="toggleUserMenu()" id="userAvatar" class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-sm">
+                        <button onclick="toggleUserMenu()" id="userAvatar"
+                            class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-sm">
                         </button>
                         <!-- Dropdown Menu -->
-                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
-                            <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        <div id="userMenu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                            <button onclick="logout()"
+                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                                 Sign Out
                             </button>
@@ -100,7 +106,7 @@
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-gradient-to-br via-gray-50 to-purple-50"
         style="background-image: linear-gradient(to bottom right, rgba(0, 160, 235, 0.05), rgb(249, 250, 251), rgb(250, 245, 255));">
-        <div class="container mx-auto px-6 py-20 md:py-28">
+        <div class="container mx-auto px-6 py-20 md:py-28" id="hero-section">
             <div class="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
                 <!-- Left Column -->
                 <div class="space-y-8 animate-fade-in">
@@ -200,13 +206,13 @@
     </section>
 
     <!-- Main Content -->
-    <main id="chat-section" class="container mx-auto px-6 py-12 md:py-16 max-w-6xl">
+    <main id="homepage-main-content" class="container mx-auto px-6 py-12 md:py-16 max-w-6xl">
         <div class="grid lg:grid-cols-[2fr,1fr] gap-8">
             <!-- Chat Area -->
-            <div class="space-y-6">
-                <div class="space-y-4">
+            <div id="homepage-chat-area" class="space-y-6">
+                <div id="homepage-messages-wrapper" class="space-y-4">
                     <!-- Bot Message -->
-                    <div
+                    <div id="homepage-welcome-bubble"
                         class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white"
                             style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
@@ -228,8 +234,8 @@
                 </div>
 
                 <!-- Input Area -->
-                <div
-                    class="bg-white p-5 sticky bottom-4 shadow-2xl border-2 border-gray-200 rounded-3xl animate-fade-in">
+                <div id="homepage-input-area"
+                    class="bg-white p-5 sticky bottom-4 shadow-2xl border border-gray-200 rounded-3xl animate-fade-in">
                     <div class="flex gap-4 items-end">
                         <textarea id="messageInput" rows="1"
                             class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
@@ -251,9 +257,10 @@
             </div>
 
             <!-- Sidebar -->
-            <div class="lg:sticky lg:top-24 space-y-6 h-fit">
+            <div id="homepage-sidebar" class="lg:sticky lg:top-24 space-y-6 h-fit">
                 <!-- Quick Start -->
-                <div class="bg-white p-6 border-2 border-gray-200 rounded-3xl animate-fade-in">
+                <div id="homepage-quick-start-card"
+                    class="bg-white p-6 border border-gray-200 rounded-3xl animate-fade-in">
                     <h3 class="font-semibold mb-5 flex items-center gap-2 text-lg">
                         <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -269,8 +276,8 @@
                 </div>
 
                 <!-- Helpful Tips -->
-                <div class="p-6 rounded-3xl animate-fade-in"
-                    style="background-color: rgba(0, 160, 235, 0.05); border: 2px solid rgba(0, 160, 235, 0.2); animation-delay: 0.1s;">
+                <div id="homepage-helpful-tips-card" class="p-6 rounded-3xl animate-fade-in"
+                    style="background-color: rgba(0, 160, 235, 0.05); border: 1px solid rgba(0, 160, 235, 0.15); animation-delay: 0.1s;">
                     <h3 class="font-semibold mb-4 flex items-center gap-2 text-lg">
                         <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -408,9 +415,9 @@
                 return `
                     <button onclick="setMessage('${escaped}')"
                         class="w-full text-left p-4 text-base rounded-2xl"
-                        style="appearance: button; background-color: rgb(255, 255, 255); border: 2px solid rgb(225, 231, 239); border-radius: 16px; transition: all 0.2s;"
+                        style="appearance: button; background-color: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 16px; transition: all 0.2s;"
                         onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
-                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'">
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'">
                         💬 ${suggestion}
                     </button>
                 `;
@@ -516,9 +523,31 @@
 
                 const data = await response.json();
 
-                // Redirect to chat page with initial message as title
+                // Animate transition before redirect
+                const heroSection = document.getElementById('hero-section');
+                const mainContent = document.getElementById('homepage-main-content');
                 const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
-                window.location.href = `/chat/${data.session_id}?title=${encodeURIComponent(title)}`;
+
+                // Create GSAP timeline for smooth transition
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        // Redirect after animation completes
+                        window.location.href = `/chat/${data.session_id}?title=${encodeURIComponent(title)}`;
+                    }
+                });
+
+                // Animate: fade out hero, slide up main content
+                tl.to(heroSection, {
+                    opacity: 0,
+                    y: -50,
+                    duration: 0.4,
+                    ease: "power2.out"
+                })
+                .to(mainContent, {
+                    y: -200,
+                    duration: 0.5,
+                    ease: "power2.inOut"
+                }, "-=0.2"); // Start slightly before hero finishes
             } catch (error) {
                 // Re-enable input on error
                 input.disabled = false;

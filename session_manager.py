@@ -506,6 +506,10 @@ class SessionManager:
             # Add message to shared memory
             session_memory.add_message('user', message)
 
+        # Set session context for tools to access
+        from agents.onboarding_agent.tools import set_session_context
+        set_session_context(self, session_id)
+
         # Get runner and execute
         runner = self.get_or_create_runner(user_id)
 

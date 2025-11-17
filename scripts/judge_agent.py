@@ -169,6 +169,37 @@ def run_agent_case(agent: AdkAgent, case_input: Dict[str, Any], session_context:
     session_id = f"judge_session_{uuid.uuid4().hex}"
     _ensure_session(runner, user_id, session_id)
 
+    # Set up session context for tools (e.g., save_business_card tool needs access to user_id)
+    # For evaluation, we create a simple mock session manager that doesn't require the root agent
+    if HAS_SESSION_MANAGER:
+        try:
+            # Create session memory directly (bypassing SessionManager.ensure_session which needs root agent)
+            from session_manager import SessionMemory
+            session_memory = SessionMemory(session_id=session_id, user_id=user_id, user_profile=None)
+
+            # If session_context has business_card, load it
+            if session_context and "business_card" in session_context:
+                session_memory.set_business_card(session_context["business_card"])
+
+            # Create a minimal mock session manager that just holds our session memory
+            class MockSessionManager:
+                def __init__(self, session_memory):
+                    self._session_memories = {session_id: session_memory}
+
+                def get_session_memory(self, sid):
+                    return self._session_memories.get(sid)
+
+            mock_session_manager = MockSessionManager(session_memory)
+
+            # Set session context for tools to access
+            from agents.onboarding_agent.tools import set_session_context
+            set_session_context(mock_session_manager, session_id)
+            print(f"  [Session context set for tools with user_id: {user_id}]")
+        except Exception as e:
+            print(f"  [Warning: Could not set session context for tools: {e}]")
+            import traceback
+            traceback.print_exc()
+
     # Prepare the message text
     message_text = _case_input_to_prompt(case_input)
 

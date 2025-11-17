@@ -103,23 +103,6 @@ from agents.utils import AgentName
 # Import SessionManager for runner and memory management
 from session_manager import get_session_manager
 
-# Import business card parser (handle hyphenated directory name)
-try:
-    import importlib.util
-    parser_path = PROJECT_ROOT / "agents" / "onboarding-agent" / "parser.py"
-    if parser_path.exists():
-        spec = importlib.util.spec_from_file_location("onboarding_parser", parser_path)
-        onboarding_parser_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(onboarding_parser_module)
-        extract_business_card_from_response = onboarding_parser_module.extract_business_card_from_response
-    else:
-        def extract_business_card_from_response(text: str):
-            return {"business_card": None, "cleaned_text": text, "has_confirmation": False}
-except Exception as e:
-    print(f"[WARNING] Could not load business card parser: {e}")
-    def extract_business_card_from_response(text: str):
-        return {"business_card": None, "cleaned_text": text, "has_confirmation": False}
-
 # Import orchestrator agent
 import importlib.util
 agent_path = PROJECT_ROOT / "agents" / "orchestrator_agent" / "agent.py"
@@ -372,8 +355,13 @@ def content_to_text(content: types.Content | None) -> str:
 
 @app.get("/")
 def read_root():
-    """Serve the homepage."""
-    return FileResponse("static/index.html")
+    """Serve the unified SPA."""
+    return FileResponse("static/app.html")
+
+@app.get("/index.html")
+def index_page():
+    """Redirect index.html to unified SPA."""
+    return FileResponse("static/app.html")
 
 @app.get("/login.html")
 def login_page():
@@ -382,8 +370,8 @@ def login_page():
 
 @app.get("/chat/{session_id}")
 def chat_page(session_id: str):
-    """Serve the chat page with session ID."""
-    return FileResponse("static/chat.html")
+    """Serve the unified SPA for chat sessions."""
+    return FileResponse("static/app.html")
 
 @app.get("/health")
 def health_check():
@@ -881,52 +869,26 @@ async def join_session(sid, data):
                         print(f"[JOIN_SESSION] Got final response from root_agent ('{root_agent.name}'), saving to storage")
                         print(f"[JOIN_SESSION] Final text preview: {final_text[:200]}...")
 
-                        # Parse business card from response
-                        print(f"[JOIN_SESSION] Attempting to parse business card from response")
-                        parsed = extract_business_card_from_response(final_text)
-                        print(f"[JOIN_SESSION] Parse result: has_confirmation={parsed.get('has_confirmation')}, business_card={parsed.get('business_card')}")
+                        # Business card saving is now handled by the onboarding agent's save_business_card tool
+                        # No need to parse or intercept here
+
+                        # Check if business card was saved by the tool (it's in session memory)
+                        session_memory = session_manager.get_session_memory(session_id)
                         business_card_data = None
-                        display_text = parsed["cleaned_text"]
-                        
-                        if parsed["has_confirmation"] and parsed["business_card"]:
-                            business_card_data = parsed["business_card"].to_dict()
-                            print(f"[BUSINESS_CARD] ✓ Found business card confirmation in response")
-                            print(f"[BUSINESS_CARD] Extracted data:")
-                            print(f"[BUSINESS_CARD]   - Name: {business_card_data.get('name')}")
-                            print(f"[BUSINESS_CARD]   - Location: {business_card_data.get('location')}")
-                            print(f"[BUSINESS_CARD]   - Service Type: {business_card_data.get('service_type')}")
-                            print(f"[BUSINESS_CARD]   - Website: {business_card_data.get('website')}")
-                            print(f"[BUSINESS_CARD]   - Social Links: {business_card_data.get('social_links')}")
+                        if session_memory:
+                            bc = session_memory.get_business_card()
+                            if bc:
+                                business_card_data = bc
+                                print(f"[JOIN_SESSION] Business card found in session memory")
 
-                            # Save business card to persistent storage
-                            print(f"[BUSINESS_CARD] Step 1: Saving to persistent storage (user_id: {user_id})")
-                            save_business_card(user_id, business_card_data)
-
-                            # Save to session memory
-                            print(f"[BUSINESS_CARD] Step 2: Saving to session memory (session_id: {session_id})")
-                            session_memory = session_manager.get_session_memory(session_id)
-                            if session_memory:
-                                session_memory.set_business_card(business_card_data)
-                                print(f"[BUSINESS_CARD] ✓ Business card saved to session memory")
-
-                                # Verify it was saved
-                                saved_bc = session_memory.get_business_card()
-                                if saved_bc:
-                                    print(f"[BUSINESS_CARD] ✓ Verification: Business card confirmed in session memory")
-                                    print(f"[BUSINESS_CARD]   Verified Name: {saved_bc.get('name')}")
-                                else:
-                                    print(f"[BUSINESS_CARD] ✗ ERROR: Business card NOT found in session memory after save!")
-                            else:
-                                print(f"[BUSINESS_CARD] ✗ ERROR: Session memory not found for session_id: {session_id}")
-
-                        # Store assistant message in Firestore and session memory (store cleaned text)
-                        save_message_to_firestore(session_id, "assistant", display_text, user_id)
-                        session_manager.save_assistant_message(session_id, display_text, message_id)
+                        # Store assistant message in Firestore and session memory
+                        save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                        session_manager.save_assistant_message(session_id, final_text, message_id)
 
                         # Emit final message with message ID and business card data
                         print(f"[JOIN_SESSION] Emitting message_complete")
                         await sio.emit('message_complete', {
-                            'message': display_text,
+                            'message': final_text,
                             'session_id': session_id,
                             'message_id': message_id,
                             'business_card': business_card_data
@@ -1098,30 +1060,25 @@ async def send_message(sid, data):
                     print(f"[SEND_MESSAGE] Got final response from root_agent, saving to storage")
                     print(f"[SEND_MESSAGE] Final text preview: {final_text[:200]}...")
 
-                    # Parse business card from response
-                    print(f"[SEND_MESSAGE] Attempting to parse business card from response")
-                    parsed = extract_business_card_from_response(final_text)
-                    print(f"[SEND_MESSAGE] Parse result: has_confirmation={parsed.get('has_confirmation')}, business_card={parsed.get('business_card')}")
-                    business_card_data = None
-                    display_text = parsed["cleaned_text"]
-                    
-                    if parsed["has_confirmation"] and parsed["business_card"]:
-                        business_card_data = parsed["business_card"].to_dict()
-                        print(f"[SEND_MESSAGE] Found business card confirmation")
-                        # Save business card to persistent storage
-                        save_business_card(user_id, business_card_data)
-                        # Save to session memory
-                        session_memory = session_manager.get_session_memory(session_id)
-                        if session_memory:
-                            session_memory.set_business_card(business_card_data)
+                    # Business card saving is now handled by the onboarding agent's save_business_card tool
+                    # No need to parse or intercept here
 
-                    # Store assistant message in Firestore and session memory (store cleaned text)
-                    save_message_to_firestore(session_id, "assistant", display_text, user_id)
-                    session_manager.save_assistant_message(session_id, display_text, message_id)
+                    # Check if business card was saved by the tool (it's in session memory)
+                    session_memory = session_manager.get_session_memory(session_id)
+                    business_card_data = None
+                    if session_memory:
+                        bc = session_memory.get_business_card()
+                        if bc:
+                            business_card_data = bc
+                            print(f"[SEND_MESSAGE] Business card found in session memory")
+
+                    # Store assistant message in Firestore and session memory
+                    save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                    session_manager.save_assistant_message(session_id, final_text, message_id)
 
                     # Emit final message with message ID and business card data
                     await sio.emit('message_complete', {
-                        'message': display_text,
+                        'message': final_text,
                         'session_id': session_id,
                         'message_id': message_id,
                         'business_card': business_card_data

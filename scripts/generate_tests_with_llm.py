@@ -89,7 +89,7 @@ CRITICAL:
 Generate the {num_tests} test cases now:"""
 
     # Call Gemini to generate tests
-    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 
     try:
         response = model.generate_content(

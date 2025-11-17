@@ -8,6 +8,8 @@
     <meta name="description" content="Chat with Creo AI to find the perfect influencers for your business">
     <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <!-- Auth utilities must be loaded first -->
     <script src="/static/auth-utils.js"></script>
     <script src="/static/user-utils.js"></script>
@@ -105,12 +107,13 @@
     </header>
 
     <!-- Main Layout -->
-    <div class="flex h-[calc(100vh-4rem)]">
+    <div id="chat-main-layout" class="flex h-[calc(100vh-4rem)]">
         <!-- Chat Area -->
-        <main class="flex-1 flex flex-col">
+        <main id="chat-main-area" class="flex-1 flex flex-col">
             <!-- Messages Container -->
             <div id="messagesContainer" class="flex-1 overflow-y-auto px-6 py-8">
-                <div class="max-w-4xl mx-auto space-y-4" id="messages">
+                <div id="chat-messages-wrapper" class="max-w-4xl mx-auto space-y-4">
+                    <div id="messages">
                     <!-- Loading indicator -->
                     <div id="loadingIndicator" class="flex gap-4 animate-fade-in">
                         <div class="flex gap-3 items-start max-w-[85%]">
@@ -133,9 +136,9 @@
             </div>
 
             <!-- Input Area (Fixed at bottom) -->
-            <div class="bg-white">
+            <div id="chat-input-container" class="bg-white">
                 <div class="max-w-4xl mx-auto px-6 py-4">
-                    <div class="bg-white p-5 shadow-2xl border-2 border-gray-200 rounded-3xl">
+                    <div id="chat-input-area" class="bg-white p-5 shadow-2xl border-2 border-gray-200 rounded-3xl">
                         <div class="flex gap-4 items-end">
                             <textarea id="messageInput" rows="1"
                                 class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
@@ -159,9 +162,9 @@
         </main>
 
         <!-- Right Sidebar (Quick Start & Tips) -->
-        <aside class="hidden lg:flex w-80 flex-col p-6 space-y-6 overflow-y-auto">
+        <aside id="chat-right-sidebar" class="hidden lg:flex w-80 flex-col p-6 space-y-6 overflow-y-auto">
             <!-- Quick Start Section -->
-            <div class="bg-white p-6 border-2 border-gray-200 rounded-3xl shadow-sm animate-fade-in">
+            <div id="chat-past-chats-card" class="bg-white p-6 border border-gray-200 rounded-3xl shadow-sm animate-fade-in">
                 <h3 class="font-semibold mb-5 flex items-center gap-2 text-lg">
                     <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -175,7 +178,7 @@
             </div>
 
             <!-- Helpful Tips Section -->
-            <div class="p-6 rounded-3xl border-2 shadow-sm animate-fade-in" style="background-color: rgba(0, 160, 235, 0.05); border-color: rgba(0, 160, 235, 0.2);">
+            <div id="chat-helpful-tips-card" class="p-6 rounded-3xl border shadow-sm animate-fade-in" style="background-color: rgba(0, 160, 235, 0.05); border-color: rgba(0, 160, 235, 0.15);">
                 <h3 class="font-semibold mb-4 flex items-center gap-2 text-lg">
                     <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
@@ -378,10 +381,10 @@
             if (pastChats.length > 0) {
                 quickStartDiv.innerHTML = pastChats.map(chat => `
                     <a href="/chat/${chat.id}"
-                       class="block w-full text-left p-4 text-base rounded-2xl border-2 transition-all duration-200"
-                       style="background-color: rgb(255, 255, 255); border-color: rgb(225, 231, 239);"
+                       class="block w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
+                       style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
                        onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'; this.style.transform='scale(1.02)'"
-                       onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'; this.style.transform='scale(1)'">
+                       onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'; this.style.transform='scale(1)'">
                         <div class="font-medium truncate">💬 ${escapeHtml(chat.title)}</div>
                         <div class="text-xs mt-1" style="color: #9CA3AF;">${new Date(chat.timestamp).toLocaleDateString()}</div>
                     </a>
@@ -389,31 +392,31 @@
             } else {
                 quickStartDiv.innerHTML = `
                     <button onclick="setMessageFromChip('I have a local coffee shop')"
-                        class="w-full text-left p-4 text-base rounded-2xl border-2 transition-all duration-200"
-                        style="background-color: rgb(255, 255, 255); border-color: rgb(225, 231, 239);"
+                        class="w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
+                        style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
                         onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'; this.style.transform='scale(1.02)'"
-                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'; this.style.transform='scale(1)'">
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'; this.style.transform='scale(1)'">
                         💬 I have a local coffee shop
                     </button>
                     <button onclick="setMessageFromChip('I sell handmade jewelry online')"
-                        class="w-full text-left p-4 text-base rounded-2xl border-2 transition-all duration-200"
-                        style="background-color: rgb(255, 255, 255); border-color: rgb(225, 231, 239);"
+                        class="w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
+                        style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
                         onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'; this.style.transform='scale(1.02)'"
-                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'; this.style.transform='scale(1)'">
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'; this.style.transform='scale(1)'">
                         💬 I sell handmade jewelry online
                     </button>
                     <button onclick="setMessageFromChip('I run a small gym')"
-                        class="w-full text-left p-4 text-base rounded-2xl border-2 transition-all duration-200"
-                        style="background-color: rgb(255, 255, 255); border-color: rgb(225, 231, 239);"
+                        class="w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
+                        style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
                         onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'; this.style.transform='scale(1.02)'"
-                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'; this.style.transform='scale(1)'">
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'; this.style.transform='scale(1)'">
                         💬 I run a small gym
                     </button>
                     <button onclick="setMessageFromChip('I own a boutique hotel')"
-                        class="w-full text-left p-4 text-base rounded-2xl border-2 transition-all duration-200"
-                        style="background-color: rgb(255, 255, 255); border-color: rgb(225, 231, 239);"
+                        class="w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
+                        style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
                         onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'; this.style.transform='scale(1.02)'"
-                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'; this.style.transform='scale(1)'">
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'; this.style.transform='scale(1)'">
                         💬 I own a boutique hotel
                     </button>
                 `;
@@ -448,7 +451,7 @@
         function addUserMessage(message) {
             const messagesDiv = document.getElementById('messages');
             const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl animate-fade-in transition-all ml-12 md:ml-20';
+            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all ml-12 md:ml-20';
             userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
             userMessageDiv.innerHTML = `
                 <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground" style="background-color: rgb(0, 160, 235); color: white;">
@@ -463,13 +466,22 @@
                 </div>
             `;
             messagesDiv.appendChild(userMessageDiv);
+
+            // GSAP animation: slide in from right with fade
+            gsap.from(userMessageDiv, {
+                opacity: 0,
+                x: 30,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+
             scrollToBottom();
         }
 
         function addBotMessage(message, businessCard = null) {
             const messagesDiv = document.getElementById('messages');
             const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl animate-fade-in transition-all mr-12 md:mr-20';
+            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
             botMessageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
             botMessageDiv.style.backdropFilter = 'blur(4px)';
             botMessageDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
@@ -496,6 +508,16 @@
                 </div>
             `;
             messagesDiv.appendChild(botMessageDiv);
+
+            // GSAP animation: slide in from left with scale
+            gsap.from(botMessageDiv, {
+                opacity: 0,
+                x: -30,
+                scale: 0.95,
+                duration: 0.5,
+                ease: "back.out(1.2)"
+            });
+
             scrollToBottom();
         }
 
