@@ -116,7 +116,7 @@ scaffold-agent: venv
 	$(PYTHON) scripts/scaffold_agent.py "$(NAME)" "$(DESC)"
 
 # Generate test data for all agents (HYBRID: golden hardcoded + LLM generated)
-generate-tests: venv
+generate-tests: install
 	@if [ -z "$(AGENT)" ]; then \
 		echo "Generating HYBRID tests (golden + LLM) for all agents..."; \
 		$(PYTHON) scripts/generate_tests_with_llm.py --hybrid; \
@@ -125,7 +125,7 @@ generate-tests: venv
 		$(PYTHON) scripts/generate_tests_with_llm.py --hybrid $(AGENT); \
 	fi
 
-judge: venv
+judge: install
 	@if [ -z "$(AGENT)" ]; then \
 		echo "Usage: make judge AGENT=<agent-folder-name>"; \
 		exit 1; \
