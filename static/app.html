@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creo - Find Perfect Influencers</title>
+    <meta name="description" content="Connect with the right influencers for your business">
+    <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <!-- Auth utilities -->
+    <script src="/static/auth-utils.js"></script>
+    <script src="/static/user-utils.js"></script>
+    <script src="/static/auth-gate.js"></script>
+
+    <style>
+        /* Hide views by default */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out forwards;
+        }
+
+        .animate-scale-in {
+            animation: scale-in 0.4s ease-out forwards;
+        }
+
+        .animate-bounce {
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        /* Auto-grow textarea */
+        #messageInput, #chatMessageInput {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Typing indicator animation */
+        @keyframes typing-dot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgb(0, 160, 235);
+            display: inline-block;
+            animation: typing-dot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-white">
+    <!-- Header -->
+    <header id="app-header" class="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex items-center justify-between">
+                <a href="/" onclick="navigateTo(event, '/')" class="pl-2">
+                    <img src="/static/creo-logo-BesatB3H.png" alt="Creo" style="height: 3rem;">
+                </a>
+
+                <div class="pr-4 flex items-center gap-3">
+                    <!-- Start Fresh Button (shown in chat view) -->
+                    <button id="headerStartFreshButton" onclick="startFreshChat()"
+                        class="hidden inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        style="color: rgb(0, 0, 0);"
+                        onmouseover="this.style.backgroundColor='rgb(0, 160, 235)'; this.style.color='white'"
+                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='rgb(0, 0, 0)'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                            <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+                            <path d="M20 3v4"></path>
+                            <path d="M22 5h-4"></path>
+                            <path d="M4 17v2"></path>
+                            <path d="M5 18H3"></path>
+                        </svg>
+                        Start Fresh
+                    </button>
+
+                    <!-- Sign In Button (shown when not logged in) -->
+                    <a id="signInButton" href="/login.html"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        style="color: rgb(0, 0, 0); border: 1px solid rgba(0, 160, 235, 0.3);"
+                        onmouseover="this.style.backgroundColor='rgb(0, 160, 235)'; this.style.color='white'; this.style.borderColor='rgb(0, 160, 235)'"
+                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='rgb(0, 0, 0)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        Sign In
+                    </a>
+
+                    <!-- User Profile (shown when logged in) -->
+                    <div id="userProfile" class="hidden flex items-center gap-3">
+                    <span id="userName" class="text-sm font-medium text-gray-700"></span>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" id="userAvatar"
+                            class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-sm">
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userMenu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                            <button onclick="logout()"
+                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HOME VIEW -->
+    <div id="home-view" class="view active">
+        <!-- Hero Section -->
+        <section id="hero-section" class="relative overflow-hidden bg-gradient-to-br via-gray-50 to-purple-50"
+            style="background-image: linear-gradient(to bottom right, rgba(0, 160, 235, 0.05), rgb(249, 250, 251), rgb(250, 245, 255));">
+            <div class="container mx-auto px-6 py-20 md:py-28">
+                <div class="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+                    <!-- Left Column -->
+                    <div class="space-y-8 animate-fade-in">
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+                            style="background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235);">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            Powered by Best-in-Class AI Agents
+                        </div>
+
+                        <!-- Main Heading -->
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900">
+                            Bring the creator magic to your business
+                        </h1>
+
+                        <!-- Subheading -->
+                        <p class="text-xl md:text-2xl text-gray-700 leading-relaxed font-medium">
+                            You run the business. Creo brings the creator magic — our trusted AI agents handle every step:
+                            match, plan, launch, track.
+                        </p>
+
+                        <!-- Features -->
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                    style="background-color: rgba(0, 160, 235, 0.1);">
+                                    <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="text-base">No forms. No dashboards - just chat with Creo</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                    style="background-color: rgba(0, 160, 235, 0.1);">
+                                    <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                    </svg>
+                                </div>
+                                <span class="text-base">Fully handle it all end to end: match, plan, launch, track</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-700">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                    style="background-color: rgba(0, 160, 235, 0.1);">
+                                    <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </div>
+                                <span class="text-base">Safe, trusted AI agents verify every creator</span>
+                            </div>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button onclick="scrollToChat()"
+                            class="inline-flex items-center justify-center gap-2 text-white text-lg px-8 py-4 rounded-full font-medium transition-colors animate-scale-in"
+                            style="background-color: rgb(0, 160, 235);"
+                            onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'"
+                            onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
+                            Tell Us What You Need!
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Right Column - Video Demo -->
+                    <div class="relative animate-fade-in" style="animation-delay: 0.2s;">
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+                            <video class="w-full h-full object-cover" autoplay loop muted playsinline poster="">
+                                <source src="/static/creo-teaser-CBjoFzhL.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="absolute -bottom-4 -right-4 w-32 h-32 rounded-full blur-3xl opacity-50"
+                            style="background-color: rgba(0, 160, 235, 0.2);"></div>
+                        <div class="absolute -top-4 -left-4 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+                <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main id="homepage-main-content" class="container mx-auto px-6 py-12 md:py-16 max-w-6xl">
+            <div class="grid lg:grid-cols-[2fr,1fr] gap-8">
+                <!-- Chat Area -->
+                <div id="homepage-chat-area" class="space-y-6">
+                    <div id="homepage-messages-wrapper" class="space-y-4">
+                        <!-- Welcome Message -->
+                        <div id="homepage-welcome-bubble"
+                            class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white"
+                                style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
+                                <div id="welcomeMessage" class="text-base leading-relaxed text-gray-700">
+                                    <span class="typing-dot"></span>
+                                    <span class="typing-dot"></span>
+                                    <span class="typing-dot"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages will appear here -->
+                        <div id="messages"></div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div id="homepage-input-area"
+                        class="bg-white p-5 sticky bottom-4 shadow-2xl border border-gray-200 rounded-3xl animate-fade-in">
+                        <div class="flex gap-4 items-end">
+                            <textarea id="messageInput" rows="1"
+                                class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
+                                placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"></textarea>
+                            <button id="sendButton" onclick="sendMessage()"
+                                class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0"
+                                style="background-color: rgba(0, 160, 235, 0.4);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="h-5 w-5">
+                                    <path
+                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z">
+                                    </path>
+                                    <path d="m21.854 2.147-10.94 10.939"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div id="homepage-sidebar" class="lg:sticky lg:top-24 space-y-6 h-fit">
+                    <!-- Quick Start -->
+                    <div id="homepage-quick-start-card"
+                        class="bg-white p-6 border border-gray-200 rounded-3xl animate-fade-in">
+                        <h3 class="font-semibold mb-5 flex items-center gap-2 text-lg">
+                            <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            Quick Start
+                        </h3>
+                        <p class="text-sm text-gray-500 mb-4">Click to try:</p>
+                        <div id="suggestionsContainer" class="space-y-3">
+                            <div class="text-sm text-gray-400">Loading suggestions...</div>
+                        </div>
+                    </div>
+
+                    <!-- Helpful Tips -->
+                    <div id="homepage-helpful-tips-card" class="p-6 rounded-3xl animate-fade-in"
+                        style="background-color: rgba(0, 160, 235, 0.05); border: 1px solid rgba(0, 160, 235, 0.15); animation-delay: 0.1s;">
+                        <h3 class="font-semibold mb-4 flex items-center gap-2 text-lg">
+                            <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                            Helpful Tips
+                        </h3>
+                        <ul class="space-y-3 text-base text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <span class="mt-0.5" style="color: rgb(0, 160, 235);">✓</span>
+                                <span>Share what you sell</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-0.5" style="color: rgb(0, 160, 235);">✓</span>
+                                <span>Tell me where you're located</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-0.5" style="color: rgb(0, 160, 235);">✓</span>
+                                <span>Mention your budget if you know it</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" class="view">
+        <main id="chat-main-layout" class="container mx-auto px-6 py-12 md:py-16 max-w-6xl">
+            <div class="grid lg:grid-cols-[2fr,1fr] gap-8">
+                <!-- Chat Area -->
+                <div id="chat-main-area" class="space-y-6">
+                    <!-- Messages Container -->
+                    <div id="chat-messages-wrapper" class="space-y-4">
+                        <div id="chatMessages">
+                            <!-- Loading indicator -->
+                            <div id="loadingIndicator" class="flex gap-4 animate-fade-in">
+                                <div class="flex gap-3 items-start max-w-[85%]">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                                        style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div
+                                        class="flex-1 p-4 rounded-2xl text-base bg-white border border-gray-200 flex items-center gap-2">
+                                        <span class="typing-dot"></span>
+                                        <span class="typing-dot"></span>
+                                        <span class="typing-dot"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div id="chat-input-area" class="bg-white p-5 sticky bottom-4 shadow-2xl border border-gray-200 rounded-3xl animate-fade-in">
+                        <div class="flex gap-4 items-end">
+                            <textarea id="chatMessageInput" rows="1"
+                                class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
+                                placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"></textarea>
+                            <button id="chatSendButton" onclick="sendChatMessage()"
+                                class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0"
+                                style="background-color: rgba(0, 160, 235, 0.4);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="h-5 w-5">
+                                    <path
+                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a .496.496 0 0 0-.635-.635l-19 6.5a .5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z">
+                                    </path>
+                                    <path d="m21.854 2.147-10.94 10.939"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <aside id="chat-right-sidebar" class="lg:sticky lg:top-24 space-y-6 h-fit">
+                <!-- Past Chats Section -->
+                <div id="chat-past-chats-card"
+                    class="bg-white p-6 border border-gray-200 rounded-3xl animate-fade-in">
+                    <h3 class="font-semibold mb-5 flex items-center gap-2 text-lg">
+                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Past Chats
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Click to continue:</p>
+                    <div id="quickStartButtons" class="space-y-3 max-h-[400px] overflow-y-auto">
+                        <!-- Will be populated by loadQuickStartButtons() -->
+                    </div>
+                </div>
+
+                <!-- Helpful Tips Section -->
+                <div id="chat-helpful-tips-card" class="p-6 rounded-3xl border shadow-sm animate-fade-in"
+                    style="background-color: rgba(0, 160, 235, 0.05); border-color: rgba(0, 160, 235, 0.15);">
+                    <h3 class="font-semibold mb-4 flex items-center gap-2 text-lg">
+                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <span style="color: rgb(0, 160, 235);">Helpful Tips</span>
+                    </h3>
+                    <ul class="space-y-3 text-base text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <span style="color: rgb(0, 160, 235);" class="mt-0.5">✓</span>
+                            <span>Share what you sell</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span style="color: rgb(0, 160, 235);" class="mt-0.5">✓</span>
+                            <span>Tell me where you're located</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span style="color: rgb(0, 160, 235);" class="mt-0.5">✓</span>
+                            <span>Mention your budget if you know it</span>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ROUTING & NAVIGATION
+        // ============================================
+        let currentView = null;
+        let currentSessionId = null;
+
+        function navigateTo(event, path) {
+            if (event) {
+                event.preventDefault();
+            }
+            history.pushState({}, '', path);
+            route();
+        }
+
+        function route() {
+            const path = window.location.pathname;
+            console.log('[ROUTER] Navigating to:', path);
+
+            if (path === '/' || path === '/index.html') {
+                showView('home');
+            } else if (path.startsWith('/chat/')) {
+                const sessionId = path.split('/')[2];
+                showView('chat', sessionId);
+            } else {
+                // Unknown route, show home
+                showView('home');
+            }
+        }
+
+        function showView(viewName, sessionId) {
+            console.log('[ROUTER] Showing view:', viewName, sessionId);
+
+            const homeView = document.getElementById('home-view');
+            const chatView = document.getElementById('chat-view');
+            const headerStartFreshButton = document.getElementById('headerStartFreshButton');
+
+            if (viewName === 'home') {
+                // Hide Start Fresh button on home view
+                if (headerStartFreshButton) {
+                    headerStartFreshButton.classList.add('hidden');
+                }
+
+                // Animate transition to home
+                if (currentView === 'chat') {
+                    gsap.timeline()
+                        .to(chatView, { opacity: 0, duration: 0.3 })
+                        .call(() => {
+                            chatView.classList.remove('active');
+                            homeView.classList.add('active');
+                            currentView = 'home';
+                        })
+                        .fromTo(homeView, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+                } else {
+                    homeView.classList.add('active');
+                    chatView.classList.remove('active');
+                    currentView = 'home';
+                }
+
+                // Load homepage suggestions
+                loadSuggestions();
+            } else if (viewName === 'chat') {
+                // Show Start Fresh button on chat view
+                if (headerStartFreshButton) {
+                    headerStartFreshButton.classList.remove('hidden');
+                }
+                currentSessionId = sessionId;
+
+                // Animate transition to chat
+                if (currentView === 'home') {
+                    const heroSection = document.getElementById('hero-section');
+                    const mainContent = document.getElementById('homepage-main-content');
+
+                    // Calculate how much to slide up (hero section height)
+                    const heroHeight = heroSection.offsetHeight;
+
+                    gsap.timeline()
+                        // Fade out and shrink hero section height to 0
+                        .to(heroSection, {
+                            opacity: 0,
+                            height: 0,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            duration: 0.9,
+                            ease: "power1.inOut"
+                        })
+                        // Slide up main content while hero is shrinking (move by hero height)
+                        .to(mainContent, {
+                            y: -heroHeight,
+                            duration: 0.9,
+                            ease: "power1.inOut"
+                        }, "-=0.8")
+                        .call(() => {
+                            homeView.classList.remove('active');
+                            chatView.classList.add('active');
+                            currentView = 'chat';
+                            // Reset hero section for when user comes back
+                            gsap.set(heroSection, { opacity: 1, height: 'auto', paddingTop: '', paddingBottom: '', clearProps: 'all' });
+                            gsap.set(mainContent, { y: 0 });
+                        })
+                        .fromTo(chatView, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+                } else {
+                    homeView.classList.remove('active');
+                    chatView.classList.add('active');
+                    currentView = 'chat';
+                }
+
+                // Initialize chat for this session
+                initializeChat(sessionId);
+            }
+        }
+
+        // Listen to browser back/forward
+        window.addEventListener('popstate', route);
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            route();
+            updateHeaderAuth();
+        });
+
+        // Update header to show Sign In button or User Profile
+        function updateHeaderAuth() {
+            const token = getAuthToken();
+            const signInButton = document.getElementById('signInButton');
+            const userProfile = document.getElementById('userProfile');
+
+            if (token) {
+                // User is logged in - show profile, hide sign in
+                signInButton.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+
+                // Parse JWT to get user info
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const userName = document.getElementById('userName');
+                    const userAvatar = document.getElementById('userAvatar');
+
+                    if (payload.name) {
+                        userName.textContent = payload.name;
+                        userAvatar.textContent = payload.name.charAt(0).toUpperCase();
+                    }
+                } catch (e) {
+                    console.error('Error parsing JWT:', e);
+                }
+            } else {
+                // User is not logged in - show sign in, hide profile
+                signInButton.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+            }
+        }
+
+        // ============================================
+        // AUTH & USER MANAGEMENT (Shared)
+        // ============================================
+        function getAuthToken() {
+            return localStorage.getItem('creo_auth_token');
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem('creo_auth_token');
+        }
+
+        function getAuthHeaders() {
+            const token = getAuthToken();
+            if (!token) return {};
+            return { 'Authorization': `Bearer ${token}` };
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            clearAuthToken();
+            updateHeaderAuth();
+            navigateTo(null, '/');
+        }
+
+        // ============================================
+        // HOMEPAGE LOGIC
+        // ============================================
+        function scrollToChat() {
+            // Smooth scroll to the chat input area
+            const inputArea = document.getElementById('homepage-input-area');
+            if (inputArea) {
+                inputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Focus on the input after scrolling
+                setTimeout(() => {
+                    const input = document.getElementById('messageInput');
+                    if (input) input.focus();
+                }, 500);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            input.disabled = true;
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.style.opacity = '0.5';
+
+            try {
+                const userId = getCurrentUserId();
+                const response = await fetch('/api/sessions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ message: message, user_id: userId })
+                });
+
+                if (!response.ok) throw new Error('Failed to create session');
+
+                const data = await response.json();
+
+                // Navigate to chat view (with animation)
+                navigateTo(null, `/chat/${data.session_id}`);
+
+            } catch (error) {
+                input.disabled = false;
+                sendButton.disabled = false;
+                sendButton.style.opacity = '1';
+                alert('Sorry, something went wrong. Please try again.');
+            }
+        }
+
+        async function loadSuggestions() {
+            try {
+                const userId = getCurrentUserId();
+                const response = await fetch('/api/suggestions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                if (!response.ok) throw new Error('Failed to load suggestions');
+
+                const data = await response.json();
+                document.getElementById('welcomeMessage').textContent = data.welcome_message;
+                document.getElementById('suggestionsContainer').innerHTML = renderSuggestions(data.suggestions);
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+                document.getElementById('welcomeMessage').textContent = "Hey! 👋 I'm here to help you connect with amazing influencers.";
+            }
+        }
+
+        function renderSuggestions(suggestions) {
+            return suggestions.map(suggestion => {
+                const escaped = suggestion.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `
+                    <button onclick="setMessage('${escaped}')"
+                        class="w-full text-left p-4 text-base rounded-2xl"
+                        style="appearance: button; background-color: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 16px; transition: all 0.2s;"
+                        onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'">
+                        💬 ${suggestion}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setMessage(text) {
+            const input = document.getElementById('messageInput');
+            input.value = text;
+            input.focus();
+            input.style.height = 'auto';
+            input.style.height = input.scrollHeight + 'px';
+            const sendButton = document.getElementById('sendButton');
+            if (sendButton) {
+                sendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            }
+        }
+
+        function setChatMessage(text) {
+            const input = document.getElementById('chatMessageInput');
+            input.value = text;
+            input.focus();
+            input.style.height = 'auto';
+            input.style.height = input.scrollHeight + 'px';
+            const sendButton = document.getElementById('chatSendButton');
+            if (sendButton) {
+                sendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            }
+        }
+
+        // Auto-grow homepage textarea
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        messageInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+            if (this.value.trim()) {
+                sendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            } else {
+                sendButton.style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
+            }
+        });
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // ============================================
+        // CHAT LOGIC
+        // ============================================
+        let socket = null;
+        let currentLoadingDiv = null;
+        let currentResponseDiv = null;
+        let currentMessageId = null;
+
+        function initializeChat(sessionId) {
+            console.log('[CHAT] Initializing chat for session:', sessionId);
+
+            // Clear previous messages and show loading indicator
+            document.getElementById('chatMessages').innerHTML = `
+                <div id="loadingIndicator" class="flex gap-4 animate-fade-in">
+                    <div class="flex gap-3 items-start max-w-[85%]">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                            style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1 p-4 rounded-2xl text-base bg-white border border-gray-200 flex items-center gap-2">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Initialize Socket.IO if not already
+            if (!socket) {
+                socket = io();
+
+                socket.on('connect', () => {
+                    console.log('[SOCKET] Connected');
+                    socket.emit('join_session', {
+                        session_id: currentSessionId,
+                        token: getAuthToken() || null,
+                        user_id: getCurrentUserId()
+                    });
+                });
+
+                socket.on('chat_history', (data) => {
+                    console.log('[SOCKET] Received chat history');
+                    const messagesDiv = document.getElementById('chatMessages');
+                    document.getElementById('loadingIndicator')?.remove();
+
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            addChatUserMessage(msg.content);
+                        } else if (msg.role === 'assistant') {
+                            addChatBotMessage(msg.content);
+                        }
+                    });
+                });
+
+                socket.on('message_chunk', (data) => {
+                    if (!currentResponseDiv || (data.message_id && data.message_id !== currentMessageId)) {
+                        if (currentResponseDiv) finishStreamingResponse();
+                        currentMessageId = data.message_id;
+                        startStreamingResponse();
+                    }
+                    appendToStreamingResponse(data.chunk);
+                });
+
+                socket.on('message_complete', (data) => {
+                    finishStreamingResponse();
+                    hideLoading();
+                    currentMessageId = null;
+                });
+            } else {
+                // Re-join session
+                socket.emit('join_session', {
+                    session_id: sessionId,
+                    token: getAuthToken() || null,
+                    user_id: getCurrentUserId()
+                });
+            }
+
+            loadQuickStartButtons();
+        }
+
+        async function startFreshChat() {
+            // Clear current chat messages and show suggestions in the chat view
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML = '';
+
+            // Add system message with suggestions
+            const systemMessageDiv = document.createElement('div');
+            systemMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            systemMessageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            systemMessageDiv.style.backdropFilter = 'blur(4px)';
+            systemMessageDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
+            systemMessageDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                        <path d="M12 8V4H8"></path>
+                        <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                        <path d="M2 14h2"></path>
+                        <path d="M20 14h2"></path>
+                        <path d="M15 13v2"></path>
+                        <path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <div class="flex-1 space-y-4">
+                    <p class="text-sm font-medium" style="color: rgba(31, 41, 55, 0.7);">Creo</p>
+                    <div class="text-base leading-relaxed" style="color: rgba(31, 41, 55, 0.9);">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                    <div id="chatSuggestionsContainer" class="space-y-3 mt-4"></div>
+                </div>
+            `;
+            messagesDiv.appendChild(systemMessageDiv);
+
+            // Animate the message box appearing
+            gsap.from(systemMessageDiv, {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+
+            // Fetch and display suggestions
+            try {
+                const userId = getCurrentUserId();
+                const response = await fetch('/api/suggestions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                if (!response.ok) throw new Error('Failed to load suggestions');
+
+                const data = await response.json();
+
+                // Animate typing effect for the welcome message
+                const messageText = systemMessageDiv.querySelector('.leading-relaxed');
+                const fullText = data.welcome_message;
+                messageText.textContent = '';
+
+                let charIndex = 0;
+                const typingSpeed = 30; // milliseconds per character
+
+                const typeWriter = () => {
+                    if (charIndex < fullText.length) {
+                        messageText.textContent += fullText.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeWriter, typingSpeed);
+                    } else {
+                        // After typing is complete, show suggestions
+                        showSuggestionChips();
+                    }
+                };
+
+                // Start typing after a short delay
+                setTimeout(typeWriter, 500);
+
+                // Function to render and animate suggestion chips
+                const showSuggestionChips = () => {
+                    const suggestionsContainer = document.getElementById('chatSuggestionsContainer');
+                    suggestionsContainer.innerHTML = data.suggestions.map(suggestion => {
+                        const escaped = suggestion.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        return `
+                            <button onclick="setChatMessage('${escaped}')"
+                                class="suggestion-chip w-full text-left p-4 text-base rounded-2xl"
+                                style="appearance: button; background-color: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 16px; transition: all 0.2s; opacity: 0;"
+                                onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                                onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'">
+                                💬 ${suggestion}
+                            </button>
+                        `;
+                    }).join('');
+
+                    // Animate suggestion chips appearing one by one
+                    const chips = suggestionsContainer.querySelectorAll('.suggestion-chip');
+                    gsap.to(chips, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        stagger: 0.1,
+                        ease: "power2.out",
+                        delay: 0.2
+                    });
+                };
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+                systemMessageDiv.querySelector('.leading-relaxed').textContent = "Hey! 👋 I'm here to help you connect with amazing influencers.";
+            }
+
+            scrollChatToBottom();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatMessageInput');
+            const message = input.value.trim();
+
+            if (!message || !socket) return;
+
+            addChatUserMessage(message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            showLoading();
+
+            socket.emit('send_message', {
+                message: message,
+                session_id: currentSessionId,
+                token: getAuthToken() || null,
+                user_id: getCurrentUserId()
+            });
+        }
+
+        function addChatUserMessage(message) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all ml-12 md:ml-20';
+            userMessageDiv.style.backgroundColor = 'rgba(0, 160, 235, 0.05)';
+            userMessageDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground" style="background-color: rgb(0, 160, 235); color: white;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <p class="text-sm font-medium" style="color: rgba(31, 41, 55, 0.7);">You</p>
+                    <div class="text-base leading-relaxed whitespace-pre-wrap" style="color: rgba(31, 41, 55, 0.9);">${escapeHtml(message)}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(userMessageDiv);
+            gsap.from(userMessageDiv, { opacity: 0, x: 30, duration: 0.4, ease: "power2.out" });
+            scrollChatToBottom();
+        }
+
+        function addChatBotMessage(message) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            botMessageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            botMessageDiv.style.backdropFilter = 'blur(4px)';
+            botMessageDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
+            botMessageDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                        <path d="M12 8V4H8"></path>
+                        <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                        <path d="M2 14h2"></path>
+                        <path d="M20 14h2"></path>
+                        <path d="M15 13v2"></path>
+                        <path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <p class="text-sm font-medium" style="color: rgba(31, 41, 55, 0.7);">Creo Assistant</p>
+                    <div class="text-base leading-relaxed whitespace-pre-wrap" style="color: rgba(31, 41, 55, 0.9);">${escapeHtml(message)}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(botMessageDiv);
+            gsap.from(botMessageDiv, { opacity: 0, x: -30, scale: 0.95, duration: 0.5, ease: "back.out(1.2)" });
+            scrollChatToBottom();
+        }
+
+        function showLoading() {
+            const messagesDiv = document.getElementById('chatMessages');
+            currentLoadingDiv = document.createElement('div');
+            currentLoadingDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            currentLoadingDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            currentLoadingDiv.style.backdropFilter = 'blur(4px)';
+            currentLoadingDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
+            currentLoadingDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8V4H8"></path>
+                        <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                        <path d="M2 14h2"></path>
+                        <path d="M20 14h2"></path>
+                        <path d="M15 13v2"></path>
+                        <path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <p class="text-sm font-medium" style="color: rgba(31, 41, 55, 0.7);">Creo Assistant</p>
+                    <div class="text-base flex items-center gap-2">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                </div>
+            `;
+            messagesDiv.appendChild(currentLoadingDiv);
+            scrollChatToBottom();
+        }
+
+        function hideLoading() {
+            if (currentLoadingDiv) {
+                currentLoadingDiv.remove();
+                currentLoadingDiv = null;
+            }
+        }
+
+        function startStreamingResponse() {
+            hideLoading();
+            const messagesDiv = document.getElementById('chatMessages');
+            currentResponseDiv = document.createElement('div');
+            currentResponseDiv.className = 'flex gap-4 p-5 rounded-3xl transition-all mr-12 md:mr-20';
+            currentResponseDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            currentResponseDiv.style.backdropFilter = 'blur(4px)';
+            currentResponseDiv.style.border = '1px solid rgba(229, 231, 235, 0.5)';
+            currentResponseDiv.innerHTML = `
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8V4H8"></path>
+                        <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                        <path d="M2 14h2"></path>
+                        <path d="M20 14h2"></path>
+                        <path d="M15 13v2"></path>
+                        <path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <p class="text-sm font-medium" style="color: rgba(31, 41, 55, 0.7);">Creo Assistant</p>
+                    <div class="response-content text-base leading-relaxed whitespace-pre-wrap" style="color: rgba(31, 41, 55, 0.9);"></div>
+                </div>
+            `;
+            messagesDiv.appendChild(currentResponseDiv);
+            scrollChatToBottom();
+        }
+
+        function appendToStreamingResponse(chunk) {
+            if (currentResponseDiv) {
+                const contentDiv = currentResponseDiv.querySelector('.response-content');
+                if (contentDiv) {
+                    contentDiv.textContent += chunk;
+                    scrollChatToBottom();
+                }
+            }
+        }
+
+        function finishStreamingResponse() {
+            currentResponseDiv = null;
+        }
+
+        function scrollChatToBottom() {
+            const container = document.getElementById('chatMessagesContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function loadQuickStartButtons() {
+            const quickStartDiv = document.getElementById('quickStartButtons');
+            if (!quickStartDiv) return;
+
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const pastChats = sessions.filter(s => s.id !== currentSessionId).slice(0, 10);
+
+            if (pastChats.length > 0) {
+                quickStartDiv.innerHTML = pastChats.map(chat => `
+                    <a href="/chat/${chat.id}" onclick="navigateTo(event, '/chat/${chat.id}')"
+                       class="block w-full text-left p-4 text-base rounded-2xl border transition-colors duration-200"
+                       style="background-color: rgb(255, 255, 255); border-color: rgb(229, 231, 235);"
+                       onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                       onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(229, 231, 235)'">
+                        <div class="font-medium truncate">💬 ${escapeHtml(chat.title)}</div>
+                        <div class="text-xs mt-1" style="color: #9CA3AF;">${new Date(chat.timestamp).toLocaleDateString()}</div>
+                    </a>
+                `).join('');
+            }
+        }
+
+        // Auto-grow chat textarea
+        const chatMessageInput = document.getElementById('chatMessageInput');
+        const chatSendButton = document.getElementById('chatSendButton');
+        chatMessageInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+            if (this.value.trim()) {
+                chatSendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            } else {
+                chatSendButton.style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
+            }
+        });
+        chatMessageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>
