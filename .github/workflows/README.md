@@ -8,12 +8,12 @@ This directory contains CI/CD workflows for the Creo platform.
 **Purpose**: Automatically evaluates all agents using the judge system on every push/PR to main.
 
 **Required Secrets**:
-- `GEMINI_API_KEY` - Google Gemini API key for AI evaluation
+- `GOOGLE_API_KEY` - Google Gemini API key for AI evaluation
 - `PINECONE_API_KEY` - Pinecone API key (optional, may not be needed for evaluation)
 
 **Setup**:
 1. Go to repository Settings → Secrets and variables → Actions
-2. Add `GEMINI_API_KEY` with your Gemini API key
+2. Add `GOOGLE_API_KEY` with your Gemini API key
 3. Get your API key from: https://makersuite.google.com/app/apikey
 
 **What it does**:
@@ -52,12 +52,12 @@ This directory contains CI/CD workflows for the Creo platform.
 
 ## Troubleshooting
 
-### "GEMINI_API_KEY environment variable not set"
+### "GOOGLE_API_KEY environment variable not set"
 
 **Solution**: Add the secret to your repository:
 1. Go to `https://github.com/<owner>/<repo>/settings/secrets/actions`
 2. Click "New repository secret"
-3. Name: `GEMINI_API_KEY`
+3. Name: `GOOGLE_API_KEY`
 4. Value: Your Gemini API key from https://makersuite.google.com/app/apikey
 5. Click "Add secret"
 
@@ -77,7 +77,7 @@ To run evaluations locally:
 
 ```bash
 # Set API key
-export GEMINI_API_KEY=your-api-key
+export GOOGLE_API_KEY=your-api-key
 
 # Evaluate specific agent
 make judge AGENT=onboarding_agent

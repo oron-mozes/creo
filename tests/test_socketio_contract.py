@@ -21,7 +21,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 
 # Mock minimal environment for testing
-os.environ.setdefault("GEMINI_API_KEY", "test-key")
+os.environ.setdefault("GOOGLE_API_KEY", "test-key")
 os.environ.setdefault("PINECONE_API_KEY", "test-key")
 
 

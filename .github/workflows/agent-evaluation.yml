@@ -30,7 +30,7 @@ jobs:
       id: eval_onboarding
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=onboarding_agent 2>&1 | tee onboarding_output.txt
@@ -45,7 +45,7 @@ jobs:
       id: eval_frontdesk
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=frontdesk_agent 2>&1 | tee frontdesk_output.txt
@@ -60,7 +60,7 @@ jobs:
       id: eval_creator_finder
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=creator_finder_agent 2>&1 | tee creator_finder_output.txt
@@ -75,7 +75,7 @@ jobs:
       id: eval_campaign_brief
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=campaign_brief_agent 2>&1 | tee campaign_brief_output.txt
@@ -90,7 +90,7 @@ jobs:
       id: eval_outreach_message
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=outreach_message_agent 2>&1 | tee outreach_message_output.txt
@@ -105,7 +105,7 @@ jobs:
       id: eval_campaign_builder
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=campaign_builder_agent 2>&1 | tee campaign_builder_output.txt
@@ -120,7 +120,7 @@ jobs:
       id: eval_orchestrator
       continue-on-error: true
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       run: |
         make judge AGENT=orchestrator_agent 2>&1 | tee orchestrator_output.txt

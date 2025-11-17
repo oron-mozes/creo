@@ -30,8 +30,8 @@ load_env_value() {
         # Try exact match first
         VALUE=$(grep "^${KEY}=" "$ENV_FILE" | cut -d '=' -f 2- | head -n 1)
 
-        # If not found, try GOOGLE_API_KEY for GEMINI_API_KEY
-        if [ -z "$VALUE" ] && [ "$KEY" = "GEMINI_API_KEY" ]; then
+        # If not found, try GOOGLE_API_KEY for GOOGLE_API_KEY
+        if [ -z "$VALUE" ] && [ "$KEY" = "GOOGLE_API_KEY" ]; then
             VALUE=$(grep "^GOOGLE_API_KEY=" "$ENV_FILE" | cut -d '=' -f 2- | head -n 1)
         fi
     fi
@@ -109,8 +109,8 @@ create_or_update_secret() {
 }
 
 # Create secrets
-# For GEMINI_API_KEY, we'll check both GEMINI_API_KEY and GOOGLE_API_KEY in .env
-create_or_update_secret "GEMINI_API_KEY" "Google Gemini API key for AI functionality" "GOOGLE_API_KEY"
+# For GOOGLE_API_KEY, we'll check both GOOGLE_API_KEY and GOOGLE_API_KEY in .env
+create_or_update_secret "GOOGLE_API_KEY" "Google Gemini API key for AI functionality" "GOOGLE_API_KEY"
 create_or_update_secret "PINECONE_API_KEY" "Pinecone API key for vector database" "PINECONE_API_KEY"
 
 echo "=========================================="
@@ -137,7 +137,7 @@ echo "Service Account: $SERVICE_ACCOUNT"
 echo ""
 
 # Grant access to secrets
-for SECRET in "GEMINI_API_KEY" "PINECONE_API_KEY"; do
+for SECRET in "GOOGLE_API_KEY" "PINECONE_API_KEY"; do
     echo "Granting access to $SECRET..."
 
     # Check if binding already exists

@@ -57,9 +57,9 @@ except Exception as e:
 # ---------------------------------------------------------------------------
 
 def load_project_env() -> None:
-    """Load key/value pairs from the project's .env if GEMINI_API_KEY not already set."""
+    """Load key/value pairs from the project's .env if GOOGLE_API_KEY not already set."""
     env_path = PROJECT_ROOT / ".env"
-    if "GEMINI_API_KEY" in os.environ or not env_path.exists():
+    if "GOOGLE_API_KEY" in os.environ or not env_path.exists():
         return
     with open(env_path, "r") as env_file:
         for line in env_file:
@@ -336,14 +336,14 @@ class Judge:
     """Simple wrapper around Gemini for scoring agent responses."""
 
     def __init__(self, model_name: str = "gemini-2.5-flash") -> None:
-        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY")
         if not api_key:
             error_msg = (
-                "GEMINI_API_KEY environment variable not set.\n\n"
+                "GOOGLE_API_KEY environment variable not set.\n\n"
                 "For local development:\n"
-                "  export GEMINI_API_KEY=your-api-key\n\n"
+                "  export GOOGLE_API_KEY=your-api-key\n\n"
                 "For GitHub Actions:\n"
-                "  Add GEMINI_API_KEY to repository secrets:\n"
+                "  Add GOOGLE_API_KEY to repository secrets:\n"
                 "  https://github.com/<owner>/<repo>/settings/secrets/actions\n\n"
                 "Get your API key from: https://makersuite.google.com/app/apikey"
             )
@@ -460,7 +460,7 @@ def load_agent_instructions(agent_dir: Path) -> str | None:
 
 
 def main() -> None:
-    # Ensure env vars from project .env are available (including GEMINI_API_KEY)
+    # Ensure env vars from project .env are available (including GOOGLE_API_KEY)
     load_project_env()
     args = parse_args()
     test_path = args.tests or (args.agent_dir / "evaluation" / "test.json")

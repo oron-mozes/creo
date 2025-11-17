@@ -85,7 +85,7 @@ Index is created automatically on first use.
 
 ```bash
 # .env file
-GEMINI_API_KEY=your-gemini-api-key
+GOOGLE_API_KEY=your-gemini-api-key
 PINECONE_API_KEY=your-pinecone-api-key
 GCP_PROJECT_ID=your-project-id
 
@@ -142,7 +142,7 @@ Deployment pipeline automatically uses these secrets. No GitHub Secrets needed f
 #### Update a Secret
 
 ```bash
-echo -n "new-api-key-value" | gcloud secrets versions add GEMINI_API_KEY \
+echo -n "new-api-key-value" | gcloud secrets versions add GOOGLE_API_KEY \
   --data-file=- \
   --project=YOUR_PROJECT_ID
 ```
@@ -174,7 +174,7 @@ gcloud secrets add-iam-policy-binding NEW_SECRET \
 gcloud secrets list --project=YOUR_PROJECT_ID
 
 # View secret metadata
-gcloud secrets describe GEMINI_API_KEY --project=YOUR_PROJECT_ID
+gcloud secrets describe GOOGLE_API_KEY --project=YOUR_PROJECT_ID
 ```
 
 Console: https://console.cloud.google.com/security/secret-manager
@@ -221,7 +221,7 @@ gcloud run deploy creo \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest
+  --set-secrets=GOOGLE_API_KEY=GOOGLE_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest
 ```
 
 #### Option B: Build and Deploy Separately
@@ -235,7 +235,7 @@ gcloud run deploy creo \
   --image gcr.io/YOUR_PROJECT_ID/creo \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest
+  --set-secrets=GOOGLE_API_KEY=GOOGLE_API_KEY:latest
 ```
 
 #### Option C: Makefile (Coming Soon)
@@ -359,7 +359,7 @@ Go to: https://github.com/YOUR_USERNAME/creo/settings/secrets/actions
 
 Add:
 1. **GCP_SA_KEY** - Contents of `github-actions-key.json`
-2. **GEMINI_API_KEY** - Your Gemini API key
+2. **GOOGLE_API_KEY** - Your Gemini API key
 3. **PINECONE_API_KEY** - Your Pinecone API key
 
 Then delete local key file:
@@ -523,7 +523,7 @@ make verify-secrets
 **Permission denied accessing secret**
 ```bash
 # Check access
-gcloud secrets get-iam-policy GEMINI_API_KEY --project=YOUR_PROJECT_ID
+gcloud secrets get-iam-policy GOOGLE_API_KEY --project=YOUR_PROJECT_ID
 
 # Grant access
 make sync-secrets

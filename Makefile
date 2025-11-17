@@ -179,7 +179,7 @@ PORT = 8000
 docker-build:
 	@echo "Building Docker image..."
 	@if [ ! -f .env ]; then \
-		echo "Warning: .env file not found. Make sure to pass GEMINI_API_KEY when running."; \
+		echo "Warning: .env file not found. Make sure to pass GOOGLE_API_KEY when running."; \
 	fi
 	docker build -t $(DOCKER_IMAGE):latest .
 	@echo "✓ Docker image built: $(DOCKER_IMAGE):latest"
@@ -188,7 +188,7 @@ docker-build:
 docker-run:
 	@echo "Starting Docker container on http://localhost:$(PORT)"
 	@if [ ! -f .env ]; then \
-		echo "Error: .env file not found. Create one with GEMINI_API_KEY=your-key"; \
+		echo "Error: .env file not found. Create one with GOOGLE_API_KEY=your-key"; \
 		exit 1; \
 	fi
 	docker run -d \
@@ -206,7 +206,7 @@ docker-test: docker-build
 	@echo "Testing Docker container..."
 	@echo "Starting container..."
 	@if [ ! -f .env ]; then \
-		echo "Error: .env file not found. Create one with GEMINI_API_KEY=your-key"; \
+		echo "Error: .env file not found. Create one with GOOGLE_API_KEY=your-key"; \
 		exit 1; \
 	fi
 	@docker run -d --name $(DOCKER_CONTAINER)-test -p 8001:8080 --env-file .env $(DOCKER_IMAGE):latest

@@ -28,7 +28,7 @@ if ! command -v gcloud &> /dev/null; then
 fi
 
 # Required secrets
-REQUIRED_SECRETS=("GEMINI_API_KEY" "PINECONE_API_KEY")
+REQUIRED_SECRETS=("GOOGLE_API_KEY" "PINECONE_API_KEY")
 
 echo -e "${BOLD}Checking Secret Manager API...${NC}"
 if gcloud services list --enabled --project=$PROJECT_ID | grep -q secretmanager.googleapis.com; then

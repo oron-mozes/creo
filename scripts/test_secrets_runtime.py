@@ -3,16 +3,16 @@
 Test script to verify secrets are accessible at runtime.
 
 This script checks:
-1. Runtime environment variables are set (GEMINI_API_KEY, PINECONE_API_KEY)
+1. Runtime environment variables are set (GOOGLE_API_KEY, PINECONE_API_KEY)
 2. Secrets can be used to make actual API calls
 3. Simulates Cloud Run environment (no .env file loading)
 
 Usage:
   # Test with runtime env vars (simulates Cloud Run)
-  GEMINI_API_KEY=xxx PINECONE_API_KEY=yyy python scripts/test_secrets_runtime.py
+  GOOGLE_API_KEY=xxx PINECONE_API_KEY=yyy python scripts/test_secrets_runtime.py
 
   # Or export them first
-  export GEMINI_API_KEY=xxx
+  export GOOGLE_API_KEY=xxx
   export PINECONE_API_KEY=yyy
   python scripts/test_secrets_runtime.py
 """
@@ -56,10 +56,10 @@ def check_runtime_env() -> None:
     """Check if runtime environment variables are available."""
     print_header("Checking Runtime Environment")
 
-    # Map GOOGLE_API_KEY to GEMINI_API_KEY if needed (for backwards compatibility)
-    if "GEMINI_API_KEY" not in os.environ and "GOOGLE_API_KEY" in os.environ:
-        os.environ["GEMINI_API_KEY"] = os.environ["GOOGLE_API_KEY"]
-        print_info("Mapped GOOGLE_API_KEY → GEMINI_API_KEY")
+    # Map GOOGLE_API_KEY to GOOGLE_API_KEY if needed (for backwards compatibility)
+    if "GOOGLE_API_KEY" not in os.environ and "GOOGLE_API_KEY" in os.environ:
+        os.environ["GOOGLE_API_KEY"] = os.environ["GOOGLE_API_KEY"]
+        print_info("Mapped GOOGLE_API_KEY → GOOGLE_API_KEY")
 
     # Check if running in Cloud Run
     if "K_SERVICE" in os.environ:
@@ -73,7 +73,7 @@ def test_env_vars() -> bool:
     print_header("Testing Environment Variables")
 
     required_vars = {
-        "GEMINI_API_KEY": "Google Gemini API key",
+        "GOOGLE_API_KEY": "Google Gemini API key",
         "PINECONE_API_KEY": "Pinecone API key",
     }
 
@@ -98,9 +98,9 @@ def test_gemini_api() -> bool:
     try:
         import google.generativeai as genai
 
-        api_key = os.environ.get("GEMINI_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY")
         if not api_key:
-            print_error("GEMINI_API_KEY not found")
+            print_error("GOOGLE_API_KEY not found")
             return False
 
         genai.configure(api_key=api_key)
@@ -158,7 +158,7 @@ def main() -> int:
     if not env_ok:
         print_error("\n❌ Environment variables are not properly configured")
         print("\nTo test runtime env vars, run:")
-        print(f"  {Colors.BOLD}export GEMINI_API_KEY=your-key{Colors.END}")
+        print(f"  {Colors.BOLD}export GOOGLE_API_KEY=your-key{Colors.END}")
         print(f"  {Colors.BOLD}export PINECONE_API_KEY=your-key{Colors.END}")
         print(f"  {Colors.BOLD}python scripts/test_secrets_runtime.py{Colors.END}")
         return 1

@@ -27,7 +27,7 @@ jobs:
 
     - name: Run contract tests
       env:
-        GEMINI_API_KEY: test-key
+        GOOGLE_API_KEY: test-key
         PINECONE_API_KEY: test-key
       run: |
         pytest tests/test_socketio_contract.py -v --tb=short

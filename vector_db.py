@@ -59,9 +59,9 @@ class EmbeddingGenerator:
     """Generate embeddings using Google Gemini."""
 
     def __init__(self):
-        api_key = os.environ.get("GEMINI_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY")
         if not api_key:
-            raise RuntimeError("GEMINI_API_KEY environment variable is required")
+            raise RuntimeError("GOOGLE_API_KEY environment variable is required")
         genai.configure(api_key=api_key)
 
     def generate_embedding(self, text: str, task_type: str = "retrieval_document") -> List[float]:

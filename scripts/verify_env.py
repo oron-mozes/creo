@@ -17,7 +17,7 @@ from typing import Dict, List, Optional, Set
 
 # Required environment variables for the application
 REQUIRED_ENV_VARS = {
-    "GEMINI_API_KEY": "Google Gemini API key for AI functionality",
+    "GOOGLE_API_KEY": "Google Gemini API key for AI functionality",
     "PINECONE_API_KEY": "Pinecone API key for vector database",
 }
 
@@ -31,7 +31,7 @@ OPTIONAL_ENV_VARS = {
 # GitHub Secrets required for CI/CD
 REQUIRED_GITHUB_SECRETS = {
     "GCP_SA_KEY": "Google Cloud service account key for deployment",
-    "GEMINI_API_KEY": "Google Gemini API key",
+    "GOOGLE_API_KEY": "Google Gemini API key",
     "PINECONE_API_KEY": "Pinecone API key",
 }
 
@@ -162,7 +162,7 @@ def check_cloud_run_env(service_name: str = "creo", region: str = "us-central1")
             print(f"\n  Set them with:")
             print(f"  {Colors.BOLD}gcloud run services update {service_name} \\")
             print(f"    --region {region} \\")
-            print(f"    --set-env-vars GEMINI_API_KEY=xxx,PINECONE_API_KEY=xxx{Colors.END}")
+            print(f"    --set-env-vars GOOGLE_API_KEY=xxx,PINECONE_API_KEY=xxx{Colors.END}")
             return False
 
         # Parse environment variables

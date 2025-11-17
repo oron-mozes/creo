@@ -81,7 +81,7 @@ jobs:
 
       - name: Run judge evaluation
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           python scripts/judge_agent.py --agent-dir agents/${{ matrix.agent }} --max-cases 3
         continue-on-error: true
@@ -125,7 +125,7 @@ jobs:
             --project ${{ env.PROJECT_ID }} \
             --platform managed \
             --allow-unauthenticated \
-            --set-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest \
+            --set-secrets GOOGLE_API_KEY=GOOGLE_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest \
             --set-env-vars GCP_PROJECT_ID=${{ env.PROJECT_ID }}
 
       - name: Get Service URL

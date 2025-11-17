@@ -77,7 +77,7 @@ Uploads all evaluation reports and output logs as artifacts:
 ## Required Secrets
 
 The workflow requires the following GitHub secrets to be configured:
-- `GEMINI_API_KEY` - API key for Gemini LLM (used by judge)
+- `GOOGLE_API_KEY` - API key for Gemini LLM (used by judge)
 - `PINECONE_API_KEY` - API key for Pinecone (if agents use it)
 
 To add these secrets:

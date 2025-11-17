@@ -354,7 +354,7 @@ We support multiple deployment platforms:
      --source . \
      --region us-central1 \
      --allow-unauthenticated \
-     --set-env-vars GEMINI_API_KEY=your-gemini-key,PINECONE_API_KEY=your-pinecone-key
+     --set-env-vars GOOGLE_API_KEY=your-gemini-key,PINECONE_API_KEY=your-pinecone-key
    ```
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
@@ -365,7 +365,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
 
 1. Sign up at https://railway.app
 2. New Project → Deploy from GitHub
-3. Select repository and add `GEMINI_API_KEY` env var
+3. Select repository and add `GOOGLE_API_KEY` env var
 4. Deploy automatically!
 
 #### Option 3: Render (Completely Free)
@@ -375,13 +375,13 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
 1. Sign up at https://render.com
 2. New → Web Service
 3. Connect GitHub and configure Docker environment
-4. Add `GEMINI_API_KEY` env var
+4. Add `GOOGLE_API_KEY` env var
 5. Deploy!
 
 ### Environment Variables for Deployment
 
 Required:
-- `GEMINI_API_KEY` - Your Google Gemini API key (get from https://aistudio.google.com/app/apikey)
+- `GOOGLE_API_KEY` - Your Google Gemini API key (get from https://aistudio.google.com/app/apikey)
 - `PINECONE_API_KEY` - Your Pinecone API key (get from https://app.pinecone.io/)
 
 Optional:
