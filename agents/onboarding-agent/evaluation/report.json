@@ -1,0 +1,36 @@
+{
+  "average_confidence_score": 0.892,
+  "total_cases": 6,
+  "test_results": [
+    {
+      "description": "User provides a website URL, agent should search and extract business info",
+      "score": 1.0,
+      "rationale": "The agent perfectly followed the instructions for handling a provided website URL, including acknowledging the search, extracting relevant business information, presenting it for confirmation, and generating the BUSINESS_CARD_CONFIRMATION block with all details."
+    },
+    {
+      "description": "User provides business name and location, agent should search for details",
+      "score": 0.85,
+      "rationale": "The agent correctly extracted information, initiated a search, presented findings, and asked for confirmation in the correct format. However, it failed to include the inferred 'Service Type' (tech startup, SaaS, etc.) in the BUSINESS_CARD_CONFIRMATION block, marking it as 'Not provided' despite presenting it to the user."
+    },
+    {
+      "description": "Business card already exists in session, should skip onboarding",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that a business card already exists in the session, acknowledged the user warmly using the business name 'Alma Cafe', and confirmed that onboarding is complete, exactly as instructed for this scenario. It also correctly avoided asking for information, using Google Search, or generating a confirmation block."
+    },
+    {
+      "description": "User confirms the business details presented",
+      "score": 0.5,
+      "rationale": "The agent correctly generated the critical BUSINESS_CARD_CONFIRMATION block, which is mandatory upon user confirmation. However, the conversational text ('Welcome back! I see we already have your details...') is inappropriate for a confirmation step and fails to warmly thank the user for confirming, as explicitly required by the instructions for this scenario. It incorrectly uses text meant for when the business card was already complete at the start of the session."
+    },
+    {
+      "description": "New user provides minimal information, agent should ask for more",
+      "score": 1.0,
+      "rationale": "The agent correctly inferred the service type ('coffee shop'), provided a warm welcome, and asked for the essential missing information (business name and location) in a conversational, non-overwhelming manner, aligning perfectly with all instructions and expected behaviors."
+    },
+    {
+      "description": "User provides Instagram handle, agent should search for business info",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the Instagram handle, indicated it would search, extracted all relevant business information (name, location, service type, social link), presented it for confirmation, and included the mandatory BUSINESS_CARD_CONFIRMATION block, perfectly following the instructions and example flow."
+    }
+  ]
+}

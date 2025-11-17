@@ -1,0 +1,38 @@
+[
+  {
+    "name": "summer_fashion_launch",
+    "description": "Create a campaign brief for summer fashion launch",
+    "user_message": "I need a campaign brief for Summer Fashion Launch 2024 targeting fashion-conscious millennials (25-40), budget $50k, 3 months timeline. Focus on sustainable fashion, summer collection, limited edition.",
+    "session_context": {
+      "business_card": {
+        "name": "Fashion Brand Co",
+        "service_type": "Fashion retail",
+        "location": "New York, NY"
+      }
+    },
+    "expected_behavior": {
+      "should_create_campaign_brief": true,
+      "should_include_objectives": true,
+      "should_define_target_audience": true,
+      "should_include_budget": true
+    }
+  },
+  {
+    "name": "tech_product_launch",
+    "description": "Create a campaign brief for tech product launch",
+    "user_message": "Create a campaign brief for Tech Product Launch targeting tech early adopters, $100k budget, 2 months. Focus on product education, pre-orders, reviews. Key messages: innovation, performance, early access.",
+    "session_context": {
+      "business_card": {
+        "name": "Tech Gadgets Inc",
+        "service_type": "Technology products",
+        "location": "San Francisco, CA"
+      }
+    },
+    "expected_behavior": {
+      "should_create_campaign_brief": true,
+      "should_include_timeline": true,
+      "should_define_key_messages": true,
+      "should_include_objectives": true
+    }
+  }
+]

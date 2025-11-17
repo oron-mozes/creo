@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,30 +8,49 @@
     <meta name="description" content="Chat with Creo AI to find the perfect influencers for your business">
     <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Auth utilities must be loaded first -->
+    <script src="/static/auth-utils.js"></script>
+    <script src="/static/user-utils.js"></script>
+    <script src="/static/auth-gate.js"></script>
     <style>
         @keyframes fade-in {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fade-in {
             animation: fade-in 0.6s ease-out forwards;
         }
+
         /* Auto-grow textarea */
         #messageInput {
             max-height: 200px;
             overflow-y: auto;
         }
+
         /* Typing indicator animation */
         @keyframes typing-dot {
-            0%, 60%, 100% {
+
+            0%,
+            60%,
+            100% {
                 transform: translateY(0);
                 opacity: 0.4;
             }
+
             30% {
                 transform: translateY(-10px);
                 opacity: 1;
             }
         }
+
         .typing-dot {
             width: 8px;
             height: 8px;
@@ -39,25 +59,47 @@
             display: inline-block;
             animation: typing-dot 1.4s infinite;
         }
+
         .typing-dot:nth-child(1) {
             animation-delay: 0s;
         }
+
         .typing-dot:nth-child(2) {
             animation-delay: 0.2s;
         }
+
         .typing-dot:nth-child(3) {
             animation-delay: 0.4s;
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-white">
     <!-- Header -->
     <header class="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-10">
         <div class="px-4 py-2">
-            <div class="flex items-center">
+            <div class="flex items-center justify-between">
                 <a href="/" class="pl-2">
                     <img src="/static/creo-logo-BesatB3H.png" alt="Creo" style="height: 3rem;">
                 </a>
+
+                <!-- User Profile -->
+                <div id="userProfile" class="hidden flex items-center gap-3 pr-4">
+                    <span id="userName" class="text-sm font-medium text-gray-700"></span>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" id="userAvatar" class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-sm">
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                            <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -76,9 +118,13 @@
 
             <!-- New Chat Button (Footer) -->
             <div class="p-4 border-t" style="background-color: rgba(0, 160, 235, 0.05);">
-                <button onclick="createNewSession()" class="w-full text-white px-4 py-2.5 rounded-xl font-medium transition-all text-sm flex items-center justify-center gap-2" style="background-color: rgb(0, 160, 235);" onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'" onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
+                <button onclick="createNewSession()"
+                    class="w-full text-white px-4 py-2.5 rounded-xl font-medium transition-all text-sm flex items-center justify-center gap-2"
+                    style="background-color: rgb(0, 160, 235);"
+                    onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'"
+                    onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     New Chat
                 </button>
@@ -90,16 +136,21 @@
             <!-- Messages Container -->
             <div id="messagesContainer" class="flex-1 overflow-y-auto px-6 py-8">
                 <div class="max-w-4xl mx-auto space-y-4" id="messages">
-                    <!-- Initial bot message -->
-                    <div class="flex gap-4 animate-fade-in">
+                    <!-- Loading indicator -->
+                    <div id="loadingIndicator" class="flex gap-4 animate-fade-in">
                         <div class="flex gap-3 items-start max-w-[85%]">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                                style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200" style="color: #1f2937;">
-                                Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!
+                            <div
+                                class="flex-1 p-4 rounded-2xl text-base bg-white border border-gray-200 flex items-center gap-2">
+                                <span class="typing-dot"></span>
+                                <span class="typing-dot"></span>
+                                <span class="typing-dot"></span>
                             </div>
                         </div>
                     </div>
@@ -111,18 +162,18 @@
                 <div class="max-w-4xl mx-auto px-6 py-4">
                     <div class="bg-white p-5 shadow-2xl border-2 border-gray-200 rounded-3xl">
                         <div class="flex gap-4 items-end">
-                            <textarea
-                                id="messageInput"
-                                rows="1"
+                            <textarea id="messageInput" rows="1"
                                 class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
-                                placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"
-                            ></textarea>
-                            <button
-                                id="sendButton"
-                                onclick="sendMessage()"
-                                class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0" style="background-color: rgba(0, 160, 235, 0.4);">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send h-5 w-5">
-                                    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                                placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"></textarea>
+                            <button id="sendButton" onclick="sendMessage()"
+                                class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0"
+                                style="background-color: rgba(0, 160, 235, 0.4);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-send h-5 w-5">
+                                    <path
+                                        d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z">
+                                    </path>
                                     <path d="m21.854 2.147-10.94 10.939"></path>
                                 </svg>
                             </button>
@@ -142,6 +193,86 @@
         let currentLoadingDiv = null;
         let currentResponseDiv = null;
         let currentMessageId = null;
+        let currentUser = null;
+
+        // Authentication functions
+        function getAuthToken() {
+            return localStorage.getItem('creo_auth_token');
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem('creo_auth_token');
+        }
+
+        function getAuthHeaders() {
+            const token = getAuthToken();
+            if (!token) return {};
+            return {
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        async function checkAuthForChat() {
+            // Check if user is authenticated
+            const user = await checkAuth({
+                requireAuth: false,  // Don't force login for chat (anonymous allowed)
+                onSuccess: (user) => {
+                    console.log('[CHAT] Authenticated user:', user);
+                    currentUser = user;
+                    displayUserProfile(user);
+                    // Check if this user just registered
+                    migrateAnonymousUser();
+                },
+                onFailure: () => {
+                    console.log('[CHAT] Anonymous user');
+                    displayLoginButton();
+                    // Ensure anonymous user ID is generated
+                    const anonId = getAnonymousUserId();
+                    console.log('[CHAT] Anonymous user ID:', anonId);
+                    currentUser = null;
+                }
+            });
+
+            return user;
+        }
+
+        function displayUserProfile(user) {
+            const userProfile = document.getElementById('userProfile');
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
+
+            if (userProfile && userName && userAvatar) {
+                userProfile.classList.remove('hidden');
+                userName.textContent = user.name || user.email;
+
+                // Set avatar (initials or image)
+                if (user.picture) {
+                    userAvatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" class="h-10 w-10 rounded-full">`;
+                } else {
+                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase();
+                    userAvatar.textContent = initials;
+                }
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            clearAuthToken();
+            window.location.href = '/login.html';
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const userMenu = document.getElementById('userMenu');
+            const userAvatar = document.getElementById('userAvatar');
+            if (userMenu && userAvatar && !userMenu.contains(event.target) && !userAvatar.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
 
         // Get session ID from URL
         function getSessionId() {
@@ -151,15 +282,6 @@
 
         function generateSessionId() {
             return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-        }
-
-        function getUserId() {
-            let userId = localStorage.getItem('creo_user_id');
-            if (!userId) {
-                userId = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('creo_user_id', userId);
-            }
-            return userId;
         }
 
         // Load sessions from localStorage
@@ -172,8 +294,8 @@
                 <a href="/chat/${session.id}"
                    class="block px-3 py-2.5 rounded-lg transition-all text-sm"
                    style="${session.id === currentSessionId ?
-                       'background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235); font-weight: 500;' :
-                       'color: #374151;'}"
+                    'background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235); font-weight: 500;' :
+                    'color: #374151;'}"
                    onmouseover="if('${session.id}' !== '${currentSessionId}') this.style.backgroundColor='rgba(0, 0, 0, 0.03)'"
                    onmouseout="if('${session.id}' !== '${currentSessionId}') this.style.backgroundColor='transparent'">
                     <div class="truncate">${session.title}</div>
@@ -211,6 +333,98 @@
             window.location.href = '/chat/' + newSessionId;
         }
 
+        async function loadSuggestionsForNewChat() {
+            try {
+                const userId = getUserId();
+                const response = await fetch('/api/suggestions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load suggestions');
+                }
+
+                const data = await response.json();
+
+                // Create welcome message with suggestions
+                const messagesDiv = document.getElementById('messages');
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'flex gap-4 animate-fade-in';
+                welcomeDiv.innerHTML = `
+                    <div class="flex gap-3 items-start max-w-[85%]">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                            style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200"
+                            style="color: #1f2937;">
+                            <div>${escapeHtml(data.welcome_message)}</div>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                ${data.suggestions.map(suggestion => {
+                    const escaped = suggestion.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `
+                                        <button onclick="setMessageFromChip('${escaped}')"
+                                            class="px-4 py-2 text-sm rounded-2xl"
+                                            style="appearance: button; background-color: rgb(255, 255, 255); border: 2px solid rgb(225, 231, 239); border-radius: 16px; transition: all 0.2s; cursor: pointer;"
+                                            onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                                            onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'">
+                                            ${escapeHtml(suggestion)}
+                                        </button>
+                                    `;
+                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                messagesDiv.appendChild(welcomeDiv);
+                scrollToBottom();
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+                // On error, show a simple welcome message without suggestions
+                const messagesDiv = document.getElementById('messages');
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'flex gap-4 animate-fade-in';
+                welcomeDiv.innerHTML = `
+                    <div class="flex gap-3 items-start max-w-[85%]">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                            style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200"
+                            style="color: #1f2937;">
+                            Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!
+                        </div>
+                    </div>
+                `;
+                messagesDiv.appendChild(welcomeDiv);
+                scrollToBottom();
+            }
+        }
+
+        function setMessageFromChip(text) {
+            const input = document.getElementById('messageInput');
+            input.value = text;
+            input.focus();
+            // Auto-grow textarea
+            input.style.height = 'auto';
+            input.style.height = input.scrollHeight + 'px';
+            // Update button state
+            const sendButton = document.getElementById('sendButton');
+            if (sendButton) {
+                sendButton.style.backgroundColor = 'rgb(0, 160, 235)';
+            }
+        }
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -240,10 +454,13 @@
             scrollToBottom();
         }
 
-        function addBotMessage(message) {
+        function addBotMessage(message, businessCard = null) {
             const messagesDiv = document.getElementById('messages');
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'flex gap-4 animate-fade-in';
+
+            const businessCardHtml = businessCard ? renderBusinessCard(businessCard) : '';
+
             botMessageDiv.innerHTML = `
                 <div class="flex gap-3 items-start max-w-[85%]">
                     <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(135deg, rgb(0, 160, 235), rgb(0, 144, 211));">
@@ -251,13 +468,18 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200 whitespace-pre-wrap" style="color: #1f2937;">
+                    <div class="flex-1 p-4 rounded-2xl text-base leading-relaxed bg-white border border-gray-200 whitespace-pre-line" style="color: #1f2937;">
                         ${escapeHtml(message)}
+                        ${businessCardHtml}
                     </div>
                 </div>
             `;
             messagesDiv.appendChild(botMessageDiv);
             scrollToBottom();
+        }
+
+        function addBotMessageWithCard(message, businessCard) {
+            addBotMessage(message, businessCard);
         }
 
         function showLoading() {
@@ -287,6 +509,15 @@
                 currentLoadingDiv.remove();
                 currentLoadingDiv = null;
             }
+            // Also search for any orphaned loading divs and remove them
+            const messagesDiv = document.getElementById('messages');
+            const loadingDivs = messagesDiv.querySelectorAll('.typing-dot');
+            loadingDivs.forEach(div => {
+                const parentDiv = div.closest('.flex.gap-4');
+                if (parentDiv) {
+                    parentDiv.remove();
+                }
+            });
         }
 
         function startStreamingResponse() {
@@ -357,18 +588,117 @@
             currentResponseDiv = null;
         }
 
+        function simulateTyping(message, businessCard = null) {
+            // Simulate typing by streaming chunks with delay
+            const words = message.split(' ');
+            let currentIndex = 0;
+            const chunkSize = 3; // Words per chunk
+
+            const typeNextChunk = () => {
+                if (currentIndex >= words.length) {
+                    // Wait for typing queue to finish before completing
+                    const waitForTyping = setInterval(() => {
+                        if (!isTyping && typingQueue.length === 0) {
+                            clearInterval(waitForTyping);
+                            // Typing complete
+                            finishStreamingResponse();
+                            // If there's a business card, append it
+                            if (businessCard && currentResponseDiv) {
+                                const contentDiv = currentResponseDiv.querySelector('.response-content');
+                                if (contentDiv) {
+                                    contentDiv.innerHTML += renderBusinessCard(businessCard);
+                                    scrollToBottom();
+                                }
+                            }
+                        }
+                    }, 50);
+                    return;
+                }
+
+                // Get next chunk of words
+                const chunk = words.slice(currentIndex, currentIndex + chunkSize).join(' ') + ' ';
+                appendToStreamingResponse(chunk);
+                currentIndex += chunkSize;
+
+                // Schedule next chunk (faster typing - 30ms per chunk)
+                setTimeout(typeNextChunk, 30);
+            };
+
+            typeNextChunk();
+        }
+
+        function renderBusinessCard(businessCard) {
+            if (!businessCard) return '';
+
+            const formatValue = (value) => {
+                return value && value !== 'Not provided' ? value : '<span class="text-gray-400 italic">Not provided</span>';
+            };
+
+            const formatWebsite = (url) => {
+                if (!url || url === 'Not provided') {
+                    return '<span class="text-gray-400 italic">Not provided</span>';
+                }
+                const displayUrl = url.replace(/^https?:\/\//, '');
+                return `<a href="${url.startsWith('http') ? url : 'https://' + url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">${displayUrl}</a>`;
+            };
+
+            return `
+                <div class="mt-4 p-5 rounded-xl border-2" style="background: linear-gradient(135deg, rgba(0, 160, 235, 0.05), rgba(0, 144, 211, 0.05)); border-color: rgba(0, 160, 235, 0.2);">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <h3 class="font-semibold text-lg" style="color: rgb(0, 160, 235);">Business Information</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="text-sm font-medium text-gray-600 mb-1">Business Name</div>
+                            <div class="text-base">${formatValue(businessCard.name)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-600 mb-1">Website</div>
+                            <div class="text-base">${formatWebsite(businessCard.website)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-600 mb-1">Location</div>
+                            <div class="text-base">${formatValue(businessCard.location)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-600 mb-1">Service Type</div>
+                            <div class="text-base">${formatValue(businessCard.service_type)}</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-600">Please confirm if this information is correct, or let me know what needs to be updated!</p>
+                    </div>
+                </div>
+            `;
+        }
+
         // Initialize Socket.IO
         function initializeSocket() {
+            if (socket) {
+                console.warn('[SOCKET] Socket already initialized, skipping');
+                return;
+            }
+
+            console.log('[SOCKET] Initializing socket connection');
             socket = io();
             const sessionId = getSessionId();
-            const userId = getUserId();
+            const token = getAuthToken();
+            const userId = getCurrentUserId();  // Get authenticated or anonymous user ID
+
+            console.log('[SOCKET] User ID:', userId);
+            console.log('[SOCKET] Has token:', !!token);
 
             socket.on('connect', () => {
-                console.log('Connected to server');
-                // Join the session room
+                console.log('[SOCKET] Connected to server');
+                console.log('[SOCKET] Emitting join_session for:', sessionId);
+                // Join the session room (works for both authenticated and anonymous)
                 socket.emit('join_session', {
                     session_id: sessionId,
-                    user_id: userId
+                    token: token || null,  // Include token if available
+                    user_id: userId  // Always include user_id (authenticated or anonymous)
                 });
             });
 
@@ -376,13 +706,14 @@
                 console.log('Disconnected from server');
             });
 
-            socket.on('chat_history', (data) => {
+            socket.on('chat_history', async (data) => {
                 console.log('Received chat history:', data);
                 const messagesDiv = document.getElementById('messages');
-                // Clear only the initial welcome message
-                const initialMessage = messagesDiv.querySelector('.animate-fade-in');
-                if (initialMessage && data.messages.length > 0) {
-                    initialMessage.remove();
+
+                // Remove loading indicator
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                if (loadingIndicator) {
+                    loadingIndicator.remove();
                 }
 
                 // Display chat history
@@ -393,9 +724,15 @@
                         addBotMessage(msg.content);
                     }
                 });
+
+                // If no messages, load suggestions for new chat
+                if (data.messages.length === 0) {
+                    await loadSuggestionsForNewChat();
+                }
             });
 
             socket.on('agent_thinking', () => {
+                console.log('[agent_thinking] Showing loading indicator');
                 showLoading();
             });
 
@@ -413,8 +750,33 @@
             });
 
             socket.on('message_complete', (data) => {
+                console.log('[message_complete] Received:', data);
+                console.log('[message_complete] currentResponseDiv:', currentResponseDiv);
+                console.log('[message_complete] currentLoadingDiv:', currentLoadingDiv);
+
                 finishStreamingResponse();
                 hideLoading();
+
+                console.log('[message_complete] After hideLoading, currentLoadingDiv:', currentLoadingDiv);
+
+                // If no streaming response was active, we need to display the message
+                if (!currentResponseDiv && data.message) {
+                    console.log('[message_complete] Displaying non-streaming message with typing animation');
+                    // Start typing animation
+                    startStreamingResponse();
+                    // Simulate typing with delay
+                    simulateTyping(data.message, data.business_card);
+                }
+                // If there was a streaming response and there's a business card, append it
+                else if (data.business_card && currentResponseDiv) {
+                    console.log('[message_complete] Appending business card to streaming response');
+                    const contentDiv = currentResponseDiv.querySelector('.response-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML += renderBusinessCard(data.business_card);
+                        scrollToBottom();
+                    }
+                }
+
                 currentMessageId = null; // Reset for next message
             });
 
@@ -422,12 +784,22 @@
                 console.error('Socket error:', data);
                 hideLoading();
                 finishStreamingResponse();
+
+                // Check if it's an authentication error
+                if (data.error && (data.error.includes('Authentication') || data.error.includes('Invalid') || data.error.includes('expired'))) {
+                    console.error('Authentication error, redirecting to login');
+                    clearAuthToken();
+                    redirectToLogin();
+                    return;
+                }
+
+                // Show generic error message
                 const messagesDiv = document.getElementById('messages');
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'flex gap-4 p-5 rounded-3xl bg-red-50 border border-red-200 mr-12 md:mr-20 animate-fade-in';
                 errorDiv.innerHTML = `
                     <div class="flex-1 text-base text-red-700">
-                        Sorry, something went wrong. Please try again.
+                        ${data.error || 'Sorry, something went wrong. Please try again.'}
                     </div>
                 `;
                 messagesDiv.appendChild(errorDiv);
@@ -442,7 +814,6 @@
             if (!message || !socket) return;
 
             const sessionId = getSessionId();
-            const userId = getUserId();
 
             // Add user message to UI
             addUserMessage(message);
@@ -463,10 +834,13 @@
             // Show loading
             showLoading();
 
-            // Send message via Socket.IO
+            // Send message via Socket.IO (works for both authenticated and anonymous)
+            const token = getAuthToken();
+            const userId = getCurrentUserId();
             socket.emit('send_message', {
                 message: message,
                 session_id: sessionId,
+                token: token || null,
                 user_id: userId
             });
         }
@@ -480,7 +854,7 @@
             messageInput.style.height = messageInput.scrollHeight + 'px';
         }
 
-        messageInput.addEventListener('input', function() {
+        messageInput.addEventListener('input', function () {
             // Auto-grow
             autoGrowTextarea();
 
@@ -493,17 +867,47 @@
         });
 
         // Handle Enter key to send message
-        messageInput.addEventListener('keypress', function(e) {
+        messageInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
 
-        // Initialize
-        loadSessions();
-        initializeSocket();
-        messageInput.focus();
+        // Initialize app
+        async function initializeApp() {
+            // Check authentication (optional for chat - anonymous allowed)
+            await checkAuthForChat();
+
+            // Save current session if it's new (just created from homepage)
+            const sessionId = getSessionId();
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const existingSession = sessions.find(s => s.id === sessionId);
+
+            if (!existingSession && sessionId) {
+                // Check if we have a title from the URL (initial message from homepage)
+                const urlParams = new URLSearchParams(window.location.search);
+                const title = urlParams.get('title') || 'New Chat';
+
+                // Save the new session with the title
+                saveSession(sessionId, title);
+                console.log('[INIT] Saved new session:', sessionId, 'with title:', title);
+
+                // Clean up URL by removing the title parameter
+                if (urlParams.has('title')) {
+                    window.history.replaceState({}, '', `/chat/${sessionId}`);
+                }
+            }
+
+            // Load sessions and initialize socket
+            loadSessions();
+            initializeSocket();
+            messageInput.focus();
+        }
+
+        // Start the app
+        initializeApp();
     </script>
 </body>
+
 </html>

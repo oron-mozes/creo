@@ -1,34 +1,38 @@
 [
   {
-    "input": {
-      "objective": "Launch new eco-friendly skincare product",
-      "target_audience": "Environmentally conscious millennials (25-40), primarily female",
-      "budget": "$50,000",
-      "timeline": "3 months",
-      "channels": [
-        "Instagram",
-        "TikTok",
-        "YouTube",
-        "Influencer partnerships"
-      ]
+    "name": "eco_skincare_launch_campaign",
+    "description": "Build comprehensive campaign for eco-friendly skincare launch",
+    "user_message": "Build a full campaign to launch our new eco-friendly skincare product targeting environmentally conscious millennials (25-40), primarily female. Budget is $50k, 3 months timeline. Use Instagram, TikTok, YouTube, and influencer partnerships.",
+    "session_context": {
+      "business_card": {
+        "name": "EcoBeauty Co",
+        "service_type": "Skincare products",
+        "location": "Los Angeles, CA"
+      }
     },
-    "expected_output_type": "campaign_plan",
-    "description": "Build comprehensive campaign for eco-friendly skincare launch"
+    "expected_behavior": {
+      "should_create_comprehensive_plan": true,
+      "should_define_channels": true,
+      "should_include_budget_allocation": true,
+      "should_include_timeline": true
+    }
   },
   {
-    "input": {
-      "objective": "Increase B2B SaaS product sign-ups",
-      "target_audience": "Small business owners, marketing managers",
-      "budget": "$30,000",
-      "timeline": "2 months",
-      "channels": [
-        "LinkedIn",
-        "Email",
-        "Webinars",
-        "Content marketing"
-      ]
+    "name": "b2b_saas_lead_generation",
+    "description": "Build B2B SaaS lead generation campaign",
+    "user_message": "Create a campaign to increase B2B SaaS product sign-ups targeting small business owners and marketing managers. Budget $30k, 2 months. Use LinkedIn, email, webinars, and content marketing.",
+    "session_context": {
+      "business_card": {
+        "name": "MarketingTech SaaS",
+        "service_type": "B2B Software",
+        "location": "Austin, TX"
+      }
     },
-    "expected_output_type": "campaign_plan",
-    "description": "Build B2B SaaS lead generation campaign"
+    "expected_behavior": {
+      "should_create_comprehensive_plan": true,
+      "should_target_b2b_audience": true,
+      "should_include_lead_generation_strategy": true,
+      "should_allocate_budget_per_channel": true
+    }
   }
 ]

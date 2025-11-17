@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
+.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server dev-reset docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
 
 # Virtual environment path
 VENV = venv
@@ -25,6 +25,7 @@ help:
 	@echo "  make generate-tests - Generate synthetic test data for all agents"
 	@echo "  make judge AGENT=\"Agent-folder-name\""
 	@echo "  make server       - Start FastAPI server (exposes orchestrator agent)"
+	@echo "  make dev-reset    - Reset all dev data (sessions, business cards, messages)"
 	@echo ""
 	@echo "Docker commands:"
 	@echo "  make docker-build - Build Docker image"
@@ -129,6 +130,38 @@ server: venv
 	@echo "Starting FastAPI server with Socket.IO on http://localhost:8000"
 	@echo "API Documentation: http://localhost:8000/docs"
 	$(VENV)/bin/uvicorn server:socket_app --reload --host 0.0.0.0 --port 8000
+
+# Reset development data (sessions, business cards, messages)
+dev-reset:
+	@echo "================================================"
+	@echo "  DEV RESET - Clearing all development data"
+	@echo "================================================"
+	@echo ""
+	@echo "This will clear:"
+	@echo "  • All in-memory sessions and runners"
+	@echo "  • All in-memory messages"
+	@echo "  • All in-memory business cards"
+	@echo "  • Browser localStorage (user_id)"
+	@echo ""
+	@echo "Note: This only affects local development."
+	@echo "      Firestore data (if connected) is NOT affected."
+	@echo ""
+	@read -p "Are you sure you want to reset? (y/N): " confirm; \
+	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
+		echo ""; \
+		echo "→ Creating reset script..."; \
+		$(PYTHON) -c "import sys; sys.path.insert(0, '.'); from session_manager import get_session_manager; from server import in_memory_messages, in_memory_business_cards; sm = get_session_manager(); sm._runners.clear(); sm._session_memories.clear(); in_memory_messages.clear(); in_memory_business_cards.clear(); print('✓ In-memory data cleared')"; \
+		echo ""; \
+		echo "→ To complete the reset:"; \
+		echo "  1. Open browser DevTools (F12)"; \
+		echo "  2. Go to Application/Storage → Local Storage"; \
+		echo "  3. Clear 'creo_user_id' or clear all localStorage"; \
+		echo "  4. Refresh the page"; \
+		echo ""; \
+		echo "✓ Dev reset complete! You can now test as a fresh user."; \
+	else \
+		echo "Reset cancelled."; \
+	fi
 
 # Docker commands
 DOCKER_IMAGE = creo-agent-api

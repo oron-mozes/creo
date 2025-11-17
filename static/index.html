@@ -1,34 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creo - Find Perfect Influencers Made Simple</title>
-    <meta name="description" content="Connect with the right influencers for your business. No complicated dashboards - just tell us what you need and we'll find your perfect match.">
+    <meta name="description"
+        content="Connect with the right influencers for your business. No complicated dashboards - just tell us what you need and we'll find your perfect match.">
     <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Auth utilities must be loaded first -->
+    <script src="/static/auth-utils.js"></script>
+    <script src="/static/user-utils.js"></script>
     <style>
         @keyframes fade-in {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes scale-in {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
+
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
+
         .animate-fade-in {
             animation: fade-in 0.6s ease-out forwards;
         }
+
         .animate-scale-in {
             animation: scale-in 0.4s ease-out forwards;
         }
+
         .animate-bounce {
             animation: bounce 2s ease-in-out infinite;
         }
+
         /* Auto-grow textarea */
         #messageInput {
             max-height: 200px;
@@ -36,26 +68,48 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-white">
     <!-- Header -->
     <header class="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-10">
         <div class="container mx-auto px-4 py-2">
             <div class="flex items-center justify-between">
                 <img src="/static/creo-logo-BesatB3H.png" alt="Creo" style="height: 3rem;">
+
+                <!-- User Profile -->
+                <div id="userProfile" class="hidden flex items-center gap-3">
+                    <span id="userName" class="text-sm font-medium text-gray-700"></span>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" id="userAvatar" class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-sm">
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                            <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br via-gray-50 to-purple-50" style="background-image: linear-gradient(to bottom right, rgba(0, 160, 235, 0.05), rgb(249, 250, 251), rgb(250, 245, 255));">
+    <section class="relative overflow-hidden bg-gradient-to-br via-gray-50 to-purple-50"
+        style="background-image: linear-gradient(to bottom right, rgba(0, 160, 235, 0.05), rgb(249, 250, 251), rgb(250, 245, 255));">
         <div class="container mx-auto px-6 py-20 md:py-28">
             <div class="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
                 <!-- Left Column -->
                 <div class="space-y-8 animate-fade-in">
                     <!-- Badge -->
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style="background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235);">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+                        style="background-color: rgba(0, 160, 235, 0.1); color: rgb(0, 160, 235);">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
                         Powered by Best-in-Class AI Agents
                     </div>
@@ -67,31 +121,41 @@
 
                     <!-- Subheading -->
                     <p class="text-xl md:text-2xl text-gray-700 leading-relaxed font-medium">
-                        You run the business. Creo brings the creator magic — our trusted AI agents handle every step: match, plan, launch, track.
+                        You run the business. Creo brings the creator magic — our trusted AI agents handle every step:
+                        match, plan, launch, track.
                     </p>
 
                     <!-- Features -->
                     <div class="space-y-3">
                         <div class="flex items-center gap-3 text-gray-700">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-full" style="background-color: rgba(0, 160, 235, 0.1);">
-                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                style="background-color: rgba(0, 160, 235, 0.1);">
+                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <span class="text-base">No forms. No dashboards - just chat with Creo</span>
                         </div>
                         <div class="flex items-center gap-3 text-gray-700">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-full" style="background-color: rgba(0, 160, 235, 0.1);">
-                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                style="background-color: rgba(0, 160, 235, 0.1);">
+                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                                 </svg>
                             </div>
                             <span class="text-base">Fully handle it all end to end: match, plan, launch, track</span>
                         </div>
                         <div class="flex items-center gap-3 text-gray-700">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-full" style="background-color: rgba(0, 160, 235, 0.1);">
-                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                                style="background-color: rgba(0, 160, 235, 0.1);">
+                                <svg class="h-4 w-4" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                             </div>
                             <span class="text-base">Safe, trusted AI agents verify every creator</span>
@@ -99,10 +163,15 @@
                     </div>
 
                     <!-- CTA Button -->
-                    <button onclick="scrollToChat()" class="inline-flex items-center justify-center gap-2 text-white text-lg px-8 py-4 rounded-full font-medium transition-colors animate-scale-in" style="background-color: rgb(0, 160, 235);" onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'" onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
+                    <button onclick="scrollToChat()"
+                        class="inline-flex items-center justify-center gap-2 text-white text-lg px-8 py-4 rounded-full font-medium transition-colors animate-scale-in"
+                        style="background-color: rgb(0, 160, 235);"
+                        onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'"
+                        onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
                         Tell Us What You Need!
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>
                     </button>
                 </div>
@@ -110,19 +179,13 @@
                 <!-- Right Column - Video Demo -->
                 <div class="relative animate-fade-in" style="animation-delay: 0.2s;">
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl">
-                        <video
-                            class="w-full h-full object-cover"
-                            autoplay
-                            loop
-                            muted
-                            playsinline
-                            poster=""
-                        >
+                        <video class="w-full h-full object-cover" autoplay loop muted playsinline poster="">
                             <source src="/static/creo-teaser-CBjoFzhL.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
-                    <div class="absolute -bottom-4 -right-4 w-32 h-32 rounded-full blur-3xl opacity-50" style="background-color: rgba(0, 160, 235, 0.2);"></div>
+                    <div class="absolute -bottom-4 -right-4 w-32 h-32 rounded-full blur-3xl opacity-50"
+                        style="background-color: rgba(0, 160, 235, 0.2);"></div>
                     <div class="absolute -top-4 -left-4 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50"></div>
                 </div>
             </div>
@@ -131,7 +194,7 @@
         <!-- Scroll Indicator -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
             <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
         </div>
     </section>
@@ -143,16 +206,19 @@
             <div class="space-y-6">
                 <div class="space-y-4">
                     <!-- Bot Message -->
-                    <div class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white" style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
+                    <div
+                        class="flex gap-4 p-5 rounded-3xl bg-white border border-gray-200 mr-12 md:mr-20 animate-fade-in">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white"
+                            style="background: linear-gradient(to bottom right, rgb(0, 160, 235), rgb(0, 144, 211));">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <div class="flex-1 space-y-2">
                             <p class="text-sm font-medium text-gray-500">Creo Assistant</p>
-                            <div class="text-base leading-relaxed text-gray-700">
-                                Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!
+                            <div id="welcomeMessage" class="text-base leading-relaxed text-gray-700">
+                                Loading...
                             </div>
                         </div>
                     </div>
@@ -162,20 +228,21 @@
                 </div>
 
                 <!-- Input Area -->
-                <div class="bg-white p-5 sticky bottom-4 shadow-2xl border-2 border-gray-200 rounded-3xl animate-fade-in">
+                <div
+                    class="bg-white p-5 sticky bottom-4 shadow-2xl border-2 border-gray-200 rounded-3xl animate-fade-in">
                     <div class="flex gap-4 items-end">
-                        <textarea
-                            id="messageInput"
-                            rows="1"
+                        <textarea id="messageInput" rows="1"
                             class="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
-                            placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"
-                        ></textarea>
-                        <button
-                            id="sendButton"
-                            onclick="sendMessage()"
-                            class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0" style="background-color: rgba(0, 160, 235, 0.4);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send h-5 w-5">
-                                <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                            placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"></textarea>
+                        <button id="sendButton" onclick="sendMessage()"
+                            class="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0"
+                            style="background-color: rgba(0, 160, 235, 0.4);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-send h-5 w-5">
+                                <path
+                                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z">
+                                </path>
                                 <path d="m21.854 2.147-10.94 10.939"></path>
                             </svg>
                         </button>
@@ -188,33 +255,27 @@
                 <!-- Quick Start -->
                 <div class="bg-white p-6 border-2 border-gray-200 rounded-3xl animate-fade-in">
                     <h3 class="font-semibold mb-5 flex items-center gap-2 text-lg">
-                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
                         Quick Start
                     </h3>
                     <p class="text-sm text-gray-500 mb-4">Click to try:</p>
-                    <div class="space-y-3">
-                        <button onclick="setMessage('I have a local coffee shop')" class="w-full text-left p-4 text-base rounded-2xl border-2 border-gray-200 bg-gray-50 transition-all duration-200 hover:scale-[1.02]" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'" onmouseout="this.style.backgroundColor='rgb(249, 250, 251)'; this.style.borderColor='rgb(229, 231, 235)'">
-                            💬 I have a local coffee shop
-                        </button>
-                        <button onclick="setMessage('I sell handmade jewelry online')" class="w-full text-left p-4 text-base rounded-2xl border-2 border-gray-200 bg-gray-50 transition-all duration-200 hover:scale-[1.02]" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'" onmouseout="this.style.backgroundColor='rgb(249, 250, 251)'; this.style.borderColor='rgb(229, 231, 235)'">
-                            💬 I sell handmade jewelry online
-                        </button>
-                        <button onclick="setMessage('I run a small gym')" class="w-full text-left p-4 text-base rounded-2xl border-2 border-gray-200 bg-gray-50 transition-all duration-200 hover:scale-[1.02]" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'" onmouseout="this.style.backgroundColor='rgb(249, 250, 251)'; this.style.borderColor='rgb(229, 231, 235)'">
-                            💬 I run a small gym
-                        </button>
-                        <button onclick="setMessage('I own a boutique hotel')" class="w-full text-left p-4 text-base rounded-2xl border-2 border-gray-200 bg-gray-50 transition-all duration-200 hover:scale-[1.02]" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'" onmouseout="this.style.backgroundColor='rgb(249, 250, 251)'; this.style.borderColor='rgb(229, 231, 235)'">
-                            💬 I own a boutique hotel
-                        </button>
+                    <div id="suggestionsContainer" class="space-y-3">
+                        <div class="text-sm text-gray-400">Loading suggestions...</div>
                     </div>
                 </div>
 
                 <!-- Helpful Tips -->
-                <div class="p-6 rounded-3xl animate-fade-in" style="background-color: rgba(0, 160, 235, 0.05); border: 2px solid rgba(0, 160, 235, 0.2); animation-delay: 0.1s;">
+                <div class="p-6 rounded-3xl animate-fade-in"
+                    style="background-color: rgba(0, 160, 235, 0.05); border: 2px solid rgba(0, 160, 235, 0.2); animation-delay: 0.1s;">
                     <h3 class="font-semibold mb-4 flex items-center gap-2 text-lg">
-                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        <svg class="h-5 w-5" style="color: rgb(0, 160, 235);" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                         Helpful Tips
                     </h3>
@@ -238,6 +299,176 @@
     </main>
 
     <script>
+        // Authentication functions
+        function getAuthToken() {
+            return localStorage.getItem('creo_auth_token');
+        }
+
+        function setAuthToken(token) {
+            localStorage.setItem('creo_auth_token', token);
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem('creo_auth_token');
+        }
+
+        function getAuthHeaders() {
+            const token = getAuthToken();
+            if (!token) return {};
+            return {
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        async function checkAuth() {
+            const token = getAuthToken();
+            if (!token) {
+                // No token - user is not logged in, but that's OK for homepage
+                displayLoginButton();
+                return null;
+            }
+
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    // Token expired or invalid - clear it but don't redirect
+                    clearAuthToken();
+                    displayLoginButton();
+                    return null;
+                }
+
+                const user = await response.json();
+                displayUserProfile(user);
+                return user;
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                // Don't redirect on error, just show login button
+                displayLoginButton();
+                return null;
+            }
+        }
+
+        function displayLoginButton() {
+            const userProfile = document.getElementById('userProfile');
+            if (userProfile) {
+                userProfile.innerHTML = `
+                    <a href="/login.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-white transition-all" style="background-color: rgb(0, 160, 235);" onmouseover="this.style.backgroundColor='rgb(0, 144, 211)'" onmouseout="this.style.backgroundColor='rgb(0, 160, 235)'">
+                        Sign In
+                    </a>
+                `;
+                userProfile.classList.remove('hidden');
+            }
+        }
+
+        function displayUserProfile(user) {
+            const userProfile = document.getElementById('userProfile');
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
+
+            if (userProfile && userName && userAvatar) {
+                userProfile.classList.remove('hidden');
+                userName.textContent = user.name || user.email;
+
+                // Set avatar (initials or image)
+                if (user.picture) {
+                    userAvatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" class="h-10 w-10 rounded-full">`;
+                } else {
+                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase();
+                    userAvatar.textContent = initials;
+                }
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            clearAuthToken();
+            window.location.href = '/login.html';
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const userMenu = document.getElementById('userMenu');
+            const userAvatar = document.getElementById('userAvatar');
+            if (userMenu && userAvatar && !userMenu.contains(event.target) && !userAvatar.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Helper function to render suggestions with consistent styling
+        function renderSuggestions(suggestions) {
+            return suggestions.map(suggestion => {
+                const escaped = suggestion.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `
+                    <button onclick="setMessage('${escaped}')"
+                        class="w-full text-left p-4 text-base rounded-2xl"
+                        style="appearance: button; background-color: rgb(255, 255, 255); border: 2px solid rgb(225, 231, 239); border-radius: 16px; transition: all 0.2s;"
+                        onmouseover="this.style.backgroundColor='rgba(0, 160, 235, 0.05)'; this.style.borderColor='rgba(0, 160, 235, 0.3)'"
+                        onmouseout="this.style.backgroundColor='rgb(255, 255, 255)'; this.style.borderColor='rgb(225, 231, 239)'">
+                        💬 ${suggestion}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Load suggestions on page load
+        async function loadSuggestions() {
+            try {
+                // Include auth headers if available (for personalized suggestions)
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                };
+
+                const response = await fetch('/api/suggestions', {
+                    method: 'POST',
+                    headers: headers
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load suggestions');
+                }
+
+                const data = await response.json();
+
+                // Update welcome message
+                const welcomeDiv = document.getElementById('welcomeMessage');
+                if (welcomeDiv) {
+                    welcomeDiv.textContent = data.welcome_message;
+                }
+
+                // Update suggestions
+                const suggestionsContainer = document.getElementById('suggestionsContainer');
+                if (suggestionsContainer && data.suggestions) {
+                    suggestionsContainer.innerHTML = renderSuggestions(data.suggestions);
+                }
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+                // Fallback to default suggestions if API fails
+                const welcomeDiv = document.getElementById('welcomeMessage');
+                if (welcomeDiv) {
+                    welcomeDiv.textContent = "Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!";
+                }
+                const suggestionsContainer = document.getElementById('suggestionsContainer');
+                if (suggestionsContainer) {
+                    // Use default fallback suggestions
+                    const defaultSuggestions = [
+                        "I have a local coffee shop",
+                        "I sell handmade jewelry online",
+                        "I run a small gym",
+                        "I own a boutique hotel"
+                    ];
+                    suggestionsContainer.innerHTML = renderSuggestions(defaultSuggestions);
+                }
+            }
+        }
+
         function scrollToChat() {
             document.getElementById('chat-section').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('messageInput').focus();
@@ -261,22 +492,33 @@
             sendButton.style.opacity = '0.5';
 
             try {
+                // Get current user ID (authenticated or anonymous)
+                const userId = getCurrentUserId();
+
                 // Create session with initial message
+                const requestBody = {
+                    message: message,
+                    user_id: userId  // Include user_id for anonymous users
+                };
+
                 const response = await fetch('/api/sessions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        ...getAuthHeaders()  // Include auth headers if available
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        user_id: getUserId()
-                    })
+                    body: JSON.stringify(requestBody)
                 });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create session');
+                }
 
                 const data = await response.json();
 
-                // Redirect to chat page
-                window.location.href = `/chat/${data.session_id}`;
+                // Redirect to chat page with initial message as title
+                const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
+                window.location.href = `/chat/${data.session_id}?title=${encodeURIComponent(title)}`;
             } catch (error) {
                 // Re-enable input on error
                 input.disabled = false;
@@ -286,15 +528,6 @@
                 // Show error message
                 alert('Sorry, something went wrong. Please try again.');
             }
-        }
-
-        function getUserId() {
-            let userId = localStorage.getItem('creo_user_id');
-            if (!userId) {
-                userId = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('creo_user_id', userId);
-            }
-            return userId;
         }
 
         function escapeHtml(text) {
@@ -312,7 +545,7 @@
             messageInput.style.height = messageInput.scrollHeight + 'px';
         }
 
-        messageInput.addEventListener('input', function() {
+        messageInput.addEventListener('input', function () {
             // Auto-grow
             autoGrowTextarea();
 
@@ -323,6 +556,31 @@
                 sendButton.style.backgroundColor = 'rgba(0, 160, 235, 0.4)';
             }
         });
+
+        // Initialize app on page load
+        window.addEventListener('DOMContentLoaded', async function () {
+            // Check authentication (optional - shows login button or user profile)
+            const user = await checkAuth({
+                requireAuth: false,
+                onSuccess: (user) => {
+                    console.log('[APP] Authenticated user:', user);
+                    displayUserProfile(user);
+                    // Check if this user just registered (was anonymous)
+                    migrateAnonymousUser();
+                },
+                onFailure: () => {
+                    console.log('[APP] Anonymous user');
+                    displayLoginButton();
+                    // Ensure anonymous user ID is generated
+                    const anonId = getAnonymousUserId();
+                    console.log('[APP] Anonymous user ID:', anonId);
+                }
+            });
+
+            // Load suggestions
+            await loadSuggestions();
+        });
     </script>
 </body>
+
 </html>

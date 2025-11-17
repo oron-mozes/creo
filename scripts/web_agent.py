@@ -19,7 +19,7 @@ AGENTS_INIT_BACKUP = PROJECT_ROOT / "agents" / "__init__.py.backup"
 AGENT_MODULES = {
     "creator-finder": ("creator_finder_agent", "creator_finder_agent", "creator-finder-agent"),
     "campaign-builder": ("campaign_builder_agent", "campaign_builder_agent", "campaign-builder-agent"),
-    "campaign-brief": ("campaing_brief_agent", "campaing_brief_agent", "campaing-brief-agent"),
+    "campaign-brief": ("campaign_brief_agent", "campaign_brief_agent", "campaign-brief-agent"),
     "outreach-message": ("outreach_message_agent", "outreach_message_agent", "outreach-message-agent"),
     "orchestrator": ("orchestrator_agent", "root_agent", "orchestrator-agent"),
 }

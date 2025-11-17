@@ -1,51 +1,50 @@
 [
   {
-    "input": {
-      "creator_name": "@techreviewer",
-      "creator_type": "Tech YouTuber",
-      "subscriber_count": "500K",
-      "campaign_type": "Product Review",
-      "product": "New smartphone",
-      "key_points": [
-        "Early access",
-        "Honest review",
-        "Creative freedom"
-      ],
-      "tone": "Professional but friendly"
+    "name": "tech_reviewer_outreach",
+    "description": "Create outreach message for tech reviewer",
+    "user_message": "Write an outreach message to @techreviewer (Tech YouTuber, 500K subscribers) for a product review of our new smartphone. Tone should be professional but friendly. Key points: early access, honest review, creative freedom.",
+    "session_context": {
+      "business_card": {
+        "name": "Tech Gadgets Inc",
+        "service_type": "Technology products"
+      }
     },
-    "expected_output_type": "outreach_message",
-    "description": "Create outreach message for tech reviewer"
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_include_value_proposition": true,
+      "should_maintain_professional_tone": true
+    }
   },
   {
-    "input": {
-      "creator_name": "@fashionista",
-      "creator_type": "Fashion Instagram Influencer",
-      "subscriber_count": "200K",
-      "campaign_type": "Sponsored Post",
-      "product": "Sustainable clothing brand",
-      "key_points": [
-        "Sustainability focus",
-        "Long-term partnership"
-      ],
-      "tone": "Casual and approachable"
+    "name": "fashion_influencer_outreach",
+    "description": "Create outreach message for fashion influencer",
+    "user_message": "Draft an outreach message to @fashionista (Fashion Instagram Influencer, 200K followers) for sponsored posts about our sustainable clothing brand. Casual and approachable tone. Focus on sustainability and long-term partnership.",
+    "session_context": {
+      "business_card": {
+        "name": "Fashion Brand Co",
+        "service_type": "Fashion retail"
+      }
     },
-    "expected_output_type": "outreach_message",
-    "description": "Create outreach message for fashion influencer"
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_align_with_brand_values": true,
+      "should_propose_partnership": true
+    }
   },
   {
-    "input": {
-      "creator_name": "@fitnessguru",
-      "creator_type": "Fitness Content Creator",
-      "subscriber_count": "150K",
-      "campaign_type": "Brand Ambassadorship",
-      "product": "Fitness app",
-      "key_points": [
-        "Authentic partnership",
-        "User testimonials"
-      ],
-      "tone": "Motivational and authentic"
+    "name": "fitness_creator_outreach",
+    "description": "Create outreach message for fitness creator",
+    "user_message": "Create outreach for @fitnessguru (Fitness Content Creator, 150K followers) for brand ambassadorship of our fitness app. Motivational and authentic tone. Emphasize authentic partnership and user testimonials.",
+    "session_context": {
+      "business_card": {
+        "name": "FitLife App",
+        "service_type": "Fitness technology"
+      }
     },
-    "expected_output_type": "outreach_message",
-    "description": "Create outreach message for fitness creator"
+    "expected_behavior": {
+      "should_create_personalized_message": true,
+      "should_propose_ambassadorship": true,
+      "should_emphasize_authenticity": true
+    }
   }
 ]

@@ -1,110 +1,179 @@
-# Examples
+# EXAMPLES (ALIGN 1:1 WITH TEST SUITE)
 
-## Example 1: Creator Search Request
+## Example A — New user (business_card=None)
 
-**User Request:** "I need to find fashion influencers for my brand"
+**User:** "I have a local coffee shop"
+**Context:** business_card=None
 
-**Your Process (MUST follow ALL steps):**
-1. Analyze → User needs creator discovery
-2. Identify → `creator_finder_agent` is best
-3. Call `creator_finder_agent` with the user's request
-4. Get technical response from creator_finder_agent (e.g., "Found 15 fashion influencers with 50K-200K followers...")
-5. **MANDATORY:** Call `frontdesk_agent` with: "Transform this creator search response for the user: [technical response]. Context: User asked to find fashion influencers."
-6. Receive warm response from frontdesk_agent
-7. **Return that warm response as YOUR (root_agent's) final response to the user**
-
-**What the user sees:**
-- The warm, conversational message from frontdesk_agent
-- Delivered as the final response from root_agent
-
-**IMPORTANT:**
-- Steps 5-7 are MANDATORY. Never stop after step 4.
-- In step 7, you must return the frontdesk response AS YOUR OWN final response
-- Do not just relay it - make it your final output marked as complete
+**Actions:**
+1. `onboarding_agent("I have a local coffee shop")`
+2. `frontdesk_agent(onboarding_response)`
+3. Return frontdesk result
 
 ---
 
-## Example 2: Campaign Brief Request
+## Example B — Onboarding in progress
 
-**User Request:** "Help me create a marketing campaign for my new coffee shop"
+**Context:** stage="onboarding"
 
-**Your Process (MUST follow ALL steps):**
-1. Analyze → User needs campaign planning
-2. Identify → `campaing_brief_agent` is best
-3. Call `campaing_brief_agent` with the user's request
-4. Get technical response (campaign brief details)
-5. **MANDATORY:** Call `frontdesk_agent` with: "Transform this campaign brief for the user: [technical response]. Context: User wants to create a marketing campaign for a new coffee shop."
-6. Receive warm response from frontdesk_agent
-7. **Return that warm response as YOUR (root_agent's) final response to the user**
-
-**What the user sees:**
-- Frontdesk agent's friendly presentation of the campaign brief
-- Delivered as the final response from root_agent
-- NOT the raw technical brief from campaing_brief_agent
-
-**IMPORTANT:**
-- Even though campaing_brief_agent gave you a complete answer, you MUST still call frontdesk_agent in step 5
-- In step 7, you must return the frontdesk response AS YOUR OWN final response
-- DO NOT stop after step 4 - continue through all steps
+**Always:**
+1. `onboarding_agent(user_message)`
+2. `frontdesk_agent(res)`
 
 ---
 
-## Example 3: Outreach Message Request
+## Example C — URL during onboarding
 
-**User Request:** "Write a message to reach out to @fashionista_jane"
+**User:** "this is us https://www.almacafe.co.il/ourplaces/rehovot"
+**Context:** stage="onboarding"
 
-**Your Process:**
-1. Analyze → User needs outreach copy
-2. Identify → `outreach_message_agent` is best
-3. Call `outreach_message_agent` with the user's request
-4. Get technical response (the draft message)
-5. Call `frontdesk_agent` with: "Transform this outreach message draft for the user: [technical response]. Context: User wants to reach out to @fashionista_jane."
-6. Return frontdesk agent's presentation
-
-**Output to User:**
-(Frontdesk agent's warm delivery of the outreach message)
+Same as Example B:
+1. `onboarding_agent(user_message)`
+2. `frontdesk_agent(res)`
 
 ---
 
-## What NOT to Do
+## Example D — Business card exists, user wants influencers
 
-### ❌ WRONG: Just redirecting
+**User:** "Find influencers for my cafe"
+**Context:** business_card exists + stage=None
 
-**User:** "I need to find fashion influencers for my brand"
+**Actions:**
+1. `campaign_brief_agent(user_message)`
+2. `frontdesk_agent(res)`
 
-**Bad Response:**
-"I'll redirect you to creator_finder_agent, which specializes in finding creators and influencers matching specific criteria. Please use the agent: creator_finder_agent"
-
-**Why it's wrong:**
-- Exposes internal agent names
-- Doesn't actually execute anything
-- Requires user to manually use another agent
-- Not helpful or conversational
-
-### ✅ RIGHT: Execute and transform
-
-**User:** "I need to find fashion influencers for my brand"
-
-**Good Response:**
-[Orchestrator calls creator_finder_agent → Gets technical results → Calls frontdesk_agent → Returns:]
-"Great! I found 15 fashion influencers who'd be perfect for your brand. Here are the top 3..."
-(Warm, helpful response with actual results - no mention of agents)
+**Note:** Call campaign_brief_agent FIRST, not creator_finder_agent
 
 ---
 
-## Multi-Step Workflow Example
+## Example E — stage="campaign_brief"
 
-**User Request:** "I want to launch a complete influencer campaign for my sustainable clothing brand"
+**Context:** stage="campaign_brief"
 
-**Your Process:**
-1. Analyze → User needs full campaign (multiple agents)
-2. Start with `campaing_brief_agent` to define the campaign
-3. Get brief response → Pass to frontdesk for warm presentation
-4. Note in session that we're in a multi-step workflow
-5. When user approves, continue with `creator_finder_agent`
-6. Then `outreach_message_agent`
-7. Finally `campaign_builder_agent`
-8. **Every step goes through frontdesk before returning to user**
+**Always:**
+1. `campaign_brief_agent(user_message)`
+2. `frontdesk_agent(res)`
 
-**Each response:**
-(Always warm, conversational, guiding user through the journey - never mentioning agent names)
+---
+
+## Example F — Vague question but no business card
+
+**User:** "Can you help me with marketing?"
+**Context:** business_card=None
+
+**Actions:**
+1. `onboarding_agent(user_message)` ← MUST route to onboarding
+2. `frontdesk_agent(res)`
+
+**NOT to campaign_brief_agent**
+
+---
+
+## Example G — Business card exists, user wants marketing campaign
+
+**User:** "I want to create a marketing campaign"
+**Context:** business_card exists + stage=None
+
+**Actions:**
+1. `campaign_brief_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example H — Business card exists, user wants outreach message
+
+**User:** "Write a message to @influencer"
+**Context:** business_card exists + stage=None
+
+**Actions:**
+1. `outreach_message_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example I — stage="creator_finder"
+
+**Context:** stage="creator_finder"
+
+**Always:**
+1. `creator_finder_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example J — stage="outreach_message"
+
+**Context:** stage="outreach_message"
+
+**Always:**
+1. `outreach_message_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example K — stage="campaign_builder"
+
+**Context:** stage="campaign_builder"
+
+**Always:**
+1. `campaign_builder_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example L — Multiple business info pieces, business_card=None
+
+**User:** "I run a sustainable fashion brand in LA called EcoWear"
+**Context:** business_card=None
+
+**Actions:**
+1. `onboarding_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example M — General marketing question with business card
+
+**User:** "What's the best way to reach millennials?"
+**Context:** business_card exists + stage=None
+
+**Actions:**
+1. `campaign_brief_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+**NOT onboarding** (business card already exists)
+**NOT asking for business info again**
+
+---
+
+## Example N — Follow-up question during onboarding
+
+**User:** "What do you mean by location?"
+**Context:** stage="onboarding"
+
+**Actions:**
+1. `onboarding_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+---
+
+## Example O — Specific creator request with business card
+
+**User:** "Find me food bloggers in LA with 50K+ followers"
+**Context:** business_card exists + stage=None
+
+**Actions:**
+1. `campaign_brief_agent(user_message)`
+2. `frontdesk_agent(res)`
+
+**Note:** Tests require campaign_brief_agent FIRST, NOT creator_finder_agent
+
+---
+
+# 🔥 CRITICAL RULES SUMMARY
+
+1. **business_card=None** → ALWAYS `onboarding_agent` → `frontdesk_agent`
+2. **stage is set** → Use that stage's agent → `frontdesk_agent`
+3. **business_card exists + stage=None + influencer/creator request** → `campaign_brief_agent` → `frontdesk_agent`
+4. **ALWAYS call 2 tools** — Never answer directly
+5. **NEVER skip frontdesk_agent** — It's mandatory as the second tool

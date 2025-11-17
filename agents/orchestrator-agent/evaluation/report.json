@@ -1,0 +1,81 @@
+{
+  "average_confidence_score": 0.667,
+  "total_cases": 15,
+  "test_results": [
+    {
+      "description": "New user with no business card should be routed to onboarding_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that with no business card, the user should be routed to the `onboarding_agent` first, followed by the `frontdesk_agent`. This perfectly aligns with the routing logic (Step 1) and the requirement to call exactly two tools in the specified order. All expected behaviors were met."
+    },
+    {
+      "description": "When stage is 'onboarding', should stay with onboarding_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that when the stage is 'onboarding', it should stay with the `onboarding_agent` as per routing logic STEP 2. It then correctly called `frontdesk_agent` second, fulfilling all instructions and expected behaviors."
+    },
+    {
+      "description": "User provides URL during onboarding, should delegate to onboarding_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the onboarding scenario (implied by URL input and test description) and delegated the request to `onboarding_agent` first, followed by `frontdesk_agent`, adhering to all routing logic and tool call order instructions. It did not extract information itself, fulfilling all expected behaviors."
+    },
+    {
+      "description": "Business card exists, user wants influencers - should route to campaign_brief_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that a business card exists and the user wants to find influencers, routing to `campaign_brief_agent` first, followed by `frontdesk_agent`, as per the routing logic and instructions."
+    },
+    {
+      "description": "When stage is 'campaign_brief', should stay with campaign_brief_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that it should stay in the 'campaign_brief' stage as per the test description and called `campaign_brief_agent` first, followed by `frontdesk_agent`, adhering to all routing logic and tool call requirements."
+    },
+    {
+      "description": "Vague marketing question with no business card - should start onboarding first",
+      "score": 0.0,
+      "rationale": "The agent failed to call any tools, answered directly, and asked a question, all of which are critical violations of the instructions. It was supposed to call `onboarding_agent` and then `frontdesk_agent`."
+    },
+    {
+      "description": "User with business card wants to create a campaign - should route to campaign_brief_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the user's intent to create a marketing campaign and routed the request to the `campaign_brief_agent` first, followed by the `frontdesk_agent`, adhering to all routing logic and tool call instructions."
+    },
+    {
+      "description": "User with business card wants help writing outreach message - should route to outreach_message_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the user's intent to write an outreach message and routed to `outreach_message_agent` first, followed by `frontdesk_agent`, adhering to all routing logic and expected behaviors."
+    },
+    {
+      "description": "When stage is 'creator_finder', should stay with creator_finder_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the current stage as 'creator_finder' and called the `creator_finder_agent` first, followed by the `frontdesk_agent`, adhering to all routing logic and tool call order instructions."
+    },
+    {
+      "description": "When stage is 'outreach_message', should stay with outreach_message_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the 'outreach_message' stage and routed to the `outreach_message_agent` as per instructions, followed by `frontdesk_agent`, fulfilling all routing logic and expected behaviors."
+    },
+    {
+      "description": "When stage is 'campaign_builder', should stay with campaign_builder_agent",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the current stage (implicitly 'campaign_builder') and called the corresponding specialist agent (`campaign_builder_agent`) first, followed by `frontdesk_agent`, adhering to all routing logic and tool call order instructions."
+    },
+    {
+      "description": "User provides multiple pieces of business info upfront - should route to onboarding_agent",
+      "score": 0.0,
+      "rationale": "The agent failed to call any tools, answered directly, and asked a question, all of which are critical violations of the instructions. It did not follow the routing logic to call `onboarding_agent` when `business_card` is None."
+    },
+    {
+      "description": "User asks general question but has business card - should provide helpful response without switching stages",
+      "score": 0.0,
+      "rationale": "The agent failed to follow the primary routing instruction. The structured input did not include a 'business_card', which means 'business_card' is None. According to the instructions, if 'business_card' is None, the agent must 'ALWAYS route to onboarding_agent'. Instead, the agent called 'campaign_brief_agent', violating this critical rule."
+    },
+    {
+      "description": "User asks clarifying question during onboarding - should stay with onboarding_agent",
+      "score": 0.0,
+      "rationale": "The agent critically failed by directly answering the user's question and explaining concepts, which violates the explicit instruction 'YOU DO NOT ANSWER QUESTIONS — YOU ONLY CALL TOOLS'. It also failed to call any tools, specifically the `onboarding_agent` and `frontdesk_agent` as required by the routing logic for `business_card is None`."
+    },
+    {
+      "description": "User asks to find specific type of creators with existing business card",
+      "score": 0.0,
+      "rationale": "The agent failed to call any tools and instead directly answered the user's request and asked follow-up questions, which violates the core instruction to 'ONLY CALL TOOLS' and 'DO NOT ANSWER QUESTIONS'."
+    }
+  ]
+}

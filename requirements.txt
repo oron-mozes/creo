@@ -7,3 +7,9 @@ python-multipart
 pydantic
 google-cloud-firestore
 pinecone-client
+pytest
+pytest-asyncio
+authlib
+python-jose[cryptography]
+passlib[bcrypt]
+httpx

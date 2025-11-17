@@ -1,0 +1,132 @@
+[
+  {
+    "name": "transform_technical_creator_results",
+    "description": "Transform technical creator finder results into warm message",
+    "user_message": "Found 15 creators matching criteria: Fashion niche, 50K-500K followers, 3%+ engagement on Instagram and TikTok",
+    "session_context": {
+      "business_card": {
+        "name": "StyleHub Boutique",
+        "location": "Los Angeles, CA",
+        "service_type": "Fashion retail"
+      },
+      "context": "User asked to find fashion influencers"
+    },
+    "expected_behavior": {
+      "should_be_conversational": true,
+      "should_use_business_name": true,
+      "should_avoid_markdown": true,
+      "should_include_key_info": true
+    },
+    "expected_response_contains": [
+      "StyleHub Boutique",
+      "15 creators",
+      "fashion"
+    ]
+  },
+  {
+    "name": "handle_error_empathetically",
+    "description": "Transform error message into empathetic response",
+    "user_message": "Error: Unable to connect to creator database",
+    "session_context": {
+      "business_card": null,
+      "context": "User tried to search for creators"
+    },
+    "expected_behavior": {
+      "should_be_empathetic": true,
+      "should_explain_simply": true,
+      "should_provide_next_steps": true,
+      "should_avoid_technical_jargon": true
+    },
+    "forbidden_patterns": [
+      "database",
+      "connection failed",
+      "error code"
+    ]
+  },
+  {
+    "name": "personalize_with_business_card",
+    "description": "Use business card to personalize greeting",
+    "user_message": "Campaign brief created successfully",
+    "session_context": {
+      "business_card": {
+        "name": "Alma Cafe",
+        "location": "Rehovot, Israel",
+        "service_type": "Coffee shop"
+      },
+      "context": "User just completed onboarding"
+    },
+    "expected_behavior": {
+      "should_use_business_name": true,
+      "should_be_warm": true,
+      "should_guide_next_steps": true
+    },
+    "expected_response_contains": [
+      "Alma Cafe"
+    ]
+  },
+  {
+    "name": "generic_greeting_without_business_card",
+    "description": "Use generic friendly greeting when business card unavailable",
+    "user_message": "Ready to help you find creators",
+    "session_context": {
+      "business_card": null,
+      "context": "New user, no business card yet"
+    },
+    "expected_behavior": {
+      "should_be_friendly": true,
+      "should_not_assume_business_details": true
+    },
+    "forbidden_patterns": [
+      "[Business Name]",
+      "[location]",
+      "[service type]"
+    ]
+  },
+  {
+    "name": "no_markdown_in_output",
+    "description": "Ensure no markdown symbols in response",
+    "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
+    "session_context": {
+      "business_card": null,
+      "context": "User asked about campaign plan"
+    },
+    "expected_behavior": {
+      "should_avoid_markdown": true,
+      "should_use_plain_text": true
+    },
+    "forbidden_patterns": [
+      "**",
+      "*   ",
+      "# ",
+      "## ",
+      "___",
+      "---"
+    ]
+  },
+  {
+    "name": "hide_internal_agent_names",
+    "description": "Never expose internal agent names to user",
+    "user_message": "creator_finder_agent found 10 results",
+    "session_context": {
+      "business_card": null,
+      "context": "User asked to find creators"
+    },
+    "expected_behavior": {
+      "should_hide_agent_names": true,
+      "should_use_first_person": true
+    },
+    "forbidden_patterns": [
+      "agent",
+      "creator_finder",
+      "campaign_builder",
+      "orchestrator",
+      "forwarding",
+      "redirecting"
+    ],
+    "expected_response_contains": [
+      "I found",
+      "we found",
+      "10 results"
+    ]
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "name": "user_provides_website_url",
+    "description": "User provides a website URL, agent should search and extract business info",
+    "user_message": "Yes, here is my website: https://www.almacafe.co.il/ourplaces/rehovot",
+    "session_context": {
+      "business_card": null
+    },
+    "expected_behavior": {
+      "should_use_google_search": true,
+      "should_extract_business_info": true,
+      "should_generate_confirmation_block": true,
+      "should_ask_for_confirmation": true
+    },
+    "expected_business_card": {
+      "name": "Alma Cafe",
+      "website": "https://www.almacafe.co.il/ourplaces/rehovot",
+      "location": "Rehovot, Israel",
+      "service_type": "Coffee shop",
+      "social_links": "Not provided"
+    }
+  },
+  {
+    "name": "user_provides_business_name_and_location",
+    "description": "User provides business name and location, agent should search for details",
+    "user_message": "My business is called TechStart and we're located in San Francisco",
+    "session_context": {
+      "business_card": null
+    },
+    "expected_behavior": {
+      "should_use_google_search": true,
+      "should_extract_business_info": true,
+      "should_generate_confirmation_block": true,
+      "should_ask_for_confirmation": true
+    }
+  },
+  {
+    "name": "business_card_already_exists",
+    "description": "Business card already exists in session, should skip onboarding",
+    "user_message": "I want to find influencers for my brand",
+    "session_context": {
+      "business_card": {
+        "name": "Alma Cafe",
+        "website": "https://www.almacafe.co.il",
+        "location": "Rehovot, Israel",
+        "service_type": "Coffee shop",
+        "social_links": "Not provided"
+      }
+    },
+    "expected_behavior": {
+      "should_use_google_search": false,
+      "should_extract_business_info": false,
+      "should_generate_confirmation_block": false,
+      "should_acknowledge_existing_business": true,
+      "should_confirm_onboarding_complete": true
+    },
+    "expected_response_contains": [
+      "Alma Cafe",
+      "already have your details",
+      "Let's move forward"
+    ]
+  },
+  {
+    "name": "user_confirms_business_details",
+    "description": "User confirms the business details presented",
+    "user_message": "Yes, that's correct!",
+    "session_context": {
+      "business_card": null,
+      "last_agent_message": "Business Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\n\\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "should_generate_confirmation_block": true,
+      "should_thank_user": true
+    }
+  },
+  {
+    "name": "new_user_with_minimal_info",
+    "description": "New user provides minimal information, agent should ask for more",
+    "user_message": "I have a local coffee shop",
+    "session_context": {
+      "business_card": null
+    },
+    "expected_behavior": {
+      "should_ask_for_business_name": true,
+      "should_ask_for_location": true,
+      "should_not_generate_confirmation_block": true
+    }
+  },
+  {
+    "name": "user_provides_social_media_handle",
+    "description": "User provides Instagram handle, agent should search for business info",
+    "user_message": "My Instagram is @almacafe_rehovot",
+    "session_context": {
+      "business_card": null
+    },
+    "expected_behavior": {
+      "should_use_google_search": true,
+      "should_extract_business_info": true
+    }
+  }
+]

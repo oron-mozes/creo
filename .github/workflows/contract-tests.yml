@@ -1,0 +1,48 @@
+name: API Contract Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  contract-tests:
+    name: Verify API Contracts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run contract tests
+      env:
+        GEMINI_API_KEY: test-key
+        PINECONE_API_KEY: test-key
+      run: |
+        pytest tests/test_socketio_contract.py -v --tb=short
+
+    - name: Comment on PR if contract changes detected
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const issue_number = context.issue.number;
+          if (issue_number) {
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: '⚠️ **API Contract Tests Failed!**\n\nThis PR contains changes that break the API contract between server and client.\n\n**Before merging:**\n1. Review contract changes in `docs/API_CONTRACT.md`\n2. Update client code to handle new contract\n3. Consider API versioning if this is a breaking change\n\nSee the workflow logs for details.'
+            });
+          }

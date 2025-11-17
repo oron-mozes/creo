@@ -12,8 +12,10 @@ except ModuleNotFoundError:
     from agents.utils import AgentName
 
 TESTABLE_AGENT_ENUMS = (
+    AgentName.ONBOARDING_AGENT,
+    AgentName.FRONTDESK_AGENT,
     AgentName.CREATOR_FINDER_AGENT,
-    AgentName.CAMPAING_BRIEF_AGENT,
+    AgentName.CAMPAIGN_BRIEF_AGENT,
     AgentName.OUTREACH_MESSAGE_AGENT,
     AgentName.CAMPAIGN_BUILDER_AGENT,
 )
@@ -23,37 +25,52 @@ def generate_creator_finder_tests() -> List[Dict[str, Any]]:
     """Generate synthetic test data for creator finder agent."""
     return [
         {
-            "input": {
-                "platforms": ["Instagram", "TikTok"],
-                "target_audiences": ["Gen Z (18-24)", "Young Professionals (25-35)"],
-                "niche": "Fashion and Lifestyle",
-                "follower_range": "50K-500K",
-                "engagement_rate_min": 3.0
+            "name": "fashion_influencers_instagram_tiktok",
+            "description": "Find fashion influencers on Instagram and TikTok targeting Gen Z and young professionals",
+            "user_message": "I need fashion influencers on Instagram and TikTok for Gen Z and young professionals, 50K-500K followers, min 3% engagement",
+            "session_context": {
+                "business_card": {
+                    "name": "Fashion Brand Co",
+                    "service_type": "Fashion retail"
+                }
             },
-            "expected_output_type": "list_of_creators",
-            "description": "Find fashion influencers on Instagram and TikTok targeting Gen Z and young professionals"
+            "expected_behavior": {
+                "should_search_creators": True,
+                "should_filter_by_platform": True,
+                "should_return_creator_list": True
+            }
         },
         {
-            "input": {
-                "platforms": ["YouTube"],
-                "target_audiences": ["Tech Enthusiasts", "Gamers"],
-                "niche": "Technology Reviews",
-                "follower_range": "100K-1M",
-                "content_type": "Video Reviews"
+            "name": "tech_reviewers_youtube",
+            "description": "Find tech review YouTubers for gaming audience",
+            "user_message": "Find tech review YouTubers with 100K-1M subscribers who create video reviews for tech enthusiasts and gamers",
+            "session_context": {
+                "business_card": {
+                    "name": "Tech Gadgets Inc",
+                    "service_type": "Technology products"
+                }
             },
-            "expected_output_type": "list_of_creators",
-            "description": "Find tech review YouTubers for gaming audience"
+            "expected_behavior": {
+                "should_search_creators": True,
+                "should_filter_by_niche": True,
+                "should_return_creator_list": True
+            }
         },
         {
-            "input": {
-                "platforms": ["LinkedIn"],
-                "target_audiences": ["B2B Decision Makers"],
-                "niche": "Business Strategy",
-                "follower_range": "10K-100K",
-                "content_focus": "Thought Leadership"
+            "name": "linkedin_thought_leaders_b2b",
+            "description": "Find LinkedIn thought leaders for B2B audience",
+            "user_message": "I want LinkedIn thought leaders with 10K-100K followers focused on business strategy for B2B decision makers",
+            "session_context": {
+                "business_card": {
+                    "name": "B2B Solutions Corp",
+                    "service_type": "Business consulting"
+                }
             },
-            "expected_output_type": "list_of_creators",
-            "description": "Find LinkedIn thought leaders for B2B audience"
+            "expected_behavior": {
+                "should_search_creators": True,
+                "should_filter_by_audience": True,
+                "should_return_creator_list": True
+            }
         }
     ]
 
@@ -62,28 +79,40 @@ def generate_campaign_brief_tests() -> List[Dict[str, Any]]:
     """Generate synthetic test data for campaign brief agent."""
     return [
         {
-            "input": {
-                "campaign_name": "Summer Fashion Launch 2024",
-                "objectives": ["Brand awareness", "Product launch", "Engagement"],
-                "target_audience": "Fashion-conscious millennials (25-40)",
-                "budget": "$50,000",
-                "timeline": "3 months",
-                "key_messages": ["Sustainable fashion", "Summer collection", "Limited edition"]
+            "name": "summer_fashion_launch",
+            "description": "Create a campaign brief for summer fashion launch",
+            "user_message": "I need a campaign brief for Summer Fashion Launch 2024 targeting fashion-conscious millennials (25-40), budget $50k, 3 months timeline. Focus on sustainable fashion, summer collection, limited edition.",
+            "session_context": {
+                "business_card": {
+                    "name": "Fashion Brand Co",
+                    "service_type": "Fashion retail",
+                    "location": "New York, NY"
+                }
             },
-            "expected_output_type": "campaign_brief",
-            "description": "Create a campaign brief for summer fashion launch"
+            "expected_behavior": {
+                "should_create_campaign_brief": True,
+                "should_include_objectives": True,
+                "should_define_target_audience": True,
+                "should_include_budget": True
+            }
         },
         {
-            "input": {
-                "campaign_name": "Tech Product Launch",
-                "objectives": ["Product education", "Pre-orders", "Reviews"],
-                "target_audience": "Tech early adopters",
-                "budget": "$100,000",
-                "timeline": "2 months",
-                "key_messages": ["Innovation", "Performance", "Early access"]
+            "name": "tech_product_launch",
+            "description": "Create a campaign brief for tech product launch",
+            "user_message": "Create a campaign brief for Tech Product Launch targeting tech early adopters, $100k budget, 2 months. Focus on product education, pre-orders, reviews. Key messages: innovation, performance, early access.",
+            "session_context": {
+                "business_card": {
+                    "name": "Tech Gadgets Inc",
+                    "service_type": "Technology products",
+                    "location": "San Francisco, CA"
+                }
             },
-            "expected_output_type": "campaign_brief",
-            "description": "Create a campaign brief for tech product launch"
+            "expected_behavior": {
+                "should_create_campaign_brief": True,
+                "should_include_timeline": True,
+                "should_define_key_messages": True,
+                "should_include_objectives": True
+            }
         }
     ]
 
@@ -92,43 +121,52 @@ def generate_outreach_message_tests() -> List[Dict[str, Any]]:
     """Generate synthetic test data for outreach message agent."""
     return [
         {
-            "input": {
-                "creator_name": "@techreviewer",
-                "creator_type": "Tech YouTuber",
-                "subscriber_count": "500K",
-                "campaign_type": "Product Review",
-                "product": "New smartphone",
-                "key_points": ["Early access", "Honest review", "Creative freedom"],
-                "tone": "Professional but friendly"
+            "name": "tech_reviewer_outreach",
+            "description": "Create outreach message for tech reviewer",
+            "user_message": "Write an outreach message to @techreviewer (Tech YouTuber, 500K subscribers) for a product review of our new smartphone. Tone should be professional but friendly. Key points: early access, honest review, creative freedom.",
+            "session_context": {
+                "business_card": {
+                    "name": "Tech Gadgets Inc",
+                    "service_type": "Technology products"
+                }
             },
-            "expected_output_type": "outreach_message",
-            "description": "Create outreach message for tech reviewer"
+            "expected_behavior": {
+                "should_create_personalized_message": True,
+                "should_include_value_proposition": True,
+                "should_maintain_professional_tone": True
+            }
         },
         {
-            "input": {
-                "creator_name": "@fashionista",
-                "creator_type": "Fashion Instagram Influencer",
-                "subscriber_count": "200K",
-                "campaign_type": "Sponsored Post",
-                "product": "Sustainable clothing brand",
-                "key_points": ["Sustainability focus", "Long-term partnership"],
-                "tone": "Casual and approachable"
+            "name": "fashion_influencer_outreach",
+            "description": "Create outreach message for fashion influencer",
+            "user_message": "Draft an outreach message to @fashionista (Fashion Instagram Influencer, 200K followers) for sponsored posts about our sustainable clothing brand. Casual and approachable tone. Focus on sustainability and long-term partnership.",
+            "session_context": {
+                "business_card": {
+                    "name": "Fashion Brand Co",
+                    "service_type": "Fashion retail"
+                }
             },
-            "expected_output_type": "outreach_message",
-            "description": "Create outreach message for fashion influencer"
+            "expected_behavior": {
+                "should_create_personalized_message": True,
+                "should_align_with_brand_values": True,
+                "should_propose_partnership": True
+            }
         },
         {
-            "input": {
-                "creator_name": "@fitnessguru",
-                "creator_type": "Fitness Content Creator",
-                "subscriber_count": "150K",
-                "campaign_type": "Brand Ambassadorship",
-                "product": "Fitness app",
-                "key_points": ["Authentic partnership", "User testimonials"],
-                "tone": "Motivational and authentic"
+            "name": "fitness_creator_outreach",
+            "description": "Create outreach message for fitness creator",
+            "user_message": "Create outreach for @fitnessguru (Fitness Content Creator, 150K followers) for brand ambassadorship of our fitness app. Motivational and authentic tone. Emphasize authentic partnership and user testimonials.",
+            "session_context": {
+                "business_card": {
+                    "name": "FitLife App",
+                    "service_type": "Fitness technology"
+                }
             },
-            "expected_output_type": "outreach_message",
-            "description": "Create outreach message for fitness creator"
+            "expected_behavior": {
+                "should_create_personalized_message": True,
+                "should_propose_ambassadorship": True,
+                "should_emphasize_authenticity": True
+            }
         }
     ]
 
@@ -137,26 +175,281 @@ def generate_campaign_builder_tests() -> List[Dict[str, Any]]:
     """Generate synthetic test data for campaign builder agent."""
     return [
         {
-            "input": {
-                "objective": "Launch new eco-friendly skincare product",
-                "target_audience": "Environmentally conscious millennials (25-40), primarily female",
-                "budget": "$50,000",
-                "timeline": "3 months",
-                "channels": ["Instagram", "TikTok", "YouTube", "Influencer partnerships"]
+            "name": "eco_skincare_launch_campaign",
+            "description": "Build comprehensive campaign for eco-friendly skincare launch",
+            "user_message": "Build a full campaign to launch our new eco-friendly skincare product targeting environmentally conscious millennials (25-40), primarily female. Budget is $50k, 3 months timeline. Use Instagram, TikTok, YouTube, and influencer partnerships.",
+            "session_context": {
+                "business_card": {
+                    "name": "EcoBeauty Co",
+                    "service_type": "Skincare products",
+                    "location": "Los Angeles, CA"
+                }
             },
-            "expected_output_type": "campaign_plan",
-            "description": "Build comprehensive campaign for eco-friendly skincare launch"
+            "expected_behavior": {
+                "should_create_comprehensive_plan": True,
+                "should_define_channels": True,
+                "should_include_budget_allocation": True,
+                "should_include_timeline": True
+            }
         },
         {
-            "input": {
-                "objective": "Increase B2B SaaS product sign-ups",
-                "target_audience": "Small business owners, marketing managers",
-                "budget": "$30,000",
-                "timeline": "2 months",
-                "channels": ["LinkedIn", "Email", "Webinars", "Content marketing"]
+            "name": "b2b_saas_lead_generation",
+            "description": "Build B2B SaaS lead generation campaign",
+            "user_message": "Create a campaign to increase B2B SaaS product sign-ups targeting small business owners and marketing managers. Budget $30k, 2 months. Use LinkedIn, email, webinars, and content marketing.",
+            "session_context": {
+                "business_card": {
+                    "name": "MarketingTech SaaS",
+                    "service_type": "B2B Software",
+                    "location": "Austin, TX"
+                }
             },
-            "expected_output_type": "campaign_plan",
-            "description": "Build B2B SaaS lead generation campaign"
+            "expected_behavior": {
+                "should_create_comprehensive_plan": True,
+                "should_target_b2b_audience": True,
+                "should_include_lead_generation_strategy": True,
+                "should_allocate_budget_per_channel": True
+            }
+        }
+    ]
+
+
+def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
+    """Generate synthetic test data for onboarding agent."""
+    return [
+        {
+            "name": "user_provides_website_url",
+            "description": "User provides a website URL, agent should search and extract business info",
+            "user_message": "Yes, here is my website: https://www.almacafe.co.il/ourplaces/rehovot",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_extract_business_info": True,
+                "should_generate_confirmation_block": True,
+                "should_ask_for_confirmation": True
+            },
+            "expected_business_card": {
+                "name": "Alma Cafe",
+                "website": "https://www.almacafe.co.il/ourplaces/rehovot",
+                "location": "Rehovot, Israel",
+                "service_type": "Coffee shop",
+                "social_links": "Not provided"
+            }
+        },
+        {
+            "name": "user_provides_business_name_and_location",
+            "description": "User provides business name and location, agent should search for details",
+            "user_message": "My business is called TechStart and we're located in San Francisco",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_extract_business_info": True,
+                "should_generate_confirmation_block": True,
+                "should_ask_for_confirmation": True
+            }
+        },
+        {
+            "name": "business_card_already_exists",
+            "description": "Business card already exists in session, should skip onboarding",
+            "user_message": "I want to find influencers for my brand",
+            "session_context": {
+                "business_card": {
+                    "name": "Alma Cafe",
+                    "website": "https://www.almacafe.co.il",
+                    "location": "Rehovot, Israel",
+                    "service_type": "Coffee shop",
+                    "social_links": "Not provided"
+                }
+            },
+            "expected_behavior": {
+                "should_use_google_search": False,
+                "should_extract_business_info": False,
+                "should_generate_confirmation_block": False,
+                "should_acknowledge_existing_business": True,
+                "should_confirm_onboarding_complete": True
+            },
+            "expected_response_contains": [
+                "Alma Cafe",
+                "already have your details",
+                "Let's move forward"
+            ]
+        },
+        {
+            "name": "user_confirms_business_details",
+            "description": "User confirms the business details presented",
+            "user_message": "Yes, that's correct!",
+            "session_context": {
+                "business_card": None,
+                "last_agent_message": "Business Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\n\\nDoes everything look correct?"
+            },
+            "expected_behavior": {
+                "should_generate_confirmation_block": True,
+                "should_thank_user": True
+            }
+        },
+        {
+            "name": "new_user_with_minimal_info",
+            "description": "New user provides minimal information, agent should ask for more",
+            "user_message": "I have a local coffee shop",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_ask_for_business_name": True,
+                "should_ask_for_location": True,
+                "should_not_generate_confirmation_block": True
+            }
+        },
+        {
+            "name": "user_provides_social_media_handle",
+            "description": "User provides Instagram handle, agent should search for business info",
+            "user_message": "My Instagram is @almacafe_rehovot",
+            "session_context": {
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_use_google_search": True,
+                "should_extract_business_info": True
+            }
+        }
+    ]
+
+
+def generate_frontdesk_agent_tests() -> List[Dict[str, Any]]:
+    """Generate synthetic test data for frontdesk agent."""
+    return [
+        {
+            "name": "transform_technical_creator_results",
+            "description": "Transform technical creator finder results into warm message",
+            "user_message": "Found 15 creators matching criteria: Fashion niche, 50K-500K followers, 3%+ engagement on Instagram and TikTok",
+            "session_context": {
+                "business_card": {
+                    "name": "StyleHub Boutique",
+                    "location": "Los Angeles, CA",
+                    "service_type": "Fashion retail"
+                },
+                "context": "User asked to find fashion influencers"
+            },
+            "expected_behavior": {
+                "should_be_conversational": True,
+                "should_use_business_name": True,
+                "should_avoid_markdown": True,
+                "should_include_key_info": True
+            },
+            "expected_response_contains": [
+                "StyleHub Boutique",
+                "15 creators",
+                "fashion"
+            ]
+        },
+        {
+            "name": "handle_error_empathetically",
+            "description": "Transform error message into empathetic response",
+            "user_message": "Error: Unable to connect to creator database",
+            "session_context": {
+                "business_card": None,
+                "context": "User tried to search for creators"
+            },
+            "expected_behavior": {
+                "should_be_empathetic": True,
+                "should_explain_simply": True,
+                "should_provide_next_steps": True,
+                "should_avoid_technical_jargon": True
+            },
+            "forbidden_patterns": [
+                "database",
+                "connection failed",
+                "error code"
+            ]
+        },
+        {
+            "name": "personalize_with_business_card",
+            "description": "Use business card to personalize greeting",
+            "user_message": "Campaign brief created successfully",
+            "session_context": {
+                "business_card": {
+                    "name": "Alma Cafe",
+                    "location": "Rehovot, Israel",
+                    "service_type": "Coffee shop"
+                },
+                "context": "User just completed onboarding"
+            },
+            "expected_behavior": {
+                "should_use_business_name": True,
+                "should_be_warm": True,
+                "should_guide_next_steps": True
+            },
+            "expected_response_contains": [
+                "Alma Cafe"
+            ]
+        },
+        {
+            "name": "generic_greeting_without_business_card",
+            "description": "Use generic friendly greeting when business card unavailable",
+            "user_message": "Ready to help you find creators",
+            "session_context": {
+                "business_card": None,
+                "context": "New user, no business card yet"
+            },
+            "expected_behavior": {
+                "should_be_friendly": True,
+                "should_not_assume_business_details": True
+            },
+            "forbidden_patterns": [
+                "[Business Name]",
+                "[location]",
+                "[service type]"
+            ]
+        },
+        {
+            "name": "no_markdown_in_output",
+            "description": "Ensure no markdown symbols in response",
+            "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
+            "session_context": {
+                "business_card": None,
+                "context": "User asked about campaign plan"
+            },
+            "expected_behavior": {
+                "should_avoid_markdown": True,
+                "should_use_plain_text": True
+            },
+            "forbidden_patterns": [
+                "**",
+                "*   ",
+                "# ",
+                "## ",
+                "___",
+                "---"
+            ]
+        },
+        {
+            "name": "hide_internal_agent_names",
+            "description": "Never expose internal agent names to user",
+            "user_message": "creator_finder_agent found 10 results",
+            "session_context": {
+                "business_card": None,
+                "context": "User asked to find creators"
+            },
+            "expected_behavior": {
+                "should_hide_agent_names": True,
+                "should_use_first_person": True
+            },
+            "forbidden_patterns": [
+                "agent",
+                "creator_finder",
+                "campaign_builder",
+                "orchestrator",
+                "forwarding",
+                "redirecting"
+            ],
+            "expected_response_contains": [
+                "I found",
+                "we found",
+                "10 results"
+            ]
         }
     ]
 
@@ -165,47 +458,271 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
     """Generate synthetic test data for orchestrator agent."""
     return [
         {
-            "input": {
-                "user_request": "I need to find fashion influencers for my brand"
+            "name": "new_user_no_business_card",
+            "description": "New user with no business card should be routed to onboarding_agent",
+            "user_message": "I have a local coffee shop",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": None
             },
-            "expected_redirect": "creator_finder_agent",
-            "description": "Should redirect to creator finder agent"
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_call_campaign_brief": True,
+                "should_NOT_ask_questions_directly": True,
+                "should_NOT_search_google": True
+            }
         },
         {
-            "input": {
-                "user_request": "I want to create a campaign brief for a product launch"
+            "name": "onboarding_stage_active",
+            "description": "When stage is 'onboarding', should stay with onboarding_agent",
+            "user_message": "Alma cafe",
+            "session_context": {
+                "workflow_state": {"stage": "onboarding"},
+                "business_card": None
             },
-            "expected_redirect": "campaing_brief_agent",
-            "description": "Should redirect to campaign brief agent"
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_switch_to_campaign_brief": True,
+                "should_NOT_search_google": True,
+                "should_NOT_assume_location": True
+            }
         },
         {
-            "input": {
-                "user_request": "Help me write an outreach message to a creator"
+            "name": "onboarding_with_url",
+            "description": "User provides URL during onboarding, should delegate to onboarding_agent",
+            "user_message": "this is us https://www.almacafe.co.il/ourplaces/rehovot",
+            "session_context": {
+                "workflow_state": {"stage": "onboarding"},
+                "business_card": None
             },
-            "expected_redirect": "outreach_message_agent",
-            "description": "Should redirect to outreach message agent"
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_extract_info_itself": True,
+                "should_delegate_url_to_onboarding": True
+            }
         },
         {
-            "input": {
-                "user_request": "I need a complete marketing campaign strategy"
+            "name": "business_card_exists_find_influencers",
+            "description": "Business card exists, user wants influencers - should route to campaign_brief_agent",
+            "user_message": "I want to find influencers for my cafe",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": {
+                    "name": "Alma Cafe",
+                    "website": "https://www.almacafe.co.il",
+                    "location": "Brooklyn, NY",
+                    "service_type": "Coffee shop"
+                }
             },
-            "expected_redirect": "campaign_builder_agent",
-            "description": "Should redirect to campaign builder agent"
+            "expected_behavior": {
+                "should_call_campaign_brief_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_call_onboarding_agent": True,
+                "should_use_existing_business_card": True
+            }
         },
         {
-            "input": {
-                "user_request": "I need to find creators, then create outreach messages, then build a campaign"
+            "name": "campaign_brief_stage_active",
+            "description": "When stage is 'campaign_brief', should stay with campaign_brief_agent",
+            "user_message": "I want to reach young professionals who love specialty coffee",
+            "session_context": {
+                "workflow_state": {"stage": "campaign_brief"},
+                "business_card": {
+                    "name": "Alma Cafe",
+                    "location": "Brooklyn, NY",
+                    "service_type": "Coffee shop"
+                }
             },
-            "expected_redirect": ["creator_finder_agent", "outreach_message_agent", "campaign_builder_agent"],
-            "description": "Should suggest workflow sequence with multiple agents"
+            "expected_behavior": {
+                "should_call_campaign_brief_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_switch_to_creator_finder": True,
+                "should_stay_in_current_stage": True
+            }
+        },
+        {
+            "name": "vague_question_no_business_card",
+            "description": "Vague marketing question with no business card - should start onboarding first",
+            "user_message": "Can you help me with marketing?",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_answer_directly": True,
+                "should_collect_business_info_first": True
+            }
+        },
+        {
+            "name": "business_card_exists_wants_campaign",
+            "description": "User with business card wants to create a campaign - should route to campaign_brief_agent",
+            "user_message": "I want to create a marketing campaign to promote my new menu",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": {
+                    "name": "TechStart",
+                    "location": "San Francisco, CA",
+                    "service_type": "Tech startup"
+                }
+            },
+            "expected_behavior": {
+                "should_call_campaign_brief_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_call_onboarding_agent": True
+            }
+        },
+        {
+            "name": "business_card_exists_wants_outreach",
+            "description": "User with business card wants help writing outreach message - should route to outreach_message_agent",
+            "user_message": "Can you help me write a message to reach out to @fitness_guru_sarah?",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": {
+                    "name": "FitLife Gym",
+                    "location": "Austin, TX",
+                    "service_type": "Fitness center"
+                }
+            },
+            "expected_behavior": {
+                "should_call_outreach_message_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_call_onboarding_agent": True
+            }
+        },
+        {
+            "name": "creator_finder_stage_active",
+            "description": "When stage is 'creator_finder', should stay with creator_finder_agent",
+            "user_message": "I want creators with at least 100K followers",
+            "session_context": {
+                "workflow_state": {"stage": "creator_finder"},
+                "business_card": {
+                    "name": "GreenEats",
+                    "location": "Portland, OR",
+                    "service_type": "Vegan restaurant"
+                }
+            },
+            "expected_behavior": {
+                "should_call_creator_finder_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_switch_to_different_stage": True,
+                "should_stay_in_current_stage": True
+            }
+        },
+        {
+            "name": "outreach_message_stage_active",
+            "description": "When stage is 'outreach_message', should stay with outreach_message_agent",
+            "user_message": "Make it more personal and mention our sustainable practices",
+            "session_context": {
+                "workflow_state": {"stage": "outreach_message"},
+                "business_card": {
+                    "name": "EcoWear",
+                    "location": "Seattle, WA",
+                    "service_type": "Sustainable clothing"
+                }
+            },
+            "expected_behavior": {
+                "should_call_outreach_message_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_stay_in_current_stage": True
+            }
+        },
+        {
+            "name": "campaign_builder_stage_active",
+            "description": "When stage is 'campaign_builder', should stay with campaign_builder_agent",
+            "user_message": "Add more Instagram posts to the campaign",
+            "session_context": {
+                "workflow_state": {"stage": "campaign_builder"},
+                "business_card": {
+                    "name": "StyleHub",
+                    "location": "Miami, FL",
+                    "service_type": "Fashion boutique"
+                }
+            },
+            "expected_behavior": {
+                "should_call_campaign_builder_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_stay_in_current_stage": True
+            }
+        },
+        {
+            "name": "multiple_business_info_pieces_no_business_card",
+            "description": "User provides multiple pieces of business info upfront - should route to onboarding_agent",
+            "user_message": "I run a yoga studio called ZenFlow in Boulder, Colorado",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_ask_for_already_provided_info": True
+            }
+        },
+        {
+            "name": "general_question_with_business_card",
+            "description": "User asks general question but has business card - should provide helpful response without switching stages",
+            "user_message": "What's the best way to reach millennials?",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": {
+                    "name": "ModernEats",
+                    "location": "Chicago, IL",
+                    "service_type": "Restaurant"
+                }
+            },
+            "expected_behavior": {
+                "should_call_campaign_brief_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_provide_helpful_response": True
+            }
+        },
+        {
+            "name": "follow_up_question_during_onboarding",
+            "description": "User asks clarifying question during onboarding - should stay with onboarding_agent",
+            "user_message": "What do you mean by service type?",
+            "session_context": {
+                "workflow_state": {"stage": "onboarding"},
+                "business_card": None
+            },
+            "expected_behavior": {
+                "should_call_onboarding_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_help_user_understand": True,
+                "should_NOT_switch_stages": True
+            }
+        },
+        {
+            "name": "specific_creator_request_with_business_card",
+            "description": "User asks to find specific type of creators with existing business card",
+            "user_message": "Find me food bloggers in Los Angeles with 50K+ followers",
+            "session_context": {
+                "workflow_state": {"stage": None},
+                "business_card": {
+                    "name": "TacoTime",
+                    "location": "Los Angeles, CA",
+                    "service_type": "Mexican restaurant"
+                }
+            },
+            "expected_behavior": {
+                "should_call_campaign_brief_agent": True,
+                "should_call_frontdesk_agent": True,
+                "should_NOT_call_onboarding_agent": True
+            }
         }
     ]
 
 
 # Map agent names to their test generators
 AGENT_TEST_GENERATORS = {
+    AgentName.ONBOARDING_AGENT.value: generate_onboarding_agent_tests,
+    AgentName.FRONTDESK_AGENT.value: generate_frontdesk_agent_tests,
     AgentName.CREATOR_FINDER_AGENT.value: generate_creator_finder_tests,
-    AgentName.CAMPAING_BRIEF_AGENT.value: generate_campaign_brief_tests,
+    AgentName.CAMPAIGN_BRIEF_AGENT.value: generate_campaign_brief_tests,
     AgentName.OUTREACH_MESSAGE_AGENT.value: generate_outreach_message_tests,
     AgentName.CAMPAIGN_BUILDER_AGENT.value: generate_campaign_builder_tests,
     'root_agent': generate_orchestrator_tests,

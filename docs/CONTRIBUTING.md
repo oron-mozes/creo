@@ -225,18 +225,62 @@ After scaffolding, you'll need to:
 
 - `make install` - Install dependencies and create virtual environment
 - `make web` - Start the ADK web interface
+- `make server` - Start FastAPI server with Socket.IO on http://localhost:8000
 - `make test` - Run tests (if available)
 - `make lint` - Run linter
 - `make format` - Format code
 - `make clean` - Clean cache files and virtual environment
+- `make dev-reset` - Reset all development data (sessions, business cards, messages) for testing as a fresh user
 - `make help` - Show all available commands
 
-## Testing Your Agent
+## Testing
+
+### Contract Tests
+
+Before making changes to the API, ensure you understand the contract:
+
+```bash
+# Run contract tests to verify API stability
+make test
+
+# Run only contract tests
+pytest tests/test_socketio_contract.py -v
+```
+
+**Important**: Contract tests ensure the Socket.IO and HTTP API contracts remain stable. Breaking these tests means you're introducing a **breaking change** that will affect client applications.
+
+See [`docs/API_CONTRACT.md`](API_CONTRACT.md) for the full API contract documentation.
+
+### Testing Your Agent
 
 1. After creating your agent, run `make web`
 2. The agent should appear in the ADK web interface
 3. Test it with various inputs to ensure it works as expected
 4. Check that examples match the expected behavior
+
+### Testing as a Fresh User
+
+When developing features like onboarding or session management, you may need to test as a completely fresh user. Use the `dev-reset` command:
+
+```bash
+make dev-reset
+```
+
+This will:
+1. Clear all in-memory sessions and runners
+2. Clear all in-memory messages
+3. Clear all in-memory business cards
+4. Prompt you to clear browser localStorage
+
+**Note:** This only affects local development with in-memory storage. If you're connected to Firestore, that data is NOT affected.
+
+**To complete the reset:**
+1. Open browser DevTools (F12)
+2. Go to Application/Storage → Local Storage
+3. Clear `creo_user_id` or clear all localStorage
+4. Refresh the page
+
+You can now test the full onboarding flow and other first-time user experiences!
 
 ## Code Style
 

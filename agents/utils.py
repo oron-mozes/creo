@@ -8,9 +8,13 @@ from enum import Enum
 class AgentName(str, Enum):
     """Enumeration of all agent names in the project."""
     CREATOR_FINDER_AGENT = 'creator_finder_agent'
-    CAMPAING_BRIEF_AGENT = 'campaing_brief_agent'
-    CAMPAING_PLANNER_AGENT = 'campaing_planner_agent'
+    CAMPAIGN_BRIEF_AGENT = 'campaign_brief_agent'
+    CAMPAIGN_PLANNER_AGENT = 'campaign_planner_agent'
     OUTREACH_MESSAGE_AGENT = 'outreach_message_agent'
+    SUGGESTIONS_AGENT = 'suggestions_agent'
+
+    ONBOARDING_AGENT = 'onboarding_agent'
+
     FRONTDESK_AGENT = 'frontdesk_agent'
 
     CAMPAIGN_BUILDER_AGENT = 'campaign_builder_agent'
