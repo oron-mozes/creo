@@ -381,6 +381,7 @@ def health_check():
 class CreateSessionRequestWithUser(BaseModel):
     message: str
     user_id: Optional[str] = None  # For anonymous users
+    session_id: Optional[str] = None  # Optional session_id to use existing session
 
 @app.post("/api/sessions", response_model=CreateSessionResponse)
 def create_session(
@@ -392,8 +393,10 @@ def create_session(
     Returns session_id to redirect user to chat page.
 
     Works for both authenticated and anonymous users.
+    If session_id is provided, uses that instead of generating a new one.
     """
-    session_id = f"session_{uuid.uuid4().hex}"
+    # Use provided session_id or generate a new one
+    session_id = request.session_id or f"session_{uuid.uuid4().hex}"
 
     # Use authenticated user ID if available, otherwise use provided user_id (anonymous)
     if current_user:

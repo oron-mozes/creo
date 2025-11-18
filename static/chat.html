@@ -868,7 +868,7 @@
             });
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
 
@@ -876,13 +876,16 @@
 
             const sessionId = getSessionId();
 
+            // Check if this is the first message in a new session
+            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
+            const existingSession = sessions.find(s => s.id === sessionId);
+            const isFirstMessage = !existingSession;
+
             // Add user message to UI
             addUserMessage(message);
 
             // Save session with first message as title
-            const sessions = JSON.parse(localStorage.getItem('creo_sessions') || '[]');
-            const existingSession = sessions.find(s => s.id === sessionId);
-            if (!existingSession) {
+            if (isFirstMessage) {
                 const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
                 saveSession(sessionId, title);
             }
@@ -895,15 +898,56 @@
             // Show loading
             showLoading();
 
-            // Send message via Socket.IO (works for both authenticated and anonymous)
-            const token = getAuthToken();
-            const userId = getCurrentUserId();
-            socket.emit('send_message', {
-                message: message,
-                session_id: sessionId,
-                token: token || null,
-                user_id: userId
-            });
+            // For first message in new session, create session via API first
+            if (isFirstMessage) {
+                try {
+                    const userId = getCurrentUserId();
+                    const response = await fetch('/api/sessions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...getAuthHeaders()
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            user_id: userId,
+                            session_id: sessionId  // Use existing session ID
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create session');
+                    }
+
+                    const data = await response.json();
+                    console.log('[SEND_MESSAGE] Session created:', data);
+                } catch (error) {
+                    console.error('[SEND_MESSAGE] Failed to create session:', error);
+                    hideLoading();
+                    // Show error to user
+                    const messagesDiv = document.getElementById('messages');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'flex gap-4 p-5 rounded-3xl bg-red-50 border border-red-200 mr-12 md:mr-20 animate-fade-in';
+                    errorDiv.innerHTML = `
+                        <div class="flex-1 text-base text-red-700">
+                            Sorry, failed to start the session. Please try refreshing the page.
+                        </div>
+                    `;
+                    messagesDiv.appendChild(errorDiv);
+                    scrollToBottom();
+                    return;
+                }
+            } else {
+                // For subsequent messages, send via Socket.IO
+                const token = getAuthToken();
+                const userId = getCurrentUserId();
+                socket.emit('send_message', {
+                    message: message,
+                    session_id: sessionId,
+                    token: token || null,
+                    user_id: userId
+                });
+            }
         }
 
         // Auto-grow textarea and update button state
