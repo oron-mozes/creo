@@ -18,3 +18,5 @@ ENV/
 agents/__init__.py.backup
 
 .claude
+.specstory
+.cursorindexingignore
