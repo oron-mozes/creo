@@ -78,6 +78,10 @@ def prepare_metadata(influencer: dict) -> dict:
         "website": influencer.get("website", ""),
         "profile_url": influencer["profile_url"],
 
+        # Pricing
+        "price": influencer.get("price", 0),
+        "currency": influencer.get("currency", "USD"),
+
         # Content themes (limited to first 5)
         "content_themes": influencer.get("content_themes", [])[:5],
 

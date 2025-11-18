@@ -1,0 +1,76 @@
+/Users/oron.mozes/Documents/personal/creo/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/oron.mozes/Documents/personal/creo/venv/lib/python3.9/site-packages/google/api_core/_python_version_support.py:252: FutureWarning: You are using a Python version (3.9.6) past its end of life. Google will update google.api_core with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+MCP requires Python 3.10 or above. Please upgrade your Python version in order to use it.
+MCP requires Python 3.10 or above. Please upgrade your Python version in order to use it.
+An error occurred: module 'importlib.metadata' has no attribute 'packages_distributions'
+============================================================
+  SEEDING PINECONE WITH MOCK INFLUENCER DATA
+============================================================
+
+[1/5] Loading influencer data from /Users/oron.mozes/Documents/personal/creo/agents/creator_finder_agent/data/seed_influencers.json...
+✓ Loaded 100 influencers
+
+[2/5] Initializing Pinecone client...
+✓ Index 'creo-influencers' already exists
+✓ Current index has 0 vectors
+
+[3/5] Initializing embedding generator...
+✓ Embedding generator ready
+
+[4/5] Generating embeddings for 100 influencers...
+(This may take a few minutes...)
+
+  Generated 10/100 embeddings...
+  Generated 20/100 embeddings...
+  Generated 30/100 embeddings...
+  Generated 40/100 embeddings...
+  Generated 50/100 embeddings...
+  Generated 60/100 embeddings...
+  Generated 70/100 embeddings...
+  Generated 80/100 embeddings...
+  Generated 90/100 embeddings...
+  Generated 100/100 embeddings...
+✓ Generated 100 embeddings
+
+[5/5] Upserting 100 influencers to Pinecone...
+Upserting 100 influencers to Pinecone...
+Progress: 100/100 influencers upserted
+✓ All influencers upserted to Pinecone
+
+============================================================
+  SEEDING COMPLETE
+============================================================
+  Total vectors in index: 100
+  Index dimension: 768
+  Index fullness: 0.00%
+============================================================
+
+Testing search...
+
+Test Query: "coffee influencers in Israel"
+Top 3 Results:
+
+1. @coffee_layla (Score: 0.7386)
+   Platform: instagram
+   Category: food_and_beverage / coffee
+   Location: Jerusalem, Israel
+   Followers: 84,207.0
+   Engagement: 2.97%
+
+2. @health_ethan (Score: 0.6415)
+   Platform: tiktok
+   Category: food_and_beverage / healthy_eating
+   Location: Jerusalem, Israel
+   Followers: 136,654.0
+   Engagement: 6.16%
+
+3. @coffee_aubrey (Score: 0.6342)
+   Platform: instagram
+   Category: food_and_beverage / coffee
+   Location: Tokyo, Japan
+   Followers: 223,793.0
+   Engagement: 4.84%
+
+✓ Pinecone is ready for influencer search!

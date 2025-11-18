@@ -134,5 +134,85 @@ def save_business_card_tool(
         })
 
 
-# Create the tool instance
+def load_business_card_tool() -> str:
+    """Load existing business card data from the database.
+
+    Use this tool to check if a business card already exists for the current user
+    before starting the onboarding process. This prevents asking for information
+    the user has already provided in previous sessions.
+
+    Returns:
+        JSON string with business card data or error if not found
+    """
+    import json
+
+    # Get session context from global storage (thread-safe)
+    global _current_session_id
+    with _context_lock:
+        if not _current_session_id or _current_session_id not in _session_contexts:
+            print("[TOOL ERROR] Session context not set - cannot load business card")
+            return json.dumps({
+                "success": False,
+                "error": "Session context not available"
+            })
+
+        context = _session_contexts[_current_session_id]
+        session_manager = context['session_manager']
+        session_id = context['session_id']
+
+    # Get user_id from session context
+    if not session_manager or not session_id:
+        print("[TOOL ERROR] Session context incomplete - cannot load business card")
+        return json.dumps({
+            "success": False,
+            "error": "Session context incomplete"
+        })
+
+    session_memory = session_manager.get_session_memory(session_id)
+    if not session_memory:
+        print(f"[TOOL ERROR] Session memory not found for session: {session_id}")
+        return json.dumps({
+            "success": False,
+            "error": "Session not found"
+        })
+
+    user_id = session_memory.user_id
+
+    print(f"[TOOL] load_business_card called for user: {user_id}")
+
+    try:
+        # Import and use the get function from utils
+        from utils.message_utils import get_business_card as get_business_card_util
+
+        # Load from persistent storage (Firestore or in-memory)
+        business_card = get_business_card_util(user_id)
+
+        if business_card:
+            print(f"[TOOL] ✓ Business card found: {business_card.get('name')}")
+
+            # Also load it into session memory so it's available for other agents
+            session_memory.set_business_card(business_card)
+
+            return json.dumps({
+                "success": True,
+                "business_card": business_card,
+                "message": "Business card loaded successfully"
+            })
+        else:
+            print(f"[TOOL] ℹ No business card found for user: {user_id}")
+            return json.dumps({
+                "success": False,
+                "error": "No business card found",
+                "message": "User has not completed onboarding yet"
+            })
+    except Exception as e:
+        print(f"[TOOL ERROR] Failed to load business card: {e}")
+        return json.dumps({
+            "success": False,
+            "error": str(e)
+        })
+
+
+# Create the tool instances
 save_business_card = FunctionTool(save_business_card_tool)
+load_business_card = FunctionTool(load_business_card_tool)

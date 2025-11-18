@@ -4,6 +4,29 @@ These examples align 1:1 with the test suite in `evaluation/test.json`.
 
 ---
 
+## Example 0: Returning user with existing business card
+
+**User message:** "I want to create a new campaign"
+
+**Context:** business_card exists in database (from previous session)
+
+**Agent response:**
+```
+[Calls load_business_card tool FIRST]
+
+[Tool returns: success=true, business_card={name: "Alma Cafe", location: "Rehovot, Israel", service_type: "Coffee shop", ...}]
+
+Welcome back! I see we already have your details for Alma Cafe in Rehovot, Israel. How can I help you with your marketing campaign today?
+```
+
+**Key points:**
+- ALWAYS call load_business_card as first action
+- If business card exists, acknowledge and skip onboarding
+- Use the business name and location from the loaded data
+- Ready to help with their request
+
+---
+
 ## Example 1: User provides website URL
 
 **User message:** "Yes, here is my website: https://www.almacafe.co.il/ourplaces/rehovot"
@@ -12,6 +35,10 @@ These examples align 1:1 with the test suite in `evaluation/test.json`.
 
 **Agent response:**
 ```
+[Calls load_business_card tool FIRST]
+
+[Tool returns: success=false, error="No business card found"]
+
 Perfect! Let me look up your website to get the details...
 
 [Uses google_search with the URL]

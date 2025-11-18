@@ -321,54 +321,8 @@ def get_user_past_sessions(user_id: str, limit: int = 5) -> list:
 # Runner and session management now handled by SessionManager
 # See session_manager.py for implementation
 
-# Business card storage functions
-in_memory_business_cards = {}  # user_id -> business_card_data
-
-def save_business_card(user_id: str, business_card_data: dict):
-    """Save business card data to Firestore or in-memory storage."""
-    print(f"[BUSINESS_CARD] save_business_card() called for user: {user_id}")
-    print(f"[BUSINESS_CARD] Data to save: {business_card_data}")
-
-    if db is not None:
-        # Use Firestore - store in users collection
-        user_ref = db.collection('users').document(user_id)
-        user_ref.set({
-            'business_card': business_card_data,
-            'updated_at': firestore.SERVER_TIMESTAMP
-        }, merge=True)
-        print(f"[BUSINESS_CARD] ✓ Successfully saved to Firestore for user: {user_id}")
-    else:
-        # Use in-memory storage for local development
-        in_memory_business_cards[user_id] = business_card_data
-        print(f"[BUSINESS_CARD] ✓ Successfully saved to in-memory storage for user: {user_id}")
-        print(f"[BUSINESS_CARD] Current in-memory storage contains {len(in_memory_business_cards)} business cards")
-
-def get_business_card(user_id: str) -> Optional[dict]:
-    """Get business card data from Firestore or in-memory storage."""
-    print(f"[BUSINESS_CARD] get_business_card() called for user: {user_id}")
-
-    if db is not None:
-        # Use Firestore
-        print(f"[BUSINESS_CARD] Querying Firestore for user: {user_id}")
-        user_ref = db.collection('users').document(user_id)
-        user_doc = user_ref.get()
-        if user_doc.exists:
-            user_data = user_doc.to_dict()
-            business_card = user_data.get('business_card')
-            if business_card:
-                print(f"[BUSINESS_CARD] ✓ Found in Firestore: {business_card.get('name')}")
-                return business_card
-        print(f"[BUSINESS_CARD] ℹ Not found in Firestore for user: {user_id}")
-        return None
-    else:
-        # Use in-memory storage for local development
-        print(f"[BUSINESS_CARD] Querying in-memory storage (contains {len(in_memory_business_cards)} cards)")
-        business_card = in_memory_business_cards.get(user_id)
-        if business_card:
-            print(f"[BUSINESS_CARD] ✓ Found in in-memory: {business_card.get('name')}")
-        else:
-            print(f"[BUSINESS_CARD] ℹ Not found in in-memory for user: {user_id}")
-        return business_card
+# Import business card storage functions from utils
+from utils.message_utils import save_business_card, get_business_card
 
 def content_to_text(content: types.Content | None) -> str:
     """Extract text from Content object."""
@@ -484,7 +438,8 @@ def get_user_sessions(user_id: str):
                         'timestamp': data.get('timestamp', datetime.now()).isoformat()
                     }
 
-            sessions = list(session_map.values())
+            # Convert to list and sort by timestamp descending (latest first)
+            sessions = sorted(session_map.values(), key=lambda s: s['timestamp'], reverse=True)
         else:
             # In-memory fallback: get from in_memory_messages
             for session_id, msgs in in_memory_messages.items():
@@ -500,6 +455,9 @@ def get_user_sessions(user_id: str):
                             'title': title,
                             'timestamp': timestamp
                         })
+
+            # Sort by timestamp descending (latest first)
+            sessions = sorted(sessions, key=lambda s: s['timestamp'], reverse=True)
 
         print(f"[GET_SESSIONS] Found {len(sessions)} sessions for user {user_id}")
         return GetSessionsResponse(sessions=sessions)
@@ -1088,9 +1046,8 @@ async def send_message(sid, data):
             await sio.emit('error', {'error': 'Missing message or session_id'}, room=sid)
             return
 
-        # Load business card from persistent storage into session memory
-        business_card = get_business_card(user_id)
-        session_manager.load_business_card_into_session(session_id, business_card)
+        # Note: Business card loading is now handled by the load_business_card tool
+        # The onboarding agent will call this tool to check for existing business cards
 
         # Store user message in Firestore
         print(f"[SEND_MESSAGE] Storing user message in storage")

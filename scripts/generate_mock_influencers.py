@@ -325,6 +325,25 @@ def generate_influencer(idx):
     # Audience demographics
     audience_demographics = generate_audience_demographics(subcategory, location_country)
 
+    # Pricing (based on followers and performance tier)
+    # Price per 1k followers: $1 to $10
+    base_price = (followers / 1000) * random.uniform(1.0, 10.0)
+
+    # Adjust by performance tier
+    tier_multipliers = {
+        "platinum": random.uniform(1.8, 2.5),
+        "gold": random.uniform(1.4, 1.8),
+        "silver": random.uniform(1.0, 1.4),
+        "bronze": random.uniform(0.6, 1.0)
+    }
+    price = int(base_price * tier_multipliers[performance_tier])
+
+    # Ensure price is within range 100-5000
+    price = max(100, min(5000, price))
+
+    # Currency (80% USD, 20% EUR)
+    currency = random.choices(["USD", "EUR"], weights=[80, 20])[0]
+
     # Contact info (use demo email with + aliasing for testing)
     clean_username = username.replace('.', '').replace('_', '')
     email = f"oronmozes+{clean_username}@gmail.com"  # Gmail + aliasing for tracking
@@ -359,7 +378,9 @@ def generate_influencer(idx):
         "website": website,
         "profile_url": profile_url,
         "content_themes": content_themes,
-        "audience_demographics": audience_demographics
+        "audience_demographics": audience_demographics,
+        "price": price,
+        "currency": currency
     }
 
 

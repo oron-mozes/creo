@@ -2,7 +2,7 @@ from pathlib import Path
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.google_search_tool import GoogleSearchTool
 from agents.utils import load_agent_instruction, load_agent_env, AgentName
-from agents.onboarding_agent.tools import save_business_card
+from agents.onboarding_agent.tools import save_business_card, load_business_card
 
 # Load environment variables for this agent
 load_agent_env(AgentName.ONBOARDING_AGENT)
@@ -26,5 +26,5 @@ onboarding_agent = Agent(
         'Must be invoked before campaign brief creation.'
     ),
     instruction=_full_instruction,
-    tools=[search_tool, save_business_card]
+    tools=[search_tool, save_business_card, load_business_card]
 )
