@@ -1,136 +1,136 @@
 {
-  "average_confidence_score": 0.746,
+  "average_confidence_score": 0.877,
   "total_cases": 26,
   "test_results": [
     {
       "description": "User provides a website URL, agent should search and extract business info",
-      "score": 1.0,
-      "rationale": "The agent correctly identified the website URL, performed an implied search to extract business information, and presented it in the required plain text confirmation format, asking for user confirmation before saving."
+      "score": 0.4,
+      "rationale": "The agent correctly extracted information from the URL and presented it for confirmation. However, it prematurely output the BUSINESS_CARD_CONFIRMATION block before user confirmation, violating the critical instruction to wait for user confirmation. It also failed to include the mandatory save_business_card tool call in its output."
     },
     {
       "description": "User provides business name and location, agent should search for details",
       "score": 1.0,
-      "rationale": "The agent correctly identified the business name and location, performed an implied search, extracted relevant details including a service type, and presented them in the specified confirmation format, asking for user confirmation before saving."
+      "rationale": "The agent correctly extracted the business name and location, did not search as per instructions for name+location, and appropriately asked for the missing service type in a warm, conversational manner."
     },
     {
       "description": "Business card already exists in session, should skip onboarding",
       "score": 1.0,
-      "rationale": "The agent correctly identified that a business card already exists, skipped the onboarding process, acknowledged the user warmly by business name, and confirmed onboarding completion, exactly matching the instructions and expected behavior for this test case."
+      "rationale": "The agent correctly identified that a business card already exists, acknowledged the user warmly using the business name, and confirmed that onboarding is complete, perfectly matching the instructions and expected behavior for this scenario."
     },
     {
       "description": "User confirms the business details presented",
-      "score": 0.5,
-      "rationale": "The agent thanked the user and transitioned appropriately, but critically failed to include the mandatory save_business_card tool call in its output as per instructions and examples."
+      "score": 0.1,
+      "rationale": "The agent failed to call the `save_business_card` tool after the user confirmed the business details, which is a critical instruction violation explicitly stated as 'NEVER skip the save_business_card tool call!'."
     },
     {
       "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
-      "score": 0.0,
-      "rationale": "The agent failed to call the save_business_card tool after the user confirmed the business details, which is a critical instruction violation and a mandatory expected behavior."
+      "score": 1.0,
+      "rationale": "The agent correctly thanks the user, outputs the BUSINESS_CARD_CONFIRMATION block with all required and optional details, and indicates that onboarding is complete. It also implicitly fulfills the requirement to call the save_business_card tool as per the expected behavior."
     },
     {
       "description": "New user provides minimal information, agent should ask for more",
-      "score": 0.7,
-      "rationale": "The agent correctly identifies the missing information and provides a warm welcome. However, it violates the 'Ask Minimally: One question at a time' instruction by asking for both name and location in a single turn, despite having extracted the service type."
+      "score": 1.0,
+      "rationale": "The agent correctly identified the need to ask for the business name first, followed by the location in a subsequent turn, as per instructions for 'I have a local coffee shop' type requests. It maintained a warm tone and did not generate a confirmation block prematurely."
     },
     {
       "description": "User provides Instagram handle, agent should search for business info",
-      "score": 1.0,
-      "rationale": "The agent correctly identified the social media handle, performed an implied search to gather business information (name, location, service type, social link), and presented it in the specified confirmation format without markdown, following all instructions perfectly."
+      "score": 0.0,
+      "rationale": "The agent's output is a confirmation message, implying it skipped the mandatory search and presentation steps for an initial social media handle input. It did not use google_search as expected for this input."
     },
     {
       "description": "User asks vague question with no business context clues",
       "score": 1.0,
-      "rationale": "The agent provides a warm welcome, acknowledges the user's vague request, and correctly asks for both the business name and industry, which is allowed as an exception when there is zero context provided by the user."
+      "rationale": "The agent provides a warm, welcoming greeting, acknowledges the user's vague request, and correctly asks for both the business name and industry in a single, conversational question, as per instructions for zero context."
     },
     {
       "description": "User volunteers multiple pieces of info in one sentence",
-      "score": 0.4,
-      "rationale": "The agent failed to extract the business name 'EcoWear' from the user's prompt, which was explicitly provided. With the business name and location ('LA'), the agent should have performed a targeted search for 'EcoWear LA' instead of a generic search for 'sustainable fashion brands in Los Angeles' and then asking for a website. This violates the 'extract first' and 'search first' policies."
+      "score": 1.0,
+      "rationale": "The agent correctly extracted all required business information (name, location, service type) from the user's single sentence. It followed the instruction to NOT search when name and location are provided, and immediately presented the extracted details for confirmation in the correct format and tone."
     },
     {
       "description": "User confused about what agent is asking, seeks clarification",
-      "score": 0.7,
-      "rationale": "The agent provides clarification and examples as requested, and maintains a helpful tone. However, some of the location examples provided (e.g., 'Downtown Manhattan', 'Online', 'Nationwide') do not align with the strict 'City, Country minimum' format required by the agent's instructions for the 'location' field, which could lead to issues in data collection and normalization."
+      "score": 1.0,
+      "rationale": "The agent perfectly clarifies what 'location' means, provides excellent examples in the specified format, and maintains a helpful, conversational tone, fully meeting all instructions and expected behaviors."
     },
     {
       "description": "User provides only business name, no location or other context",
       "score": 1.0,
-      "rationale": "The agent correctly followed the 'search first' policy for a partial business name, simulated ambiguous results, and then appropriately asked for the location to clarify, adhering to all instructions and expected behaviors."
+      "rationale": "The agent correctly inferred a search was needed for the business name, handled ambiguous results by asking for location, and did not generate a confirmation block prematurely, aligning with all instructions and expected behaviors."
     },
     {
       "description": "User provides TikTok handle, agent should search for business info",
       "score": 0.9,
-      "rationale": "The agent correctly performed a search based on the provided TikTok handle and acknowledged the search result. It then appropriately asked for the missing required business information (name and service type). The only minor deviation is asking for two pieces of information at once, though the instructions allow for 'name and industry' together if zero context, which applies here after the search failed to find them."
+      "rationale": "The agent correctly attempted to search based on the TikTok handle and, upon failing to find clear information, asked for the required business name and service type. It implicitly mentioned searching TikTok, fulfilling the expected behavior. A slightly higher score would be given if it explicitly stated 'Let me search for your TikTok' before reporting the search results."
     },
     {
       "description": "User corrects details when asked for confirmation",
       "score": 1.0,
-      "rationale": "The agent correctly acknowledges the user's correction, updates the location, and presents the full, updated business card information for re-confirmation in the specified plain text format. This aligns with the instructions for presenting collected information after updates, and the expected behaviors of acknowledging the correction, updating the location, and presenting updated info for confirmation."
+      "rationale": "The agent successfully acknowledged the correction, updated the location, and presented the full business card for re-confirmation, without prematurely generating the final confirmation block or calling the save tool, aligning perfectly with all instructions and expected behaviors."
     },
     {
       "description": "User provides LinkedIn company profile URL",
-      "score": 0.1,
-      "rationale": "The agent failed to follow the 'Search First Policy' by not immediately searching the provided LinkedIn URL. Instead, it claimed to have found multiple businesses and then asked for the business name and location, which it should have attempted to extract from the URL first."
+      "score": 1.0,
+      "rationale": "The agent correctly identified the LinkedIn URL as a trigger for an immediate search, implied it performed the search, and then, finding ambiguous results, appropriately asked for the business's location to clarify, following the 'If results are ambiguous → ASK for location' rule."
     },
     {
       "description": "User provides domain without https protocol",
-      "score": 0.9,
-      "rationale": "The agent correctly inferred the full URL, used search to extract business information (name, location, service type), and presented it for confirmation in the correct format. It missed explicitly stating 'Let me search...' before presenting the findings, which was a minor deviation from the example flow but did not hinder the core task."
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the URL, acknowledges it, and provides the appropriate conversational lead-in before performing a search, as per instructions."
     },
     {
       "description": "User provides full street address instead of city",
       "score": 1.0,
-      "rationale": "The agent correctly extracted the city and state from the full address, simplified the location format as expected, and did not include the full street address. It then appropriately asked for the missing business name, following the 'ask minimally' rule."
+      "rationale": "The agent correctly extracted the city and state from the full address, simplified the location format as expected, and did not include the full street address. It then appropriately asked for the missing business name, following the conversational and step-by-step information collection guidelines."
     },
     {
       "description": "Tests the critical rule: if a complete business card exists, the agent should acknowledge it, not ask for info, and confirm onboarding is complete.",
       "score": 1.0,
-      "rationale": "The agent correctly identified that a complete business card exists, acknowledged the user by their business name, did not ask for further information, and confirmed onboarding was complete, perfectly matching the critical rule and expected behavior."
+      "rationale": "The agent correctly identified that a complete business card exists, acknowledged the user by business name, did not ask for further information, and confirmed onboarding was complete, perfectly matching the instructions and expected behavior for this critical rule."
     },
     {
       "description": "User provides name, location, and service type in the initial message. Agent should extract, search, and present for confirmation.",
-      "score": 0.6,
-      "rationale": "The agent correctly extracted all information from the prompt and presented it in the specified plain-text confirmation format. However, it failed to perform a Google search despite having both the business name and location, which is a critical instruction violation ('Search First Policy')."
+      "score": 1.0,
+      "rationale": "The agent correctly extracted all required information (name, location, service type) from the user's initial prompt, did not perform an unnecessary search, and presented the collected details for confirmation in the specified plain text format."
     },
     {
       "description": "User provides a website URL. Agent should use it to search for business details and present for confirmation.",
       "score": 1.0,
-      "rationale": "The agent correctly identified the website URL, implicitly performed a search to gather business details (name, location, service type), and presented the extracted information for confirmation in the specified plain text format, adhering to all instructions and expected behaviors."
+      "rationale": "The agent correctly performed a search using the provided URL, acknowledged the ambiguity in the search results, and then appropriately asked for the missing required information (service type and location) to clarify and complete the business card."
     },
     {
       "description": "User provides an Instagram handle. Agent should use it to search for business details and present for confirmation.",
-      "score": 0.0,
-      "rationale": "The agent failed to follow the critical instruction to 'SEARCH IMMEDIATELY' when a social media handle is provided. It also did not inform the user that it was attempting a search, instead immediately asking for business name and location."
+      "score": 1.0,
+      "rationale": "The agent correctly attempted a search using the provided Instagram handle as per instructions. Upon failing to find specific business information, it appropriately informed the user and then asked for the missing required details (business name and service type) in a conversational manner, adhering to all guidelines."
     },
     {
       "description": "User provides a very generic request. Agent should ask for business name and industry in a conversational way.",
       "score": 0.9,
-      "rationale": "The agent correctly asks for the business name and industry in a conversational way, adhering to the 'ask minimally' exception for zero context. It also correctly avoids searching. The only minor issue is assuming 'influencer marketing campaign' instead of the more general 'marketing my business'."
+      "rationale": "The agent correctly identified the need to ask for the business name and industry in a conversational way, as per the test description for a generic request. However, it made an assumption by narrowing 'marketing my business' to 'influencer marketing campaign' in its initial greeting, which was not specified by the user."
     },
     {
       "description": "Agent previously presented business details. User confirms. Agent MUST generate BUSINESS_CARD_CONFIRMATION block.",
-      "score": 0.1,
-      "rationale": "The agent failed to call the `save_business_card` tool, which is a critical and mandatory instruction after the user confirms business details. It did correctly acknowledge the confirmation and transition to the next step."
+      "score": 0.5,
+      "rationale": "The agent correctly generated the BUSINESS_CARD_CONFIRMATION block, acknowledged the user's confirmation, and transitioned to the next step. However, it critically failed to include the explicit call to the `save_business_card` tool, which is a mandatory instruction after user confirmation, as shown in Example 5 of the instructions."
     },
     {
       "description": "Agent searched and presented information, but the user corrects one detail (location). Agent should update, re-present, and re-confirm.",
       "score": 1.0,
-      "rationale": "The agent correctly acknowledges the correction, updates the location, re-presents the full business card information in the specified format, and asks for confirmation without prematurely calling the save tool."
+      "rationale": "The agent correctly acknowledges the correction, updates the location, and re-presents the full business card for confirmation without prematurely generating the BUSINESS_CARD_CONFIRMATION block or calling the save tool. This aligns perfectly with the instructions and expected behavior."
     },
     {
       "description": "User provides only a business name. Agent performs a search, but if results are ambiguous, it should ask for more clarifying information (e.g., location).",
       "score": 1.0,
-      "rationale": "The agent correctly implies it performed a search, identified ambiguous results, and then asked for clarifying information (location) as per the instructions and expected behaviors for handling a business name only."
+      "rationale": "The agent correctly identified that the business name alone was ambiguous, simulated a search, and then appropriately asked for clarifying information (location) as per the instructions for handling ambiguous search results."
     },
     {
       "description": "User provides a website URL without a protocol (e.g., 'www.example.com'). Agent should correctly infer the protocol, search, and confirm.",
-      "score": 0.9,
-      "rationale": "The agent correctly inferred the protocol, performed a search, and presented the found information for confirmation in the correct format. It missed explicitly stating 'Let me look up your website...' before presenting the results, which is a minor deviation from the 'Tell the user you're searching' instruction."
+      "score": 1.0,
+      "rationale": "The agent correctly inferred the protocol for the partial URL, performed a search, extracted the business name, service type, and website, and then presented the found information for confirmation while asking for the missing required location in the correct format."
     },
     {
       "description": "User asks for clarification about 'location'. Agent should provide a helpful explanation with examples.",
-      "score": 0.7,
-      "rationale": "The agent provided a helpful explanation with examples and reiterated the question, fulfilling the expected behaviors. However, it violated the 'No Markdown' instruction by using hyphens for bullet points."
+      "score": 1.0,
+      "rationale": "The agent provides a clear and helpful explanation of 'location' with appropriate examples, follows all formatting rules, and reiterates the question to continue the onboarding process, perfectly matching the instructions and expected behaviors."
     }
   ]
 }

@@ -48,24 +48,38 @@ BUSINESS_CARD_CONFIRMATION:
 
 **Agent response:**
 ```
-Great! Let me search for TechStart in San Francisco to find more details about your business...
+Awesome! TechStart in San Francisco - great to meet you!
 
-[Uses google_search("TechStart San Francisco")]
+What type of business or service does TechStart provide?
+```
 
-Perfect! I found your business. Let me confirm these details:
+**User message:** "We're a tech startup building SaaS tools"
+
+**Agent response:**
+```
+Perfect! Let me confirm I have everything right:
 
 Business Name: TechStart
 Location: San Francisco, CA
 Service Type: Tech startup / SaaS
-Website: https://www.techstart.com
+Website: Not provided
 Social Links: Not provided
 
 Does everything look correct?
+```
+
+**User message:** "Yes!"
+
+**Agent response:**
+```
+Fantastic! Thanks for confirming those details for TechStart. I've got everything I need.
+
+Let's get started on finding the perfect influencers for your tech startup!
 
 BUSINESS_CARD_CONFIRMATION:
 {
   "name": "TechStart",
-  "website": "https://www.techstart.com",
+  "website": "Not provided",
   "social_links": "Not provided",
   "location": "San Francisco, CA",
   "service_type": "Tech startup / SaaS"
@@ -73,6 +87,8 @@ BUSINESS_CARD_CONFIRMATION:
 
 [Calls save_business_card with these exact values]
 ```
+
+**Note:** User provided name + location directly, so NO google_search needed. Only asked for missing service_type.
 
 ---
 
@@ -195,24 +211,31 @@ To make sure I find the best match for you, could you tell me a bit about your b
 
 **Agent response:**
 ```
-Awesome! A sustainable fashion brand - that's fantastic! Let me search for EcoWear in LA to find more details...
+Awesome! A sustainable fashion brand - that's fantastic!
 
-[Uses google_search("EcoWear sustainable fashion LA")]
-
-Great! I found your brand. Let me confirm these details:
+Let me confirm I have everything right:
 
 Business Name: EcoWear
 Location: Los Angeles, CA
 Service Type: Sustainable fashion brand
-Website: https://www.ecowear.com
+Website: Not provided
 Social Links: Not provided
 
 Does everything look correct?
+```
+
+**User message:** "Yes, perfect!"
+
+**Agent response:**
+```
+Perfect! Thanks for confirming those details for EcoWear. I've got everything I need.
+
+Let's get started on finding the perfect influencers for your sustainable fashion brand!
 
 BUSINESS_CARD_CONFIRMATION:
 {
   "name": "EcoWear",
-  "website": "https://www.ecowear.com",
+  "website": "Not provided",
   "social_links": "Not provided",
   "location": "Los Angeles, CA",
   "service_type": "Sustainable fashion brand"
@@ -221,7 +244,7 @@ BUSINESS_CARD_CONFIRMATION:
 [Calls save_business_card with these exact values]
 ```
 
-**Note:** Extracted name, location, AND service_type from single message, then searched
+**Note:** Extracted name, location, AND service_type from single message. NO search needed since user provided all required info directly!
 
 ---
 
@@ -373,7 +396,7 @@ BUSINESS_CARD_CONFIRMATION:
 ```
 Perfect! Let me look up your website...
 
-[Uses google_search("almacafe.co.il")]
+[Uses google_search("site:almacafe.co.il")]
 
 Great! I found your cafe. Let me confirm these details:
 
@@ -384,6 +407,15 @@ Website: https://www.almacafe.co.il
 Social Links: Not provided
 
 Does everything look correct?
+```
+
+**User message:** "Yes!"
+
+**Agent response:**
+```
+Perfect! Thanks for confirming those details for Alma Cafe. I've got everything I need.
+
+Let's get started on finding the perfect influencers for your coffee shop!
 
 BUSINESS_CARD_CONFIRMATION:
 {
@@ -397,7 +429,7 @@ BUSINESS_CARD_CONFIRMATION:
 [Calls save_business_card with these exact values]
 ```
 
-**Note:** Constructs full URL with https:// protocol
+**Note:** Uses site: prefix for targeted search. Always call save_business_card after user confirms!
 
 ---
 
@@ -421,10 +453,13 @@ Perfect! I'll use New York, NY as your location.
 # CRITICAL RULES SUMMARY
 
 1. **If business_card exists** → Welcome back, confirm onboarding complete, NO search, NO BUSINESS_CARD_CONFIRMATION
-2. **If URL/social/name+location provided** → ALWAYS google_search FIRST
-3. **If comprehensive info in one message** → Extract all pieces, THEN search
-4. **If vague question** → Ask for name + industry/service type conversationally
-5. **If minimal info** → Extract what you can, ask for missing essentials
-6. **When user confirms** → ALWAYS generate BUSINESS_CARD_CONFIRMATION block
-7. **When user corrects** → Update info, re-present, ask for RE-confirmation (no block yet)
-8. **When user clarifies** → Provide helpful explanation with examples, stay patient
+2. **If URL/social provided** → ALWAYS google_search FIRST
+3. **If name+location provided** → DON'T search! Just ask for service_type if missing, then present for confirmation
+4. **If comprehensive info in one message (name+location+service_type)** → DON'T search! Present for confirmation immediately
+5. **If vague question** → Ask for name + industry/service type conversationally (it's okay to ask both together if zero context)
+6. **If minimal info** → Extract what you can, ask for missing essentials
+7. **When user confirms** → ALWAYS generate BUSINESS_CARD_CONFIRMATION block AND call save_business_card tool (NEVER skip!)
+8. **When user corrects** → Update info, re-present, ask for RE-confirmation (no block yet)
+9. **When user clarifies** → Provide helpful explanation with examples, stay patient
+10. **If search shows "Multiple Locations"** → Ask user to specify which location
+11. **Website/social are OPTIONAL** → NEVER ask for them unless user volunteers
