@@ -34,6 +34,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Rehovot, Israel",
   "service_type": "Coffee shop"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -68,6 +70,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "San Francisco, CA",
   "service_type": "Tech startup / SaaS"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -107,6 +111,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Rehovot, Israel",
   "service_type": "Coffee shop"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -121,10 +127,10 @@ BUSINESS_CARD_CONFIRMATION:
 ```
 That's wonderful! I'd love to help you with your coffee shop.
 
-To give you the best recommendations, what's your shop's name and where are you located?
+What's your shop's name?
 ```
 
-**Note:** Extracted service_type ("coffee shop"), but asking for name + location
+**Note:** Extracted service_type ("coffee shop"). Location will be asked in the next turn after name is provided.
 
 ---
 
@@ -158,6 +164,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Rehovot, Israel",
   "service_type": "Coffee shop"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -209,6 +217,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Los Angeles, CA",
   "service_type": "Sustainable fashion brand"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 **Note:** Extracted name, location, AND service_type from single message, then searched
@@ -223,17 +233,19 @@ BUSINESS_CARD_CONFIRMATION:
 
 **Agent response:**
 ```
-Great question! By location, I mean where your business operates. This could be:
+Great question! By location, I mean the city and country where your business is based.
+For example:
 
-- City and state (e.g., "Austin, Texas")
-- City and country (e.g., "London, UK")
-- A specific neighborhood (e.g., "Downtown Manhattan")
-- Or if you serve customers online, you can say "Online" or "Nationwide"
+Austin, Texas, USA
+London, UK
+San Francisco, CA, USA
+
+If your business mainly operates online, you can also say something like "Online-only".
 
 Where is your business based?
 ```
 
-**Note:** Provides helpful clarification with examples, remains patient
+**Note:** No bullets, no markdown, all plain text, correct location formatting
 
 ---
 
@@ -286,6 +298,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Los Angeles, CA",
   "service_type": "Sustainable fashion"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -343,6 +357,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "San Francisco, CA",
   "service_type": "B2B SaaS platform"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 ---
@@ -377,6 +393,8 @@ BUSINESS_CARD_CONFIRMATION:
   "location": "Rehovot, Israel",
   "service_type": "Coffee shop"
 }
+
+[Calls save_business_card with these exact values]
 ```
 
 **Note:** Constructs full URL with https:// protocol
