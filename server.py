@@ -161,6 +161,15 @@ static_dir = PROJECT_ROOT / "static"
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+# Mount React build directory if it exists (production)
+build_dir = PROJECT_ROOT / "build"
+if build_dir.exists():
+    print(f"[SERVER] Serving React build from {build_dir}")
+    # Mount build/assets as /assets for production
+    assets_dir = build_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
 # Combine FastAPI and Socket.IO
 socket_app = socketio.ASGIApp(sio, app)
 
@@ -188,6 +197,14 @@ class SuggestionsResponse(BaseModel):
     welcome_message: str
     suggestions: list[str]
 
+class SessionInfo(BaseModel):
+    id: str
+    title: str
+    timestamp: str
+
+class GetSessionsResponse(BaseModel):
+    sessions: list[SessionInfo]
+
 # In-memory storage (for local dev)
 in_memory_messages = {}  # session_id -> list of messages
 # Note: Runners are now managed by SessionManager
@@ -196,15 +213,25 @@ in_memory_messages = {}  # session_id -> list of messages
 def save_message_to_firestore(session_id: str, role: str, content: str, user_id: str = None):
     """Save a message to Firestore or in-memory storage."""
     if db is not None:
-        # Use Firestore
-        message_ref = db.collection('sessions').document(session_id).collection('messages').document()
+        # Use Firestore - save to both locations:
+        # 1. In session subcollection (for get_session_messages)
+        # 2. In top-level messages collection (for get_user_sessions query)
+
         message_data = {
             'role': role,
             'content': content,
             'timestamp': firestore.SERVER_TIMESTAMP,
-            'user_id': user_id
+            'user_id': user_id,
+            'session_id': session_id  # Add session_id for top-level collection
         }
+
+        # Save to session subcollection
+        message_ref = db.collection('sessions').document(session_id).collection('messages').document()
         message_ref.set(message_data)
+
+        # Also save to top-level messages collection for easy session queries
+        db.collection('messages').document(message_ref.id).set(message_data)
+
         return message_ref.id
     else:
         # Use in-memory storage for local development
@@ -355,12 +382,18 @@ def content_to_text(content: types.Content | None) -> str:
 
 @app.get("/")
 def read_root():
-    """Serve the unified SPA."""
+    """Serve the unified SPA (React build in production, fallback to static/app.html in dev)."""
+    build_index = PROJECT_ROOT / "build" / "index.html"
+    if build_index.exists():
+        return FileResponse(build_index)
     return FileResponse("static/app.html")
 
 @app.get("/index.html")
 def index_page():
     """Redirect index.html to unified SPA."""
+    build_index = PROJECT_ROOT / "build" / "index.html"
+    if build_index.exists():
+        return FileResponse(build_index)
     return FileResponse("static/app.html")
 
 @app.get("/login.html")
@@ -408,12 +441,74 @@ def create_session(
 
     print(f"[CREATE_SESSION] session_id={session_id}, user_id={user_id}, message='{request.message[:50]}...'")
 
-    # Store the initial message in Firestore
-    save_message_to_firestore(session_id, "user", request.message, user_id)
+    # Note: We don't save the message here because send_message socket handler will save it
+    # This endpoint just creates/initializes the session and returns the IDs
 
-    print(f"[CREATE_SESSION] Message stored successfully for session {session_id}")
+    print(f"[CREATE_SESSION] Session created: {session_id}")
 
     return CreateSessionResponse(session_id=session_id, user_id=user_id)
+
+@app.get("/api/sessions", response_model=GetSessionsResponse)
+def get_user_sessions(user_id: str):
+    """
+    Get all chat sessions for a user.
+    Returns list of sessions with id, title, and timestamp.
+    """
+    print(f"[GET_SESSIONS] Fetching sessions for user {user_id}")
+
+    try:
+        sessions = []
+
+        # Query Firestore for all sessions belonging to this user
+        if db:
+            # Firestore: query messages collection grouped by session_id
+            messages_ref = db.collection('messages')
+            query = messages_ref.where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(100)
+            docs = query.stream()
+
+            # Group messages by session_id to get unique sessions
+            session_map = {}
+            for doc in docs:
+                data = doc.to_dict()
+                session_id = data.get('session_id')
+                if session_id and session_id not in session_map:
+                    # Get first user message as title
+                    if data.get('role') == 'user':
+                        title = data.get('content', 'New Chat')[:50]
+                    else:
+                        title = 'New Chat'
+
+                    session_map[session_id] = {
+                        'id': session_id,
+                        'title': title,
+                        'timestamp': data.get('timestamp', datetime.now()).isoformat()
+                    }
+
+            sessions = list(session_map.values())
+        else:
+            # In-memory fallback: get from in_memory_messages
+            for session_id, msgs in in_memory_messages.items():
+                if msgs:
+                    # Check if any message belongs to this user
+                    user_msgs = [m for m in msgs if m.get('user_id') == user_id]
+                    if user_msgs:
+                        first_user_msg = next((m for m in msgs if m.get('role') == 'user'), None)
+                        title = first_user_msg['content'][:50] if first_user_msg else 'New Chat'
+                        timestamp = msgs[0].get('timestamp', datetime.now().isoformat())
+                        sessions.append({
+                            'id': session_id,
+                            'title': title,
+                            'timestamp': timestamp
+                        })
+
+        print(f"[GET_SESSIONS] Found {len(sessions)} sessions for user {user_id}")
+        return GetSessionsResponse(sessions=sessions)
+
+    except Exception as e:
+        print(f"[GET_SESSIONS] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return GetSessionsResponse(sessions=[])
 
 @app.get("/api/sessions/{session_id}/messages", response_model=GetMessagesResponse)
 def get_messages(session_id: str):
@@ -1059,6 +1154,10 @@ async def send_message(sid, data):
             if event.author == root_agent.name and event.is_final_response():
                 got_final_response = True
                 final_text = content_to_text(event.content)
+                print(f"[SEND_MESSAGE] DEBUG: Final response from root_agent")
+                print(f"[SEND_MESSAGE] DEBUG: event.content = {event.content}")
+                print(f"[SEND_MESSAGE] DEBUG: final_text = '{final_text}'")
+                print(f"[SEND_MESSAGE] DEBUG: final_text length = {len(final_text) if final_text else 0}")
                 if final_text:
                     print(f"[SEND_MESSAGE] Got final response from root_agent, saving to storage")
                     print(f"[SEND_MESSAGE] Final text preview: {final_text[:200]}...")
