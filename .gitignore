@@ -17,4 +17,10 @@ ENV/
 *.backup
 agents/__init__.py.backup
 
+# React/Node
+node_modules/
+build/
+dist/
+.DS_Store
+
 .claude
