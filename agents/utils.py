@@ -61,7 +61,7 @@ def load_agent_env(agent_name: Union[AgentName, str], project_root: Optional[Pat
     
     # Read .env file manually to get all variables
     env_vars = {}
-    with open(env_file, 'r') as f:
+    with open(env_file, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.strip()
             # Skip comments and empty lines
@@ -106,13 +106,13 @@ def load_agent_instruction(agent_dir: Path) -> str:
     """
     # Read instruction from external file
     instruction_path = agent_dir / 'instruction.md'
-    with open(instruction_path, 'r') as f:
+    with open(instruction_path, 'r', encoding='utf-8') as f:
         instruction = f.read().strip()
-    
+
     # Read examples from external file (optional)
     examples_path = agent_dir / 'examples.md'
     if examples_path.exists():
-        with open(examples_path, 'r') as f:
+        with open(examples_path, 'r', encoding='utf-8') as f:
             examples = f.read().strip()
         # Combine instruction and examples
         full_instruction = f"{instruction}\n\n{examples}"

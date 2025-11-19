@@ -1,14 +1,26 @@
 """Tools for the creator finder agent to search for creators in Pinecone vector database."""
+import sys
+print("DEBUG: Starting tools.py import", file=sys.stderr, flush=True)
+
 from typing import List, Dict, Optional
+print("DEBUG: Imported typing", file=sys.stderr, flush=True)
+
+import logging
+print("DEBUG: Imported logging", file=sys.stderr, flush=True)
+
+print("DEBUG: About to import FunctionTool from google.adk.tools", file=sys.stderr, flush=True)
 from google.adk.tools import FunctionTool
-from vector_db import VectorDB
+print("DEBUG: Imported FunctionTool", file=sys.stderr, flush=True)
+
+logger = logging.getLogger(__name__)
+print("DEBUG: Logger created", file=sys.stderr, flush=True)
 
 
 def find_creators_helper(
-    category: str,
+    category: Optional[str] = None,
     location: Optional[str] = None,
-    min_price: float = 0,
-    max_price: float = 10000,
+    min_price: float = 0.0,
+    max_price: Optional[float] = 100000.0,
     max_results: int = 10,
     target_audience: Optional[str] = None,
     platform: Optional[str] = None
@@ -19,11 +31,11 @@ def find_creators_helper(
     the specified criteria using semantic search and metadata filtering.
 
     Args:
-        category: Content category (e.g., 'food', 'travel', 'tech', 'lifestyle', 'fashion', 'beauty', 'fitness', 'gaming')
+        category: Content category (e.g., 'food', 'travel', 'tech', 'lifestyle', 'fashion', 'beauty', 'fitness', 'gaming'). Optional.
         location: Geographic location at any level - country (e.g., 'US', 'UK'), region/state (e.g., 'California', 'Texas'),
                  city (e.g., 'New York', 'London'), or neighborhood (e.g., 'Queens NY', 'Brooklyn'). Optional.
-        min_price: Minimum price per creator based on budget calculation
-        max_price: Maximum price per creator based on budget
+        min_price: Minimum price per creator based on budget calculation (default: 0.0)
+        max_price: Maximum price per creator based on budget (default: 100000.0)
         max_results: Maximum number of creators to return (default: 10, max: 50)
         target_audience: Description of target audience demographics or interests (optional)
         platform: Platform filter (e.g., 'YouTube', 'Instagram', 'TikTok'). Optional, defaults to all platforms.
@@ -38,12 +50,26 @@ def find_creators_helper(
         - Estimated price range
         - Profile/Channel URL
     """
+    logger.info("="*80)
+    logger.info(f"find_creators_helper called with: category={category}, location={location}, min_price={min_price}, max_price={max_price}, platform={platform}, target_audience={target_audience}")
+    logger.info("="*80)
+
     try:
-        # Initialize Pinecone vector database
+        # Initialize Pinecone vector database (lazy initialization)
+        logger.info("Importing VectorDB...")
+        import sys
+        import os
+        # Add parent directory to path to import vector_db
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+        from vector_db import VectorDB
+        logger.info("Initializing VectorDB...")
         vector_db = VectorDB()
+        logger.info("VectorDB initialized successfully")
 
         # Build semantic search query
-        query_parts = [category, "creator"]
+        query_parts = ["creator"]
+        if category:
+            query_parts.insert(0, category)
         if platform:
             query_parts.append(platform)
         if location:
@@ -52,20 +78,26 @@ def find_creators_helper(
             query_parts.append(f"for {target_audience}")
 
         search_query = " ".join(query_parts)
+        logger.info(f"Search query: '{search_query}'")
 
         # Build metadata filter for Pinecone
+        # NOTE: We do NOT filter by category in metadata because:
+        # 1. Semantic search already handles category matching
+        # 2. Category values in DB may be different from user input (e.g., "diy" vs "home_and_garden")
         metadata_filter = {}
-        if category:
-            metadata_filter["category"] = category.lower()
         if platform:
             metadata_filter["platform"] = platform
+
+        logger.info(f"Metadata filter: {metadata_filter if metadata_filter else 'None'}")
+        if category:
+            logger.info(f"Category '{category}' will be matched via semantic search, not metadata filter")
 
         # Search in Pinecone (creators namespace)
         # Fetch more results for filtering by price and location
         search_results = vector_db.search(
             query=search_query,
             top_k=min(max_results * 3, 50),  # Fetch extra for filtering
-            namespace="creators",
+            namespace="",
             filter=metadata_filter if metadata_filter else None
         )
 
@@ -78,17 +110,23 @@ def find_creators_helper(
             creator = result["metadata"]
 
             # Filter by price range
-            price_min = creator.get("estimated_price_min", 0)
-            price_max = creator.get("estimated_price_max", 0)
+            creator_price = creator.get("price", 0)
 
             # Skip if creator is too expensive or too cheap
-            if price_min > max_price or price_max < min_price:
+            if creator_price > max_price or creator_price < min_price:
                 continue
 
             # Filter by location (case-insensitive partial match)
             if location:
-                creator_location = creator.get("location", "")
-                if not creator_location or location.lower() not in creator_location.lower():
+                creator_city = creator.get("location_city", "")
+                creator_country = creator.get("location_country", "")
+                location_lower = location.lower()
+
+                # Check if location matches either city or country
+                city_match = creator_city and location_lower in creator_city.lower()
+                country_match = creator_country and location_lower in creator_country.lower()
+
+                if not (city_match or country_match):
                     continue
 
             filtered_creators.append(creator)
@@ -113,43 +151,43 @@ def find_creators_helper(
         result += "=" * 80 + "\n\n"
 
         for i, creator in enumerate(creators_sorted, 1):
-            result += f"{i}. {creator.get('name', 'Unknown')}\n"
+            result += f"{i}. {creator.get('display_name', 'Unknown')}\n"
             result += f"   Platform: {creator.get('platform', 'N/A')}\n"
 
             # Display follower/subscriber count
-            if creator.get('subscriber_count'):
-                result += f"   Subscribers: {creator.get('subscriber_count'):,}\n"
-            elif creator.get('follower_count'):
-                result += f"   Followers: {creator.get('follower_count'):,}\n"
+            if creator.get('followers'):
+                result += f"   Followers: {creator.get('followers'):,.0f}\n"
 
             # Display engagement and other metrics
             if creator.get('engagement_rate'):
                 result += f"   Engagement Rate: {creator.get('engagement_rate')}%\n"
 
-            if creator.get('view_count'):
-                result += f"   Total Views: {creator.get('view_count'):,}\n"
+            if creator.get('posts_count'):
+                result += f"   Posts: {creator.get('posts_count'):,.0f}\n"
 
-            if creator.get('video_count'):
-                result += f"   Videos/Posts: {creator.get('video_count'):,}\n"
-
-            # Price range
-            price_min = creator.get('estimated_price_min', 0)
-            price_max = creator.get('estimated_price_max', 0)
-            result += f"   Estimated Price: ${price_min:,.2f} - ${price_max:,.2f}\n"
+            # Price
+            creator_price = creator.get('price', 0)
+            if creator_price:
+                result += f"   Price: ${creator_price:,.2f}\n"
 
             # Profile URL
-            url = creator.get('channel_url') or creator.get('profile_url', 'N/A')
+            url = creator.get('profile_url', 'N/A')
             result += f"   URL: {url}\n"
 
             # Description
-            description = creator.get('description', 'No description available')
+            description = creator.get('bio', 'No description available')
             if len(description) > 200:
                 description = description[:200] + '...'
-            result += f"   Description: {description}\n"
+            result += f"   Bio: {description}\n"
 
             # Location
-            if creator.get('location'):
-                result += f"   Location: {creator.get('location')}\n"
+            location_parts = []
+            if creator.get('location_city'):
+                location_parts.append(creator.get('location_city'))
+            if creator.get('location_country'):
+                location_parts.append(creator.get('location_country'))
+            if location_parts:
+                result += f"   Location: {', '.join(location_parts)}\n"
 
             result += "-" * 80 + "\n\n"
 
@@ -160,4 +198,7 @@ def find_creators_helper(
 
 
 # Create the tool instance
+print("DEBUG: About to create FunctionTool instance", file=sys.stderr, flush=True)
 find_creators = FunctionTool(find_creators_helper)
+print("DEBUG: FunctionTool instance created", file=sys.stderr, flush=True)
+print("DEBUG: tools.py module load complete", file=sys.stderr, flush=True)

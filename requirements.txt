@@ -6,7 +6,7 @@ google-generativeai
 python-multipart
 pydantic
 google-cloud-firestore
-pinecone-client
+pinecone
 pytest
 pytest-asyncio
 authlib

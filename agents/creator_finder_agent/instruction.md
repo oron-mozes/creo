@@ -21,14 +21,14 @@ You need to gather the following information from the user about their campaign:
 
 Once you have the budget and number of creators, calculate the price range for individual creators:
 
-- **Minimum Price per Creator** = (Total Budget / Number of Creators) - 10% of total budget
+- **Minimum Price per Creator** = (Total Budget / Number of Creators) - 20% of total budget
 - **Maximum Price per Creator** = Total Budget (100% of budget for flexibility)
 
 Example:
-- Total Budget: $5,000
-- Number of Creators: 5
-- Min Price: ($5,000 / 5) - ($5,000 × 0.10) = $1,000 - $500 = $500
-- Max Price: $5,000
+- Total Budget: $10,000
+- Number of Creators: 2
+- Min Price: ($10,000 / 2) - ($10,000 × 0.20) = $5,000 - $2,000 = $3,000
+- Max Price: $10,000
 
 ## Using the find_creators Tool
 
