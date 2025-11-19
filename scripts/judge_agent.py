@@ -14,6 +14,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
+import requests
+
 import google.generativeai as genai
 
 # Ensure project root is on sys.path so `agents` package can be imported
@@ -114,6 +116,12 @@ def _ensure_session(runner: InMemoryRunner, user_id: str, session_id: str) -> No
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    env_judge_backend = os.environ.get("JUDGE_BACKEND", "gemini")
+    env_judge_model = os.environ.get("JUDGE_MODEL")
+    env_judge_base_url = os.environ.get("JUDGE_BASE_URL")
+    env_judge_api_key = os.environ.get("JUDGE_API_KEY")
+    env_judge_max_tokens = os.environ.get("JUDGE_MAX_TOKENS")
+
     parser.add_argument(
         "--agent-dir",
         type=Path,
@@ -135,6 +143,36 @@ def parse_args() -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Skip invoking the target agent (useful when you just want to preview prompts).",
+    )
+    parser.add_argument(
+        "--judge-backend",
+        choices=["gemini", "openai"],
+        default=env_judge_backend,
+        help="Which judge backend to use. 'openai' can point to a self-hosted OpenAI-compatible endpoint (e.g., Llama 3.1 via Ollama).",
+    )
+    parser.add_argument(
+        "--judge-model",
+        type=str,
+        default=env_judge_model,
+        help="Model name for the judge backend. Defaults to gemini-2.5-flash for Gemini or llama3.1 for OpenAI-compatible runtimes.",
+    )
+    parser.add_argument(
+        "--judge-base-url",
+        type=str,
+        default=env_judge_base_url,
+        help="Base URL for OpenAI-compatible judge (e.g., http://localhost:11434/v1).",
+    )
+    parser.add_argument(
+        "--judge-api-key",
+        type=str,
+        default=env_judge_api_key,
+        help="API key for the judge backend (optional for local/self-hosted runtimes).",
+    )
+    parser.add_argument(
+        "--judge-max-tokens",
+        type=int,
+        default=int(env_judge_max_tokens) if env_judge_max_tokens else None,
+        help="Limit on judge response tokens (OpenAI-compatible backend). Defaults to 512.",
     )
     return parser.parse_args()
 
@@ -237,74 +275,84 @@ def run_agent_case(agent: AdkAgent, case_input: Dict[str, Any], session_context:
     # Track responses by author to capture sub-agent outputs
     responses_by_author: Dict[str, List[str]] = {}
 
-    for event in runner.run(
-        user_id=user_id,
-        session_id=session_id,
-        new_message=new_message,
-    ):
-        event_count += 1
-        
-        # Debug: log event details
-        event_author = getattr(event, 'author', None)
-        if event_author:
-            event_authors.append(event_author)
-        is_final = event.is_final_response() if hasattr(event, 'is_final_response') else False
-        
-        # Debug: print event structure for first few events
-        if event_count <= 3:
-            print(f"  [DEBUG] Event #{event_count}: author={event_author}, is_final={is_final}, "
-                  f"has_content={bool(event.content)}, has_parts={bool(event.content and event.content.parts)}")
-            if event.content and event.content.parts:
-                for i, part in enumerate(event.content.parts):
-                    part_attrs = [attr for attr in dir(part) if not attr.startswith('_')]
-                    print(f"    Part {i} attributes: {[a for a in part_attrs if 'call' in a.lower() or 'tool' in a.lower()]}")
-        
-        # Collect all agent responses (including from sub-agents)
-        candidate = _content_to_text(event.content)
-        if candidate:
-            all_responses.append(candidate)
-            # Track responses by author
-            if event_author:
-                if event_author not in responses_by_author:
-                    responses_by_author[event_author] = []
-                responses_by_author[event_author].append(candidate)
+    try:
+        event_stream = runner.run(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=new_message,
+        )
+    except Exception as e:
+        raise RuntimeError(f"Agent runner failed before emitting events: {e}") from e
 
-        # Capture function calls (for orchestrator agents)
-        # Check multiple ways function calls might appear in events
-        if event.content and event.content.parts:
-            for part in event.content.parts:
-                # Check for function_call attribute
-                if hasattr(part, 'function_call') and part.function_call:
-                    fc_name = getattr(part.function_call, 'name', None)
-                    if fc_name:
-                        function_calls.append(fc_name)
-                        print(f"  [DEBUG] Found function_call: {fc_name}")
-                
-                # Check for function_response attribute (tool execution results)
-                if hasattr(part, 'function_response') and part.function_response:
-                    fr_name = getattr(part.function_response, 'name', None)
-                    if fr_name:
-                        function_responses.append(fr_name)
-                        print(f"  [DEBUG] Found function_response: {fr_name}")
-        
-        # Also check event-level attributes for function calls
-        if hasattr(event, 'function_call') and event.function_call:
-            fc_name = getattr(event.function_call, 'name', None)
-            if fc_name:
-                function_calls.append(fc_name)
-                print(f"  [DEBUG] Found event-level function_call: {fc_name}")
-        
-        # Check for tool invocations in event metadata
-        if hasattr(event, 'tool_calls'):
-            for tool_call in event.tool_calls:
-                if hasattr(tool_call, 'name'):
-                    function_calls.append(tool_call.name)
-                    print(f"  [DEBUG] Found tool_call: {tool_call.name}")
-        
-        # Track final response from the root agent
-        if event_author == agent.name and is_final:
+    try:
+        for event in event_stream:
+            event_count += 1
+            
+            # Debug: log event details
+            event_author = getattr(event, 'author', None)
+            if event_author:
+                event_authors.append(event_author)
+            is_final = event.is_final_response() if hasattr(event, 'is_final_response') else False
+            
+            # Debug: print event structure for first few events
+            if event_count <= 3:
+                print(f"  [DEBUG] Event #{event_count}: author={event_author}, is_final={is_final}, "
+                      f"has_content={bool(event.content)}, has_parts={bool(event.content and event.content.parts)}")
+                if event.content and event.content.parts:
+                    for i, part in enumerate(event.content.parts):
+                        part_attrs = [attr for attr in dir(part) if not attr.startswith('_')]
+                        print(f"    Part {i} attributes: {[a for a in part_attrs if 'call' in a.lower() or 'tool' in a.lower()]}")
+            
+            # Collect all agent responses (including from sub-agents)
+            candidate = _content_to_text(event.content)
             if candidate:
-                final_response = candidate
+                all_responses.append(candidate)
+                # Track responses by author
+                if event_author:
+                    if event_author not in responses_by_author:
+                        responses_by_author[event_author] = []
+                    responses_by_author[event_author].append(candidate)
+
+            # Capture function calls (for orchestrator agents)
+            # Check multiple ways function calls might appear in events
+            if event.content and event.content.parts:
+                for part in event.content.parts:
+                    # Check for function_call attribute
+                    if hasattr(part, 'function_call') and part.function_call:
+                        fc_name = getattr(part.function_call, 'name', None)
+                        if fc_name:
+                            function_calls.append(fc_name)
+                            print(f"  [DEBUG] Found function_call: {fc_name}")
+                    
+                    # Check for function_response attribute (tool execution results)
+                    if hasattr(part, 'function_response') and part.function_response:
+                        fr_name = getattr(part.function_response, 'name', None)
+                        if fr_name:
+                            function_responses.append(fr_name)
+                            print(f"  [DEBUG] Found function_response: {fr_name}")
+            
+            # Also check event-level attributes for function calls
+            if hasattr(event, 'function_call') and event.function_call:
+                fc_name = getattr(event.function_call, 'name', None)
+                if fc_name:
+                    function_calls.append(fc_name)
+                    print(f"  [DEBUG] Found event-level function_call: {fc_name}")
+            
+            # Check for tool invocations in event metadata
+            if hasattr(event, 'tool_calls'):
+                for tool_call in event.tool_calls:
+                    if hasattr(tool_call, 'name'):
+                        function_calls.append(tool_call.name)
+                        print(f"  [DEBUG] Found tool_call: {tool_call.name}")
+            
+            # Track final response from the root agent
+            if event_author == agent.name and is_final:
+                if candidate:
+                    final_response = candidate
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        raise RuntimeError(f"Agent runner error after {event_count} events: {e}\n{tb}") from e
 
     # Debug: log what we collected
     if event_count == 0:
@@ -363,26 +411,50 @@ class JudgeResult:
     score: float
     rationale: str
 
-class Judge:
-    """Simple wrapper around Gemini for scoring agent responses."""
+def _truncate(text: str | None, max_chars: int = 4000) -> str:
+    if not text:
+        return ""
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3] + "..."
 
-    def __init__(self, model_name: str = "gemini-2.5-flash") -> None:
-        api_key = os.environ.get("GOOGLE_API_KEY")
-        if not api_key:
-            error_msg = (
-                "GOOGLE_API_KEY environment variable not set.\n\n"
-                "For local development:\n"
-                "  export GOOGLE_API_KEY=your-api-key\n\n"
-                "For GitHub Actions:\n"
-                "  Add GOOGLE_API_KEY to repository secrets:\n"
-                "  https://github.com/<owner>/<repo>/settings/secrets/actions\n\n"
-                "Get your API key from: https://makersuite.google.com/app/apikey"
-            )
-            raise RuntimeError(error_msg)
-        genai.configure(api_key=api_key)
-        self._model = genai.GenerativeModel(model_name)
-        self._last_request_time = 0.0
-        self._min_request_interval = 6.5  # ~9 requests per minute to stay under 10/min limit
+class Judge:
+    """Wrapper around different LLM backends for scoring agent responses."""
+
+    def __init__(
+        self,
+        backend: str = "gemini",
+        model_name: str | None = None,
+        api_base: str | None = None,
+        api_key: str | None = None,
+        max_tokens: int | None = None,
+    ) -> None:
+        self._backend = backend
+        if backend == "gemini":
+            api_key = api_key or os.environ.get("GOOGLE_API_KEY")
+            if not api_key:
+                error_msg = (
+                    "GOOGLE_API_KEY environment variable not set.\n\n"
+                    "For local development:\n"
+                    "  export GOOGLE_API_KEY=your-api-key\n\n"
+                    "For GitHub Actions:\n"
+                    "  Add GOOGLE_API_KEY to repository secrets:\n"
+                    "  https://github.com/<owner>/<repo>/settings/secrets/actions\n\n"
+                    "Get your API key from: https://makersuite.google.com/app/apikey"
+                )
+                raise RuntimeError(error_msg)
+            genai.configure(api_key=api_key)
+            self._model = genai.GenerativeModel(model_name or "gemini-2.5-flash")
+            self._last_request_time = 0.0
+            self._min_request_interval = 6.5  # ~9 requests per minute to stay under 10/min limit
+        elif backend == "openai":
+            self._model_name = model_name or os.environ.get("LLM_JUDGE_MODEL", "llama3.1")
+            self._api_base = api_base or os.environ.get("LLM_JUDGE_BASE_URL", "http://localhost:11434/v1")
+            self._api_key = api_key or os.environ.get("LLM_JUDGE_API_KEY")
+            self._session = requests.Session()
+            self._max_tokens = max_tokens or int(os.environ.get("LLM_JUDGE_MAX_TOKENS", "512"))
+        else:
+            raise ValueError(f"Unsupported judge backend: {backend}")
 
     def score(
         self,
@@ -393,43 +465,49 @@ class Judge:
         expected_behavior: Dict[str, Any] | None = None,
         agent_instructions: str | None = None,
     ) -> JudgeResult:
-        # Rate limiting: ensure we don't exceed API quota
-        elapsed = time.time() - self._last_request_time
-        if elapsed < self._min_request_interval:
-            sleep_time = self._min_request_interval - elapsed
-            print(f"  [Rate limiting: waiting {sleep_time:.1f}s...]", end="\r")
-            time.sleep(sleep_time)
+        # Truncate noisy parts to keep prompt within small-context judges
+        safe_case_desc = _truncate(case_description, 500)
+        safe_input = _truncate(json.dumps(test_input, indent=2, ensure_ascii=False), 2000)
+        safe_agent_output = _truncate(agent_output, 2000)
+        safe_agent_instructions = _truncate(agent_instructions, 1500) if agent_instructions else None
+        safe_expected_behavior = (
+            _truncate(json.dumps(expected_behavior, indent=2, ensure_ascii=False), 1500)
+            if expected_behavior else None
+        )
+
+        # Debug: log judge target once per call
+        print(f"  [JUDGE] backend={self._backend} model={getattr(self, '_model_name', 'gemini')} base={getattr(self, '_api_base', 'gemini')} max_tokens={getattr(self, '_max_tokens', 'n/a')}")
 
         # Build the evaluation prompt
         prompt_parts = [
             "You are an impartial judge scoring how well an agent handled a test case.",
             "",
-            f"Test description: {case_description}",
+            f"Test description: {safe_case_desc}",
             f"Expected output type: {expected_output_type}",
             f"Structured input (JSON):",
-            json.dumps(test_input, indent=2, ensure_ascii=False),
+            safe_input,
         ]
 
         # Add agent instructions if available
-        if agent_instructions:
+        if safe_agent_instructions:
             prompt_parts.extend([
                 "",
                 "Agent Instructions (the agent must follow these):",
-                agent_instructions.strip(),
+                safe_agent_instructions.strip(),
             ])
 
         # Add expected behavior if available
-        if expected_behavior:
+        if safe_expected_behavior:
             prompt_parts.extend([
                 "",
                 "Expected behavior (the agent should exhibit these behaviors):",
-                json.dumps(expected_behavior, indent=2, ensure_ascii=False),
+                safe_expected_behavior,
             ])
 
         prompt_parts.extend([
             "",
             "Agent output:",
-            agent_output.strip(),
+            safe_agent_output.strip(),
             "",
             "Evaluate the agent's response based on:",
             "1. Does it follow the agent instructions?",
@@ -444,32 +522,91 @@ class Judge:
         ])
 
         prompt = "\n".join(prompt_parts)
-        # Try up to 3 times to get valid JSON
+        prompt = "\n".join(prompt_parts)
+
+        if self._backend == "gemini":
+            # Rate limiting: ensure we don't exceed API quota
+            elapsed = time.time() - getattr(self, "_last_request_time", 0.0)
+            if elapsed < self._min_request_interval:
+                sleep_time = self._min_request_interval - elapsed
+                print(f"  [Rate limiting: waiting {sleep_time:.1f}s...]", end="\r")
+                time.sleep(sleep_time)
+
+            # Try up to 3 times to get valid JSON
+            for attempt in range(3):
+                try:
+                    self._last_request_time = time.time()
+                    response = self._model.generate_content(prompt, generation_config={"temperature": 0.1})
+                    raw = response.text.strip()
+
+                    # Try to extract JSON if wrapped in markdown code blocks
+                    if raw.startswith("```"):
+                        lines = raw.split("\n")
+                        # Remove first and last lines (markdown fences)
+                        raw = "\n".join(lines[1:-1]) if len(lines) > 2 else raw
+                        # Remove json language identifier if present
+                        if raw.startswith("json"):
+                            raw = raw[4:].strip()
+
+                    payload = json.loads(raw)
+                    return JudgeResult(score=float(payload["score"]), rationale=str(payload["rationale"]))
+                except (json.JSONDecodeError, KeyError, ValueError) as e:
+                    if attempt == 2:  # Last attempt
+                        # Return a default low score if we can't parse
+                        print(f"Warning: Failed to parse judge response after 3 attempts. Raw: {raw[:100]}")
+                        return JudgeResult(score=0.0, rationale=f"Judge failed to provide valid score (parse error: {str(e)})")
+                    continue  # Retry
+            return JudgeResult(score=0.0, rationale="Judge failed to provide valid score")
+
+        # OpenAI-compatible backend (e.g., self-hosted Llama 3.1)
         for attempt in range(3):
             try:
-                self._last_request_time = time.time()
-                response = self._model.generate_content(prompt, generation_config={"temperature": 0.1})
-                raw = response.text.strip()
+                headers = {"Content-Type": "application/json"}
+                if self._api_key:
+                    headers["Authorization"] = f"Bearer {self._api_key}"
 
-                # Try to extract JSON if wrapped in markdown code blocks
+                resp = self._session.post(
+                    f"{self._api_base}/chat/completions",
+                    headers=headers,
+                    json={
+                        "model": self._model_name,
+                        "temperature": 0.1,
+                        "response_format": {"type": "json_object"},
+                        "max_tokens": self._max_tokens,
+                        "messages": [
+                            {"role": "system", "content": "You are an impartial judge scoring how well an agent handled a test case."},
+                            {"role": "user", "content": prompt},
+                        ],
+                    },
+                    timeout=60,
+                )
+                try:
+                    resp.raise_for_status()
+                except requests.RequestException as e:
+                    body = resp.text if resp is not None else ""
+                    raise RuntimeError(f"Judge HTTP error {resp.status_code if resp is not None else 'unknown'}: {e}; body: {body[:300]}") from e
+                print(f"  [JUDGE] HTTP {resp.status_code} from judge")
+                data = resp.json()
+                raw = data["choices"][0]["message"]["content"].strip()
+
                 if raw.startswith("```"):
                     lines = raw.split("\n")
-                    # Remove first and last lines (markdown fences)
                     raw = "\n".join(lines[1:-1]) if len(lines) > 2 else raw
-                    # Remove json language identifier if present
                     if raw.startswith("json"):
                         raw = raw[4:].strip()
 
                 payload = json.loads(raw)
                 return JudgeResult(score=float(payload["score"]), rationale=str(payload["rationale"]))
             except (json.JSONDecodeError, KeyError, ValueError) as e:
-                if attempt == 2:  # Last attempt
-                    # Return a default low score if we can't parse
+                if attempt == 2:
                     print(f"Warning: Failed to parse judge response after 3 attempts. Raw: {raw[:100]}")
                     return JudgeResult(score=0.0, rationale=f"Judge failed to provide valid score (parse error: {str(e)})")
-                continue  # Retry
+                continue
+            except requests.RequestException as e:
+                if attempt == 2:
+                    return JudgeResult(score=0.0, rationale=f"Judge HTTP error: {e}")
+                time.sleep(1)
 
-        # Fallback (shouldn't reach here)
         return JudgeResult(score=0.0, rationale="Judge failed to provide valid score")
 
 # ---------------------------------------------------------------------------
@@ -501,7 +638,13 @@ def main() -> None:
 
     agent = load_agent(args.agent_dir)
     agent_instructions = load_agent_instructions(args.agent_dir)
-    judge = Judge()
+    judge = Judge(
+        backend=args.judge_backend,
+        model_name=args.judge_model,
+        api_base=args.judge_base_url,
+        api_key=args.judge_api_key,
+        max_tokens=args.judge_max_tokens,
+    )
 
     total_score = 0.0
     table: List[Tuple[str, float, str]] = []

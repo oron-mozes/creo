@@ -43,6 +43,9 @@ help:
 	@echo "  make sync-secrets   - Sync secrets from .env to Google Secret Manager"
 	@echo "  make verify-secrets - Verify secrets in Google Secret Manager"
 	@echo "  make setup-gmail    - Setup Gmail OAuth authentication for outreach emails"
+	@echo "  make judge-llama-start - Start local Llama (Ollama) judge server for evaluations"
+	@echo "  make judge-llama-stop  - Stop local Llama judge server"
+	@echo "  make judge-llama-logs  - Tail logs from local Llama judge server"
 
 # Create virtual environment
 venv:
@@ -135,6 +138,26 @@ judge: install
 		exit 1; \
 	fi
 	$(PYTHON) scripts/judge_agent.py --agent-dir agents/$(AGENT)
+
+# Start/stop local Llama judge (requires Docker)
+judge-llama-start:
+	@echo "Starting local Llama (OpenAI-compatible) judge server on http://localhost:11434 ..."
+	@docker run -d --name llama-judge --pull=always -p 11434:11434 ollama/ollama:latest
+	@echo "Waiting for server to be ready..."
+	@sleep 5
+	@echo "Initializing models (first run may download):"
+	@echo " - Judge model: llama3.1:70b"
+	@docker exec llama-judge ollama pull llama3.1:70b
+	@echo " - Generator model: llama3.1:8b"
+	@docker exec llama-judge ollama pull llama3.1:8b
+	@echo "✓ Llama judge is running at http://localhost:11434/v1 with judge=llama3.1:70b and gen=llama3.1:8b"
+
+judge-llama-stop:
+	@docker rm -f llama-judge || true
+	@echo "✓ Llama judge stopped"
+
+judge-llama-logs:
+	@docker logs -f llama-judge
 
 # Start FastAPI server with Socket.IO (backend only)
 server-backend: venv

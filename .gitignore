@@ -24,3 +24,5 @@ dist/
 .DS_Store
 
 .claude
+gmail_token.json
+gmail_credentials.json

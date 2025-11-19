@@ -26,6 +26,7 @@ class SessionMemory:
     def __init__(self, session_id: str, user_id: str, user_profile: Optional[Dict[str, Any]] = None):
         self.session_id = session_id
         self.user_id = user_id
+        self.created_at = datetime.utcnow()
 
         # Shared memory - accessible by all agents in this session
         self.shared_context: Dict[str, Any] = {
@@ -572,6 +573,7 @@ class SessionManager:
         session_memory = self.get_session_memory(session_id)
         if not session_memory:
             return user_message
+        user_id = session_memory.user_id
 
         # Build context header
         context_parts = ["=== SESSION CONTEXT (accessible by all agents) ==="]
@@ -599,11 +601,69 @@ class SessionManager:
         context_parts.append("")  # Empty line
         context_parts.append(f"User message: {user_message}")
 
+        # Add summaries of prior sessions for this user (up to 4 most recent)
+        def _truncate(text: str, max_len: int = 200) -> str:
+            if text is None:
+                return ""
+            return text if len(text) <= max_len else text[: max_len - 3] + "..."
+
+        prior_sessions = [
+            mem for sid, mem in self._session_memories.items()
+            if mem.user_id == user_id and sid != session_id
+        ]
+        prior_sessions = sorted(prior_sessions, key=lambda m: getattr(m, "created_at", datetime.min), reverse=True)[:4]
+        if prior_sessions:
+            context_parts.append("")
+            context_parts.append("=== PRIOR SESSION SUMMARIES (last 4) ===")
+            for idx, mem in enumerate(prior_sessions, start=1):
+                messages = mem.get_shared_context().get('messages', [])
+                last_user = next((m['content'] for m in reversed(messages) if m.get('role') == 'user'), "")
+                last_assistant = next((m['content'] for m in reversed(messages) if m.get('role') == 'assistant'), "")
+                bc = mem.get_business_card()
+                context_parts.append(
+                    f"[Session {idx}] created_at={getattr(mem, 'created_at', '')} "
+                    f"msgs={len(messages)} "
+                    f"business_card={'yes' if bc else 'no'} "
+                    f"last_user=\"{_truncate(last_user)}\" "
+                    f"last_assistant=\"{_truncate(last_assistant)}\""
+                )
+            context_parts.append("=== END PRIOR SESSION SUMMARIES ===")
+
+        # Summarize older messages but keep last N intact
+        MAX_CONTEXT_MESSAGES = 20
+        messages = session_memory.get_shared_context().get('messages', [])
+        summary_text = ""
+        if len(messages) > MAX_CONTEXT_MESSAGES:
+            older = messages[:-MAX_CONTEXT_MESSAGES]
+            # Simple heuristic summary: count roles and include first/last snippets
+            user_msgs = [m['content'] for m in older if m.get('role') == 'user']
+            assistant_msgs = [m['content'] for m in older if m.get('role') == 'assistant']
+            summary_text = [
+                "--- Conversation summary of earlier turns ---",
+                f"Older user turns: {len(user_msgs)}",
+                f"Older assistant turns: {len(assistant_msgs)}",
+            ]
+            if user_msgs:
+                summary_text.append(f"First user msg: {user_msgs[0][:200]}")
+            if assistant_msgs:
+                summary_text.append(f"First assistant msg: {assistant_msgs[0][:200]}")
+            if user_msgs:
+                summary_text.append(f"Last user msg in summary: {user_msgs[-1][:200]}")
+            if assistant_msgs:
+                summary_text.append(f"Last assistant msg in summary: {assistant_msgs[-1][:200]}")
+            summary_text.append("--- Recent turns follow ---")
+            summary_text = "\n".join(summary_text)
+
+        if summary_text:
+            context_parts.append(summary_text)
+
         enhanced = "\n".join(context_parts)
         print(f"[SessionManager] Enhanced message with context:")
         print(f"  - Workflow stage: {workflow_stage.value if workflow_stage else 'None'}")
         print(f"  - Business card: {'Present' if business_card else 'None'}")
         print(f"  - User message: {user_message[:100]}...")
+        if summary_text:
+            print(f"  - Summary injected for {len(messages) - MAX_CONTEXT_MESSAGES} earlier messages")
         return enhanced
 
     def save_assistant_message(

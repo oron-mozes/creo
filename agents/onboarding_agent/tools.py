@@ -176,6 +176,16 @@ def load_business_card_tool() -> str:
             "error": "Session not found"
         })
 
+    # First check session memory (the orchestrator may have injected a business card already)
+    in_memory_card = session_memory.get_business_card()
+    if in_memory_card:
+        print(f"[TOOL] ✓ Business card found in session memory: {in_memory_card.get('name')}")
+        return json.dumps({
+            "success": True,
+            "business_card": in_memory_card,
+            "message": "Business card loaded from session"
+        })
+
     user_id = session_memory.user_id
 
     print(f"[TOOL] load_business_card called for user: {user_id}")
