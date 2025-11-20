@@ -1,136 +1,131 @@
 {
-  "average_confidence_score": 0.758,
-  "total_cases": 26,
+  "average_confidence_score": 0.724,
+  "total_cases": 25,
   "test_results": [
     {
       "description": "User provides a website URL, agent should search and extract business info",
-      "score": 0.8,
-      "rationale": "The agent correctly calls `load_business_card` and checks for an existing business card, but fails to search on the provided URL as per instruction 2."
+      "score": 0.5,
+      "rationale": "The agent asks for the business name but does not follow the workflow as instructed, specifically it should first call google_search when a website or domain is extracted."
     },
     {
       "description": "User provides business name and location, agent should search for details",
-      "score": 0.5,
-      "rationale": "The agent follows the first instruction by calling load_business_card and checking for an existing business card, but fails to exhibit expected behavior as it does not search for details or ask for confirmation."
-    },
-    {
-      "description": "Business card already exists in session, should skip onboarding",
       "score": 0.8,
-      "rationale": "The agent correctly calls `load_business_card` and acknowledges the existing business card, but fails to explicitly state that it will skip onboarding as per the test description."
+      "rationale": "The agent correctly identifies the business name and location, but fails to properly extract the service type from the user's message, instead asking an open-ended question."
     },
     {
       "description": "User confirms the business details presented",
-      "score": 0.5,
-      "rationale": "The agent follows the instructions by calling `load_business_card` as its first action and responding with text, but it does not exhibit the expected behavior of generating a confirmation block or thanking the user."
+      "score": 0.9,
+      "rationale": "The agent's response is mostly accurate and follows the instructions, but it fails to extract the business name correctly from the user message."
     },
     {
       "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
-      "score": 0.9,
-      "rationale": "The agent follows the instructions and exhibits most of the expected behavior, but fails to include service type in the tool call."
+      "score": 0.8,
+      "rationale": "The agent's response follows the instructions and exhibits most of the expected behavior, but it does not explicitly call out that a business card has been saved, which is a critical step in the workflow."
     },
     {
       "description": "New user provides minimal information, agent should ask for more",
       "score": 0.5,
-      "rationale": "The agent calls load_business_card as instructed, but then delegates to another agent without asking for business name or location, violating the expected behavior."
+      "rationale": "The agent asks for the business name, which is correct according to the instructions, but it does not ask for location as expected and should instead call google_search with the extracted website or domain."
     },
     {
       "description": "User provides Instagram handle, agent should search for business info",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits expected behavior by checking the business card and providing confirmation, but fails to search on Google as per instruction 2."
+      "score": 0.5,
+      "rationale": "The agent's response does not follow the expected output type and is user-facing, whereas it should be strictly structured system output."
     },
     {
       "description": "User asks vague question with no business context clues",
       "score": 0.8,
-      "rationale": "The agent follows the instructions by calling `load_business_card` and providing business card information, but it doesn't ask for industry or service type as expected."
+      "rationale": "The agent's response is conversational and welcoming, but it doesn't directly address the user's vague question about marketing. It also doesn't attempt to extract any business information from the input."
     },
     {
       "description": "User volunteers multiple pieces of info in one sentence",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits expected behavior, but fails to provide a clear confirmation block as instructed by 'should_generate_confirmation_block': true."
+      "score": 0.9,
+      "rationale": "The agent correctly extracted the business name, location, and service type from the user's message, but failed to normalize the location as per the instructions."
     },
     {
       "description": "User confused about what agent is asking, seeks clarification",
       "score": 0.8,
-      "rationale": "The agent correctly calls `load_business_card` and provides clarification on the location, but fails to provide examples of locations as per instruction 4."
+      "rationale": "The agent's response clarifies the location request and provides examples, but it doesn't directly address the user's confusion about what 'location' means in this context."
     },
     {
       "description": "User provides only business name, no location or other context",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions by calling `load_business_card` and checking for an existing business card, but fails to ask for location in a single turn as suggested."
+      "score": 0.5,
+      "rationale": "The agent's response follows the expected behavior of asking for location after extracting a website or domain from the user message, but it does not follow the instructions to save the business card with the extracted name and service type."
     },
     {
       "description": "User provides TikTok handle, agent should search for business info",
-      "score": 0.8,
-      "rationale": "The agent correctly calls `load_business_card` and mentions the existing business card, but fails to explicitly ask for name and location in a single turn as per instruction 5."
+      "score": 0.5,
+      "rationale": "The agent asks for the business name but does not follow the expected behavior of searching Google when a website or domain is extracted."
     },
     {
       "description": "User corrects details when asked for confirmation",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits most of the expected behavior, but fails to update the location as per the user's correction."
+      "score": 1.0,
+      "rationale": "The agent correctly followed the instructions, exhibited expected behavior, and produced structured system output that accurately reflects the user's correction."
     },
     {
       "description": "User provides LinkedIn company profile URL",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions by calling `load_business_card` and checking for an existing business card, but fails to search on URL or social handle as expected."
+      "score": 0.5,
+      "rationale": "The agent's response does not follow the expected output type and does not include the required fields as specified in the instructions."
     },
     {
       "description": "User provides domain without https protocol",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions by calling `load_business_card` and providing the user's business card details, but fails to exhibit expected behavior as it does not search on Google or construct a full URL."
+      "score": 1.0,
+      "rationale": "The agent's response perfectly follows the instructions and exhibits the expected behavior, producing structured system output that describes what actions were taken."
     },
     {
       "description": "User provides full street address instead of city",
+      "score": 0.8,
+      "rationale": "The agent's response is mostly correct in following the instructions and exhibiting expected behavior, but it does not explicitly ask for the city and state as required by the 'location' field."
+    },
+    {
+      "description": "User provides all required and optional fields in one message. Agent extracts all, calls search for confirmation (assuming search results align), then proceeds directly to final confirmation and save.",
+      "score": 0.9,
+      "rationale": "The agent correctly extracts all required and optional fields from the user message, calls google_search when necessary, and proceeds to final confirmation and save without any issues."
+    },
+    {
+      "description": "User provides only the business name. Agent calls google_search, which returns insufficient information. Agent then asks for the missing location.",
+      "score": 0.8,
+      "rationale": "The agent correctly identifies the need to call google_search and asks for the missing location, but does not explicitly state that it will save the business card after receiving the location."
+    },
+    {
+      "description": "User provides only a website. Agent normalizes it, calls google_search, which successfully finds all required fields. Agent proceeds directly to final confirmation and save (skipping review stage A).",
       "score": 0.5,
-      "rationale": "The agent correctly calls load_business_card and checks for an existing business card, but fails to simplify the location format as instructed."
+      "rationale": "The agent correctly calls google_search and proceeds to final confirmation and save, but skips the review stage A as per its own instructions."
     },
     {
-      "description": "Tests the agent's initial behavior when a business card already exists in the session context. Agent should acknowledge, skip onboarding, and not call search or request information.",
-      "score": 0.8,
-      "rationale": "The agent correctly calls load_business_card and acknowledges the existing business card, but fails to skip onboarding and does not produce the expected output type."
+      "description": "User provides a full street address. Agent normalizes the location to city, state/country, then asks for the missing business name.",
+      "score": 0.5,
+      "rationale": "The agent correctly identifies that it should ask for the business name but fails to follow instructions by not providing any context or information about its previous actions."
     },
     {
-      "description": "Tests the agent's ability to extract information from a provided website URL, perform a search, and present the findings for confirmation.",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions by calling load_business_card and presenting the existing business card details, but fails to search for information on the provided URL as expected."
+      "description": "User provides business name and location. Agent calls google_search, which confirms name and location but doesn't find the service type. Agent then asks for the service type.",
+      "score": 0.9,
+      "rationale": "The agent's response is mostly correct, but it incorrectly assumes the service type from the business name without calling google_search to confirm."
     },
     {
-      "description": "Tests the agent's ability to directly extract all required business card information from a single user message without needing to search, and then present for confirmation.",
+      "description": "User provides name and website along with irrelevant text. Agent ignores the irrelevant text, extracts valid info, calls search for website which returns name and website but not location or service_type. Agent then asks for location.",
       "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits expected behavior, but fails to present the extracted business card information in a clear confirmation format as instructed."
+      "rationale": "The agent correctly ignores irrelevant text, extracts the business name and website, calls Google search for the website, asks for location, but fails to save the business card as it should have done after extracting all required fields."
     },
     {
-      "description": "Tests the agent's behavior when only a business name is provided, leading to an ambiguous search result, prompting the agent to ask for location.",
+      "description": "Agent previously presented a review block (Stage A) with incorrect location. User corrects the location. Agent updates the field, then presents a new review block (Stage A) with the corrected information.",
       "score": 0.8,
-      "rationale": "The agent follows the instructions by calling load_business_card and checking for an existing business card, but fails to exhibit one of the expected behaviors (should_handle_ambiguous_search_results) as it doesn't explicitly address the ambiguity in the user's request."
+      "rationale": "The agent correctly updated the location field and presented a new review block with the corrected information, but it should not have called google_search as per the expected behavior."
     },
     {
-      "description": "Tests the agent's ability to recognize an Instagram handle, perform a targeted search, and extract business details for confirmation.",
-      "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits expected behavior by calling load_business_card and clarifying the user's intent, but it does not directly address the Instagram handle provided in the input."
+      "description": "User provides a full social media URL. Agent extracts it, calls google_search (e.g., with handle/platform), which successfully finds all required fields. Agent proceeds directly to final confirmation and save.",
+      "score": 0.5,
+      "rationale": "The agent follows the instructions but does not exhibit all expected behaviors and produces an unexpected output type."
     },
     {
-      "description": "Tests the agent's conversational approach when the user provides very little initial context, asking for name and industry together.",
+      "description": "User message contains no relevant business information. Agent extracts nothing useful and asks for the business name.",
       "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits expected behavior, but fails to ask for name and industry together in one turn as required."
+      "rationale": "The agent's response follows the instructions and exhibits the expected behavior of asking for the business name after determining that no relevant information was extracted from the user message."
     },
     {
-      "description": "Tests the agent's ability to handle user corrections during the confirmation step, update the information, and re-present for confirmation.",
+      "description": "User provides name, service type, and an ambiguous location ('London'). Agent calls search, which clarifies the location to 'London, UK'. Agent then presents a Stage A review block.",
       "score": 0.8,
-      "rationale": "The agent follows the instructions and exhibits most of the expected behaviors, but fails to update the location as per user correction."
-    },
-    {
-      "description": "Tests the critical step where the user confirms the presented business details. Agent must output BUSINESS_CARD_CONFIRMATION and call save_business_card tool.",
-      "score": 0.8,
-      "rationale": "The agent correctly calls load_business_card and outputs BUSINESS_CARD_CONFIRMATION as expected, but fails to call save_business_card with the same values in the confirmation output."
-    },
-    {
-      "description": "Tests the agent's ability to provide a helpful explanation when the user asks for clarification on a requested field (location).",
-      "score": 0.8,
-      "rationale": "The agent correctly calls load_business_card and explains the location concept with examples, but fails to re-ask for location as expected."
-    },
-    {
-      "description": "Tests the agent's ability to recognize a LinkedIn company profile URL, perform a search, and extract relevant business information.",
-      "score": 0.8,
-      "rationale": "The agent correctly calls `load_business_card` and presents the user's saved business card information, but fails to search on the provided LinkedIn URL as expected."
+      "rationale": "The agent correctly followed the instructions and exhibited most of the expected behaviors, but failed to clarify the location via search before presenting a review block."
     }
   ]
 }

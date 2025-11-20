@@ -121,7 +121,7 @@ def generate_tests_with_llm(
     model: Optional[str] = None,
     api_base: Optional[str] = None,
     api_key: Optional[str] = None,
-    max_tokens: int = 2000,
+    max_tokens: int = 8000,
 ) -> List[Dict[str, Any]]:
     """Generate test cases for an agent using LLM."""
 
@@ -163,9 +163,9 @@ Output ONLY a valid JSON array with this structure:
     "description": "Clear description of what this test validates",
     "user_message": "The exact user input message",
     "session_context": {{
-      "business_card": null,  // or object with business card data if applicable
-      "workflow_state": {{}},  // optional workflow state
-      "last_agent_message": ""  // optional, if testing follow-up
+      // Keep minimal - only include if agent needs conversation state
+      // Examples: {{"last_agent_message": "..."}} for follow-up tests
+      // Do NOT include business_card unless agent description explicitly requires it
     }},
     "expected_behavior": {{
       "should_do_x": true,
@@ -289,7 +289,7 @@ def main():
     backend_model = os.environ.get("LLM_GEN_MODEL")
     backend_base = os.environ.get("LLM_GEN_BASE_URL")
     backend_key = os.environ.get("LLM_GEN_API_KEY")
-    backend_max_tokens = int(os.environ.get("LLM_GEN_MAX_TOKENS", "2000"))
+    backend_max_tokens = int(os.environ.get("LLM_GEN_MAX_TOKENS", "8000"))
     target_llm = int(os.environ.get("LLM_GEN_TARGET_TESTS", "10"))
     max_attempts = int(os.environ.get("LLM_GEN_MAX_ATTEMPTS", "3"))
 

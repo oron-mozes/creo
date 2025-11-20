@@ -214,15 +214,19 @@ def generate_campaign_builder_tests() -> List[Dict[str, Any]]:
 
 
 def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
-    """Generate synthetic test data for onboarding agent."""
+    """
+    Generate golden test data for onboarding agent.
+
+    NOTE: This agent assumes it's ONLY called when business card does NOT exist.
+    The orchestrator handles routing - it will not call onboarding_agent if business_card is already present.
+    Therefore, all tests assume empty session_context (no business_card).
+    """
     return [
         {
             "name": "user_provides_website_url",
             "description": "User provides a website URL, agent should search and extract business info",
             "user_message": "Yes, here is my website: https://www.almacafe.co.il/ourplaces/rehovot",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_extract_business_info": True,
@@ -241,9 +245,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_business_name_and_location",
             "description": "User provides business name and location, agent should search for details",
             "user_message": "My business is called TechStart and we're located in San Francisco",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_extract_business_info": True,
@@ -252,37 +254,10 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             }
         },
         {
-            "name": "business_card_already_exists",
-            "description": "Business card already exists in session, should skip onboarding",
-            "user_message": "I want to find influencers for my brand",
-            "session_context": {
-                "business_card": {
-                    "name": "Alma Cafe",
-                    "website": "https://www.almacafe.co.il",
-                    "location": "Rehovot, Israel",
-                    "service_type": "Coffee shop",
-                    "social_links": "Not provided"
-                }
-            },
-            "expected_behavior": {
-                "should_use_google_search": False,
-                "should_extract_business_info": False,
-                "should_generate_confirmation_block": False,
-                "should_acknowledge_existing_business": True,
-                "should_confirm_onboarding_complete": True
-            },
-            "expected_response_contains": [
-                "Alma Cafe",
-                "already have your details",
-                "Let's move forward"
-            ]
-        },
-        {
             "name": "user_confirms_business_details",
             "description": "User confirms the business details presented",
             "user_message": "Yes, that's correct!",
             "session_context": {
-                "business_card": None,
                 "last_agent_message": "Business Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\n\\nDoes everything look correct?"
             },
             "expected_behavior": {
@@ -295,7 +270,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
             "user_message": "yes it does. how did you do it? that is great",
             "session_context": {
-                "business_card": None,
+                
                 "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\nSocial Links: Not provided\\n\\nDoes that all look good?"
             },
             "expected_behavior": {
@@ -330,9 +305,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "new_user_with_minimal_info",
             "description": "New user provides minimal information, agent should ask for more",
             "user_message": "I have a local coffee shop",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_ask_for_business_name": True,
                 "should_ask_for_location": True,
@@ -343,9 +316,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_social_media_handle",
             "description": "User provides Instagram handle, agent should search for business info",
             "user_message": "My Instagram is @almacafe_rehovot",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_extract_business_info": True
@@ -355,9 +326,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "vague_generic_question_no_context",
             "description": "User asks vague question with no business context clues",
             "user_message": "Can you help me with marketing?",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_ask_for_business_name": True,
                 "should_ask_for_industry_or_service_type": True,
@@ -373,9 +342,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_comprehensive_info_upfront",
             "description": "User volunteers multiple pieces of info in one sentence",
             "user_message": "I run a sustainable fashion brand in LA called EcoWear",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_extract_name": True,
                 "should_extract_location": True,
@@ -394,7 +361,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "description": "User confused about what agent is asking, seeks clarification",
             "user_message": "What do you mean by location?",
             "session_context": {
-                "business_card": None,
+                
                 "last_agent_message": "What's your brand name and where is your business located?"
             },
             "expected_behavior": {
@@ -412,9 +379,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_business_name_only",
             "description": "User provides only business name, no location or other context",
             "user_message": "My business is called StyleHub",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_ask_for_location_if_search_fails": True,
@@ -425,9 +390,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_tiktok_handle",
             "description": "User provides TikTok handle, agent should search for business info",
             "user_message": "Check out our TikTok @ecowear_official",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_extract_business_info": True,
@@ -439,7 +402,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "description": "User corrects details when asked for confirmation",
             "user_message": "No, the location is wrong - we're actually in San Jose, not San Francisco",
             "session_context": {
-                "business_card": None,
+                
                 "last_agent_message": "Business Name: TechStart\\nLocation: San Francisco, CA\\nService Type: Tech startup\\n\\nDoes everything look correct?"
             },
             "expected_behavior": {
@@ -456,9 +419,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_linkedin_profile",
             "description": "User provides LinkedIn company profile URL",
             "user_message": "Here's our LinkedIn: linkedin.com/company/techstart-inc",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_extract_business_info": True,
@@ -469,9 +430,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "name": "user_provides_partial_url",
             "description": "User provides domain without https protocol",
             "user_message": "Our site is almacafe.co.il",
-            "session_context": {
-                "business_card": None
-            },
+            "session_context": {},
             "expected_behavior": {
                 "should_use_google_search": True,
                 "should_construct_full_url": True,
@@ -483,7 +442,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "description": "User provides full street address instead of city",
             "user_message": "We're at 123 Main Street, Suite 400, New York, NY 10001",
             "session_context": {
-                "business_card": None,
+                
                 "last_agent_message": "What's your brand name and where is your business located?"
             },
             "expected_behavior": {
@@ -530,7 +489,7 @@ def generate_frontdesk_agent_tests() -> List[Dict[str, Any]]:
             "description": "Transform error message into empathetic response",
             "user_message": "Error: Unable to connect to creator database",
             "session_context": {
-                "business_card": None,
+                
                 "context": "User tried to search for creators"
             },
             "expected_behavior": {
@@ -571,7 +530,7 @@ def generate_frontdesk_agent_tests() -> List[Dict[str, Any]]:
             "description": "Use generic friendly greeting when business card unavailable",
             "user_message": "Ready to help you find creators",
             "session_context": {
-                "business_card": None,
+                
                 "context": "New user, no business card yet"
             },
             "expected_behavior": {
@@ -589,7 +548,7 @@ def generate_frontdesk_agent_tests() -> List[Dict[str, Any]]:
             "description": "Ensure no markdown symbols in response",
             "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
             "session_context": {
-                "business_card": None,
+                
                 "context": "User asked about campaign plan"
             },
             "expected_behavior": {
@@ -610,7 +569,7 @@ def generate_frontdesk_agent_tests() -> List[Dict[str, Any]]:
             "description": "Never expose internal agent names to user",
             "user_message": "creator_finder_agent found 10 results",
             "session_context": {
-                "business_card": None,
+                
                 "context": "User asked to find creators"
             },
             "expected_behavior": {
@@ -643,7 +602,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "I have a local coffee shop",
             "session_context": {
                 "workflow_state": {"stage": None},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
@@ -659,7 +618,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "Alma cafe",
             "session_context": {
                 "workflow_state": {"stage": "onboarding"},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
@@ -675,7 +634,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "this is us https://www.almacafe.co.il/ourplaces/rehovot",
             "session_context": {
                 "workflow_state": {"stage": "onboarding"},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
@@ -729,7 +688,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "Can you help me with marketing?",
             "session_context": {
                 "workflow_state": {"stage": None},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
@@ -835,7 +794,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "I run a yoga studio called ZenFlow in Boulder, Colorado",
             "session_context": {
                 "workflow_state": {"stage": None},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
@@ -867,7 +826,7 @@ def generate_orchestrator_tests() -> List[Dict[str, Any]]:
             "user_message": "What do you mean by service type?",
             "session_context": {
                 "workflow_state": {"stage": "onboarding"},
-                "business_card": None
+                
             },
             "expected_behavior": {
                 "should_call_onboarding_agent": True,
