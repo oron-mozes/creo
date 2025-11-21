@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server dev-reset docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets
+.PHONY: help install test lint format clean run-agent web web-creator-finder web-campaign-builder web-campaign-brief web-outreach-message web-orchestrator venv scaffold-agent generate-tests judge server dev-reset docker-build docker-run docker-test docker-stop docker-clean verify-env sync-secrets verify-secrets setup-gmail
 
 # Virtual environment path
 VENV = venv
@@ -25,8 +25,11 @@ help:
 	@echo "  make generate-tests - Generate test data for all agents (golden + LLM hybrid)"
 	@echo "  make generate-tests AGENT=<agent-name> - Generate tests for specific agent"
 	@echo "  make judge AGENT=\"Agent-folder-name\""
-	@echo "  make server       - Start FastAPI server (exposes orchestrator agent)"
-	@echo "  make dev-reset    - Reset all dev data (sessions, business cards, messages)"
+	@echo "  make server            - Start full stack (React frontend + FastAPI backend)"
+	@echo "  make server-backend    - Start FastAPI server only (port 8000)"
+	@echo "  make server-frontend   - Start React frontend only (port 3000)"
+	@echo "  make build-frontend    - Build React app for production"
+	@echo "  make dev-reset         - Reset all dev data (sessions, business cards, messages)"
 	@echo ""
 	@echo "Docker commands:"
 	@echo "  make docker-build - Build Docker image"
@@ -39,6 +42,7 @@ help:
 	@echo "  make verify-env     - Verify all environment variables are configured"
 	@echo "  make sync-secrets   - Sync secrets from .env to Google Secret Manager"
 	@echo "  make verify-secrets - Verify secrets in Google Secret Manager"
+	@echo "  make setup-gmail    - Setup Gmail OAuth authentication for outreach emails"
 
 # Create virtual environment
 venv:
@@ -132,11 +136,40 @@ judge: install
 	fi
 	$(PYTHON) scripts/judge_agent.py --agent-dir agents/$(AGENT)
 
-# Start FastAPI server with Socket.IO
-server: venv
+# Start FastAPI server with Socket.IO (backend only)
+server-backend: venv
 	@echo "Starting FastAPI server with Socket.IO on http://localhost:8000"
 	@echo "API Documentation: http://localhost:8000/docs"
 	$(VENV)/bin/uvicorn server:socket_app --reload --host 0.0.0.0 --port 8000
+
+# Start React frontend (development mode)
+server-frontend:
+	@echo "Starting React frontend on http://localhost:3000"
+	@cd frontend && npm run dev
+
+# Start both frontend and backend together
+server:
+	@echo "================================================"
+	@echo "  Starting Full Stack Development Server"
+	@echo "================================================"
+	@echo ""
+	@echo "  Backend (FastAPI):  http://localhost:8000"
+	@echo "  Frontend (React):   http://localhost:3000"
+	@echo "  API Docs:           http://localhost:8000/docs"
+	@echo ""
+	@echo "  Press Ctrl+C to stop both servers"
+	@echo "================================================"
+	@echo ""
+	@trap 'kill 0' SIGINT; \
+	$(MAKE) server-backend & \
+	$(MAKE) server-frontend & \
+	wait
+
+# Build frontend for production
+build-frontend:
+	@echo "Building React frontend for production..."
+	@cd frontend && npm run build
+	@echo "✓ Frontend built to /build directory"
 
 # Reset development data (sessions, business cards, messages)
 dev-reset:
@@ -250,3 +283,9 @@ sync-secrets:
 # Verify secrets in Google Secret Manager
 verify-secrets:
 	@bash scripts/verify_secrets.sh
+
+# Setup Gmail OAuth authentication
+setup-gmail: venv
+	@echo "Setting up Gmail OAuth authentication..."
+	@echo "This will open your browser to authenticate with Google."
+	@$(PYTHON) -c "from utils.gmail_utils import gmail_service; gmail_service.authenticate(); print('✓ Gmail authentication successful!')"

@@ -291,6 +291,42 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             }
         },
         {
+            "name": "user_confirms_extracted_business_details_should_save",
+            "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
+            "user_message": "yes it does. how did you do it? that is great",
+            "session_context": {
+                "business_card": None,
+                "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\nSocial Links: Not provided\\n\\nDoes that all look good?"
+            },
+            "expected_behavior": {
+                "should_call_save_business_card_tool": True,
+                "should_include_business_name_in_tool_call": True,
+                "should_include_location_in_tool_call": True,
+                "should_include_service_type_in_tool_call": True,
+                "should_include_website_in_tool_call": True,
+                "should_thank_user": True,
+                "should_indicate_onboarding_complete": True
+            },
+            "expected_business_card": {
+                "name": "Alma Cafe",
+                "location": "Rehovot, Israel",
+                "service_type": "Coffee shop",
+                "website": "https://www.almacafe.co.il/ourplaces/rehovot",
+                "social_links": "Not provided"
+            },
+            "expected_tool_calls": [
+                {
+                    "tool_name": "save_business_card",
+                    "parameters_contain": {
+                        "name": "Alma Cafe",
+                        "location": "Rehovot",
+                        "service_type": "Coffee shop",
+                        "website": "almacafe.co.il"
+                    }
+                }
+            ]
+        },
+        {
             "name": "new_user_with_minimal_info",
             "description": "New user provides minimal information, agent should ask for more",
             "user_message": "I have a local coffee shop",

@@ -6,8 +6,8 @@
 **Context:** business_card=None
 
 **Actions:**
-1. `onboarding_agent("I have a local coffee shop")`
-2. `frontdesk_agent(onboarding_response)`
+1. `onboarding_agent(request="I have a local coffee shop")`
+2. `frontdesk_agent(request=onboarding_response)`
 3. Return frontdesk result
 
 ---
@@ -17,8 +17,8 @@
 **Context:** stage="onboarding"
 
 **Always:**
-1. `onboarding_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `onboarding_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -39,8 +39,8 @@ Same as Example B:
 **Context:** business_card exists + stage=None
 
 **Actions:**
-1. `campaign_brief_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_brief_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 **Note:** Call campaign_brief_agent FIRST, not creator_finder_agent
 
@@ -51,8 +51,8 @@ Same as Example B:
 **Context:** stage="campaign_brief"
 
 **Always:**
-1. `campaign_brief_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_brief_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -75,8 +75,8 @@ Same as Example B:
 **Context:** business_card exists + stage=None
 
 **Actions:**
-1. `campaign_brief_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_brief_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -86,8 +86,8 @@ Same as Example B:
 **Context:** business_card exists + stage=None
 
 **Actions:**
-1. `outreach_message_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `outreach_message_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -96,8 +96,8 @@ Same as Example B:
 **Context:** stage="creator_finder"
 
 **Always:**
-1. `creator_finder_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `creator_finder_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -106,8 +106,8 @@ Same as Example B:
 **Context:** stage="outreach_message"
 
 **Always:**
-1. `outreach_message_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `outreach_message_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -116,8 +116,8 @@ Same as Example B:
 **Context:** stage="campaign_builder"
 
 **Always:**
-1. `campaign_builder_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_builder_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 ---
 
@@ -138,8 +138,8 @@ Same as Example B:
 **Context:** business_card exists + stage=None
 
 **Actions:**
-1. `campaign_brief_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_brief_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 **NOT onboarding** (business card already exists)
 **NOT asking for business info again**
@@ -163,8 +163,8 @@ Same as Example B:
 **Context:** business_card exists + stage=None
 
 **Actions:**
-1. `campaign_brief_agent(user_message)`
-2. `frontdesk_agent(res)`
+1. `campaign_brief_agent(request=user_message)`
+2. `frontdesk_agent(request=res)`
 
 **Note:** Tests require campaign_brief_agent FIRST, NOT creator_finder_agent
 

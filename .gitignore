@@ -20,3 +20,10 @@ agents/__init__.py.backup
 .claude
 .specstory
 .cursorindexingignore
+# React/Node
+node_modules/
+build/
+dist/
+.DS_Store
+
+.claude

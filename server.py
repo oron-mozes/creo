@@ -103,26 +103,9 @@ from agents.utils import AgentName
 # Import SessionManager for runner and memory management
 from session_manager import get_session_manager
 
-# Import business card parser (handle hyphenated directory name)
-try:
-    import importlib.util
-    parser_path = PROJECT_ROOT / "agents" / "onboarding-agent" / "parser.py"
-    if parser_path.exists():
-        spec = importlib.util.spec_from_file_location("onboarding_parser", parser_path)
-        onboarding_parser_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(onboarding_parser_module)
-        extract_business_card_from_response = onboarding_parser_module.extract_business_card_from_response
-    else:
-        def extract_business_card_from_response(text: str):
-            return {"business_card": None, "cleaned_text": text, "has_confirmation": False}
-except Exception as e:
-    print(f"[WARNING] Could not load business card parser: {e}")
-    def extract_business_card_from_response(text: str):
-        return {"business_card": None, "cleaned_text": text, "has_confirmation": False}
-
-# Import orchestrator agent (handle hyphenated directory name)
+# Import orchestrator agent
 import importlib.util
-agent_path = PROJECT_ROOT / "agents" / "orchestrator-agent" / "agent.py"
+agent_path = PROJECT_ROOT / "agents" / "orchestrator_agent" / "agent.py"
 spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
 orchestrator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(orchestrator_module)
@@ -130,7 +113,7 @@ root_agent = orchestrator_module.root_agent
 
 # Import suggestions agent
 try:
-    suggestions_path = PROJECT_ROOT / "agents" / "suggestions-agent" / "agent.py"
+    suggestions_path = PROJECT_ROOT / "agents" / "suggestions_agent" / "agent.py"
     if suggestions_path.exists():
         suggestions_spec = importlib.util.spec_from_file_location("suggestions_agent", suggestions_path)
         suggestions_module = importlib.util.module_from_spec(suggestions_spec)
@@ -178,6 +161,15 @@ static_dir = PROJECT_ROOT / "static"
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+# Mount React build directory if it exists (production)
+build_dir = PROJECT_ROOT / "build"
+if build_dir.exists():
+    print(f"[SERVER] Serving React build from {build_dir}")
+    # Mount build/assets as /assets for production
+    assets_dir = build_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
 # Combine FastAPI and Socket.IO
 socket_app = socketio.ASGIApp(sio, app)
 
@@ -205,6 +197,14 @@ class SuggestionsResponse(BaseModel):
     welcome_message: str
     suggestions: list[str]
 
+class SessionInfo(BaseModel):
+    id: str
+    title: str
+    timestamp: str
+
+class GetSessionsResponse(BaseModel):
+    sessions: list[SessionInfo]
+
 # In-memory storage (for local dev)
 in_memory_messages = {}  # session_id -> list of messages
 # Note: Runners are now managed by SessionManager
@@ -213,15 +213,25 @@ in_memory_messages = {}  # session_id -> list of messages
 def save_message_to_firestore(session_id: str, role: str, content: str, user_id: str = None):
     """Save a message to Firestore or in-memory storage."""
     if db is not None:
-        # Use Firestore
-        message_ref = db.collection('sessions').document(session_id).collection('messages').document()
+        # Use Firestore - save to both locations:
+        # 1. In session subcollection (for get_session_messages)
+        # 2. In top-level messages collection (for get_user_sessions query)
+
         message_data = {
             'role': role,
             'content': content,
             'timestamp': firestore.SERVER_TIMESTAMP,
-            'user_id': user_id
+            'user_id': user_id,
+            'session_id': session_id  # Add session_id for top-level collection
         }
+
+        # Save to session subcollection
+        message_ref = db.collection('sessions').document(session_id).collection('messages').document()
         message_ref.set(message_data)
+
+        # Also save to top-level messages collection for easy session queries
+        db.collection('messages').document(message_ref.id).set(message_data)
+
         return message_ref.id
     else:
         # Use in-memory storage for local development
@@ -311,54 +321,8 @@ def get_user_past_sessions(user_id: str, limit: int = 5) -> list:
 # Runner and session management now handled by SessionManager
 # See session_manager.py for implementation
 
-# Business card storage functions
-in_memory_business_cards = {}  # user_id -> business_card_data
-
-def save_business_card(user_id: str, business_card_data: dict):
-    """Save business card data to Firestore or in-memory storage."""
-    print(f"[BUSINESS_CARD] save_business_card() called for user: {user_id}")
-    print(f"[BUSINESS_CARD] Data to save: {business_card_data}")
-
-    if db is not None:
-        # Use Firestore - store in users collection
-        user_ref = db.collection('users').document(user_id)
-        user_ref.set({
-            'business_card': business_card_data,
-            'updated_at': firestore.SERVER_TIMESTAMP
-        }, merge=True)
-        print(f"[BUSINESS_CARD] ✓ Successfully saved to Firestore for user: {user_id}")
-    else:
-        # Use in-memory storage for local development
-        in_memory_business_cards[user_id] = business_card_data
-        print(f"[BUSINESS_CARD] ✓ Successfully saved to in-memory storage for user: {user_id}")
-        print(f"[BUSINESS_CARD] Current in-memory storage contains {len(in_memory_business_cards)} business cards")
-
-def get_business_card(user_id: str) -> Optional[dict]:
-    """Get business card data from Firestore or in-memory storage."""
-    print(f"[BUSINESS_CARD] get_business_card() called for user: {user_id}")
-
-    if db is not None:
-        # Use Firestore
-        print(f"[BUSINESS_CARD] Querying Firestore for user: {user_id}")
-        user_ref = db.collection('users').document(user_id)
-        user_doc = user_ref.get()
-        if user_doc.exists:
-            user_data = user_doc.to_dict()
-            business_card = user_data.get('business_card')
-            if business_card:
-                print(f"[BUSINESS_CARD] ✓ Found in Firestore: {business_card.get('name')}")
-                return business_card
-        print(f"[BUSINESS_CARD] ℹ Not found in Firestore for user: {user_id}")
-        return None
-    else:
-        # Use in-memory storage for local development
-        print(f"[BUSINESS_CARD] Querying in-memory storage (contains {len(in_memory_business_cards)} cards)")
-        business_card = in_memory_business_cards.get(user_id)
-        if business_card:
-            print(f"[BUSINESS_CARD] ✓ Found in in-memory: {business_card.get('name')}")
-        else:
-            print(f"[BUSINESS_CARD] ℹ Not found in in-memory for user: {user_id}")
-        return business_card
+# Import business card storage functions from utils
+from utils.message_utils import save_business_card, get_business_card
 
 def content_to_text(content: types.Content | None) -> str:
     """Extract text from Content object."""
@@ -372,8 +336,19 @@ def content_to_text(content: types.Content | None) -> str:
 
 @app.get("/")
 def read_root():
-    """Serve the homepage."""
-    return FileResponse("static/index.html")
+    """Serve the unified SPA (React build in production, fallback to static/app.html in dev)."""
+    build_index = PROJECT_ROOT / "build" / "index.html"
+    if build_index.exists():
+        return FileResponse(build_index)
+    return FileResponse("static/app.html")
+
+@app.get("/index.html")
+def index_page():
+    """Redirect index.html to unified SPA."""
+    build_index = PROJECT_ROOT / "build" / "index.html"
+    if build_index.exists():
+        return FileResponse(build_index)
+    return FileResponse("static/app.html")
 
 @app.get("/login.html")
 def login_page():
@@ -382,8 +357,8 @@ def login_page():
 
 @app.get("/chat/{session_id}")
 def chat_page(session_id: str):
-    """Serve the chat page with session ID."""
-    return FileResponse("static/chat.html")
+    """Serve the unified SPA for chat sessions."""
+    return FileResponse("static/app.html")
 
 @app.get("/health")
 def health_check():
@@ -393,6 +368,7 @@ def health_check():
 class CreateSessionRequestWithUser(BaseModel):
     message: str
     user_id: Optional[str] = None  # For anonymous users
+    session_id: Optional[str] = None  # Optional session_id to use existing session
 
 @app.post("/api/sessions", response_model=CreateSessionResponse)
 def create_session(
@@ -404,8 +380,10 @@ def create_session(
     Returns session_id to redirect user to chat page.
 
     Works for both authenticated and anonymous users.
+    If session_id is provided, uses that instead of generating a new one.
     """
-    session_id = f"session_{uuid.uuid4().hex}"
+    # Use provided session_id or generate a new one
+    session_id = request.session_id or f"session_{uuid.uuid4().hex}"
 
     # Use authenticated user ID if available, otherwise use provided user_id (anonymous)
     if current_user:
@@ -417,12 +395,78 @@ def create_session(
 
     print(f"[CREATE_SESSION] session_id={session_id}, user_id={user_id}, message='{request.message[:50]}...'")
 
-    # Store the initial message in Firestore
-    save_message_to_firestore(session_id, "user", request.message, user_id)
+    # Note: We don't save the message here because send_message socket handler will save it
+    # This endpoint just creates/initializes the session and returns the IDs
 
-    print(f"[CREATE_SESSION] Message stored successfully for session {session_id}")
+    print(f"[CREATE_SESSION] Session created: {session_id}")
 
     return CreateSessionResponse(session_id=session_id, user_id=user_id)
+
+@app.get("/api/sessions", response_model=GetSessionsResponse)
+def get_user_sessions(user_id: str):
+    """
+    Get all chat sessions for a user.
+    Returns list of sessions with id, title, and timestamp.
+    """
+    print(f"[GET_SESSIONS] Fetching sessions for user {user_id}")
+
+    try:
+        sessions = []
+
+        # Query Firestore for all sessions belonging to this user
+        if db:
+            # Firestore: query messages collection grouped by session_id
+            messages_ref = db.collection('messages')
+            query = messages_ref.where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(100)
+            docs = query.stream()
+
+            # Group messages by session_id to get unique sessions
+            session_map = {}
+            for doc in docs:
+                data = doc.to_dict()
+                session_id = data.get('session_id')
+                if session_id and session_id not in session_map:
+                    # Get first user message as title
+                    if data.get('role') == 'user':
+                        title = data.get('content', 'New Chat')[:50]
+                    else:
+                        title = 'New Chat'
+
+                    session_map[session_id] = {
+                        'id': session_id,
+                        'title': title,
+                        'timestamp': data.get('timestamp', datetime.now()).isoformat()
+                    }
+
+            # Convert to list and sort by timestamp descending (latest first)
+            sessions = sorted(session_map.values(), key=lambda s: s['timestamp'], reverse=True)
+        else:
+            # In-memory fallback: get from in_memory_messages
+            for session_id, msgs in in_memory_messages.items():
+                if msgs:
+                    # Check if any message belongs to this user
+                    user_msgs = [m for m in msgs if m.get('user_id') == user_id]
+                    if user_msgs:
+                        first_user_msg = next((m for m in msgs if m.get('role') == 'user'), None)
+                        title = first_user_msg['content'][:50] if first_user_msg else 'New Chat'
+                        timestamp = msgs[0].get('timestamp', datetime.now().isoformat())
+                        sessions.append({
+                            'id': session_id,
+                            'title': title,
+                            'timestamp': timestamp
+                        })
+
+            # Sort by timestamp descending (latest first)
+            sessions = sorted(sessions, key=lambda s: s['timestamp'], reverse=True)
+
+        print(f"[GET_SESSIONS] Found {len(sessions)} sessions for user {user_id}")
+        return GetSessionsResponse(sessions=sessions)
+
+    except Exception as e:
+        print(f"[GET_SESSIONS] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return GetSessionsResponse(sessions=[])
 
 @app.get("/api/sessions/{session_id}/messages", response_model=GetMessagesResponse)
 def get_messages(session_id: str):
@@ -881,52 +925,26 @@ async def join_session(sid, data):
                         print(f"[JOIN_SESSION] Got final response from root_agent ('{root_agent.name}'), saving to storage")
                         print(f"[JOIN_SESSION] Final text preview: {final_text[:200]}...")
 
-                        # Parse business card from response
-                        print(f"[JOIN_SESSION] Attempting to parse business card from response")
-                        parsed = extract_business_card_from_response(final_text)
-                        print(f"[JOIN_SESSION] Parse result: has_confirmation={parsed.get('has_confirmation')}, business_card={parsed.get('business_card')}")
+                        # Business card saving is now handled by the onboarding agent's save_business_card tool
+                        # No need to parse or intercept here
+
+                        # Check if business card was saved by the tool (it's in session memory)
+                        session_memory = session_manager.get_session_memory(session_id)
                         business_card_data = None
-                        display_text = parsed["cleaned_text"]
-                        
-                        if parsed["has_confirmation"] and parsed["business_card"]:
-                            business_card_data = parsed["business_card"].to_dict()
-                            print(f"[BUSINESS_CARD] ✓ Found business card confirmation in response")
-                            print(f"[BUSINESS_CARD] Extracted data:")
-                            print(f"[BUSINESS_CARD]   - Name: {business_card_data.get('name')}")
-                            print(f"[BUSINESS_CARD]   - Location: {business_card_data.get('location')}")
-                            print(f"[BUSINESS_CARD]   - Service Type: {business_card_data.get('service_type')}")
-                            print(f"[BUSINESS_CARD]   - Website: {business_card_data.get('website')}")
-                            print(f"[BUSINESS_CARD]   - Social Links: {business_card_data.get('social_links')}")
+                        if session_memory:
+                            bc = session_memory.get_business_card()
+                            if bc:
+                                business_card_data = bc
+                                print(f"[JOIN_SESSION] Business card found in session memory")
 
-                            # Save business card to persistent storage
-                            print(f"[BUSINESS_CARD] Step 1: Saving to persistent storage (user_id: {user_id})")
-                            save_business_card(user_id, business_card_data)
-
-                            # Save to session memory
-                            print(f"[BUSINESS_CARD] Step 2: Saving to session memory (session_id: {session_id})")
-                            session_memory = session_manager.get_session_memory(session_id)
-                            if session_memory:
-                                session_memory.set_business_card(business_card_data)
-                                print(f"[BUSINESS_CARD] ✓ Business card saved to session memory")
-
-                                # Verify it was saved
-                                saved_bc = session_memory.get_business_card()
-                                if saved_bc:
-                                    print(f"[BUSINESS_CARD] ✓ Verification: Business card confirmed in session memory")
-                                    print(f"[BUSINESS_CARD]   Verified Name: {saved_bc.get('name')}")
-                                else:
-                                    print(f"[BUSINESS_CARD] ✗ ERROR: Business card NOT found in session memory after save!")
-                            else:
-                                print(f"[BUSINESS_CARD] ✗ ERROR: Session memory not found for session_id: {session_id}")
-
-                        # Store assistant message in Firestore and session memory (store cleaned text)
-                        save_message_to_firestore(session_id, "assistant", display_text, user_id)
-                        session_manager.save_assistant_message(session_id, display_text, message_id)
+                        # Store assistant message in Firestore and session memory
+                        save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                        session_manager.save_assistant_message(session_id, final_text, message_id)
 
                         # Emit final message with message ID and business card data
                         print(f"[JOIN_SESSION] Emitting message_complete")
                         await sio.emit('message_complete', {
-                            'message': display_text,
+                            'message': final_text,
                             'session_id': session_id,
                             'message_id': message_id,
                             'business_card': business_card_data
@@ -963,6 +981,21 @@ async def join_session(sid, data):
                         'message': final_text,
                         'session_id': session_id,
                         'message_id': message_id
+                    }, room=session_id)
+                else:
+                    # No chunks at all - likely a 503 error or other service failure
+                    print(f"[JOIN_SESSION] ERROR: No response chunks received, showing service error message")
+                    error_message = (
+                        "⚠️ Our AI service is experiencing technical difficulties right now.\n\n"
+                        "This could be due to high traffic on Google's servers.\n\n"
+                        "Please try again in a few minutes, or contact support if this persists.\n\n"
+                        "We apologize for the inconvenience!"
+                    )
+                    await sio.emit('message_complete', {
+                        'message': error_message,
+                        'session_id': session_id,
+                        'message_id': message_id,
+                        'is_error': True
                     }, room=session_id)
 
             print(f"[JOIN_SESSION] Initial message processing complete")
@@ -1013,9 +1046,8 @@ async def send_message(sid, data):
             await sio.emit('error', {'error': 'Missing message or session_id'}, room=sid)
             return
 
-        # Load business card from persistent storage into session memory
-        business_card = get_business_card(user_id)
-        session_manager.load_business_card_into_session(session_id, business_card)
+        # Note: Business card loading is now handled by the load_business_card tool
+        # The onboarding agent will call this tool to check for existing business cards
 
         # Store user message in Firestore
         print(f"[SEND_MESSAGE] Storing user message in storage")
@@ -1079,34 +1111,33 @@ async def send_message(sid, data):
             if event.author == root_agent.name and event.is_final_response():
                 got_final_response = True
                 final_text = content_to_text(event.content)
+                print(f"[SEND_MESSAGE] DEBUG: Final response from root_agent")
+                print(f"[SEND_MESSAGE] DEBUG: event.content = {event.content}")
+                print(f"[SEND_MESSAGE] DEBUG: final_text = '{final_text}'")
+                print(f"[SEND_MESSAGE] DEBUG: final_text length = {len(final_text) if final_text else 0}")
                 if final_text:
                     print(f"[SEND_MESSAGE] Got final response from root_agent, saving to storage")
                     print(f"[SEND_MESSAGE] Final text preview: {final_text[:200]}...")
 
-                    # Parse business card from response
-                    print(f"[SEND_MESSAGE] Attempting to parse business card from response")
-                    parsed = extract_business_card_from_response(final_text)
-                    print(f"[SEND_MESSAGE] Parse result: has_confirmation={parsed.get('has_confirmation')}, business_card={parsed.get('business_card')}")
-                    business_card_data = None
-                    display_text = parsed["cleaned_text"]
-                    
-                    if parsed["has_confirmation"] and parsed["business_card"]:
-                        business_card_data = parsed["business_card"].to_dict()
-                        print(f"[SEND_MESSAGE] Found business card confirmation")
-                        # Save business card to persistent storage
-                        save_business_card(user_id, business_card_data)
-                        # Save to session memory
-                        session_memory = session_manager.get_session_memory(session_id)
-                        if session_memory:
-                            session_memory.set_business_card(business_card_data)
+                    # Business card saving is now handled by the onboarding agent's save_business_card tool
+                    # No need to parse or intercept here
 
-                    # Store assistant message in Firestore and session memory (store cleaned text)
-                    save_message_to_firestore(session_id, "assistant", display_text, user_id)
-                    session_manager.save_assistant_message(session_id, display_text, message_id)
+                    # Check if business card was saved by the tool (it's in session memory)
+                    session_memory = session_manager.get_session_memory(session_id)
+                    business_card_data = None
+                    if session_memory:
+                        bc = session_memory.get_business_card()
+                        if bc:
+                            business_card_data = bc
+                            print(f"[SEND_MESSAGE] Business card found in session memory")
+
+                    # Store assistant message in Firestore and session memory
+                    save_message_to_firestore(session_id, "assistant", final_text, user_id)
+                    session_manager.save_assistant_message(session_id, final_text, message_id)
 
                     # Emit final message with message ID and business card data
                     await sio.emit('message_complete', {
-                        'message': display_text,
+                        'message': final_text,
                         'session_id': session_id,
                         'message_id': message_id,
                         'business_card': business_card_data

@@ -254,6 +254,123 @@ class SessionMemory:
         self.agent_contexts['onboarding_agent']['status'] = status
         print(f"[SessionMemory] Onboarding status set to: {status.value}")
 
+    # Outreach Message Agent-Specific Methods
+
+    def initialize_outreach_context(self) -> None:
+        """Initialize the outreach message agent's context structure.
+
+        This should be called when outreach starts to ensure the agent
+        has proper memory structure for tracking sent emails and responses.
+        """
+        if 'outreach_message_agent' not in self.agent_contexts:
+            self.agent_contexts['outreach_message_agent'] = {
+                'status': 'preparing',  # OutreachStatus enum
+                'sent_emails': [],  # List of sent OutreachEmail records
+                'responses': [],  # List of InfluencerResponse records
+                'current_creator': None,  # Currently targeted creator
+            }
+            print(f"[SessionMemory] Initialized outreach agent context for session: {self.session_id}")
+
+    def add_outreach_email(self, outreach_email_data: Dict[str, Any]) -> None:
+        """Record a sent outreach email.
+
+        Args:
+            outreach_email_data: Dictionary with OutreachEmail fields
+        """
+        self.initialize_outreach_context()
+
+        email_record = {
+            'creator_email': outreach_email_data.get('creator_email'),
+            'creator_name': outreach_email_data.get('creator_name'),
+            'brand_name': outreach_email_data.get('brand_name'),
+            'sent_at': datetime.utcnow().isoformat(),
+            'email_id': outreach_email_data.get('email_id'),
+            'status': 'awaiting_response',  # awaiting_response, interested, not_interested, need_info
+        }
+
+        context = self.agent_contexts['outreach_message_agent']
+        context['sent_emails'].append(email_record)
+        context['status'] = 'email_sent'
+
+        print(f"[SessionMemory] Outreach email recorded: {outreach_email_data.get('creator_name')} ({outreach_email_data.get('creator_email')})")
+
+    def record_influencer_response(self, response_data: Dict[str, Any]) -> None:
+        """Record an influencer's response to outreach email.
+
+        Args:
+            response_data: Dictionary with InfluencerResponse fields
+        """
+        self.initialize_outreach_context()
+
+        response_record = {
+            'creator_email': response_data.get('creator_email'),
+            'creator_name': response_data.get('creator_name'),
+            'response_type': response_data.get('response_type'),
+            'responded_at': response_data.get('responded_at', datetime.utcnow().isoformat()),
+        }
+
+        context = self.agent_contexts['outreach_message_agent']
+        context['responses'].append(response_record)
+        context['status'] = 'response_received'
+
+        # Update the status of the corresponding sent email
+        for email in context['sent_emails']:
+            if email['creator_email'] == response_data.get('creator_email'):
+                email['status'] = response_data.get('response_type')
+                break
+
+        print(f"[SessionMemory] Influencer response recorded: {response_data.get('creator_name')} - {response_data.get('response_type')}")
+
+    def get_outreach_status(self) -> Optional[str]:
+        """Get the current outreach status.
+
+        Returns:
+            Outreach status string or None if not set
+        """
+        if 'outreach_message_agent' not in self.agent_contexts:
+            return None
+        return self.agent_contexts['outreach_message_agent'].get('status')
+
+    def get_sent_emails(self) -> List[Dict[str, Any]]:
+        """Get all sent outreach emails for this session.
+
+        Returns:
+            List of sent email records
+        """
+        if 'outreach_message_agent' not in self.agent_contexts:
+            return []
+        return self.agent_contexts['outreach_message_agent'].get('sent_emails', [])
+
+    def get_influencer_responses(self) -> List[Dict[str, Any]]:
+        """Get all influencer responses for this session.
+
+        Returns:
+            List of response records
+        """
+        if 'outreach_message_agent' not in self.agent_contexts:
+            return []
+        return self.agent_contexts['outreach_message_agent'].get('responses', [])
+
+    def set_current_creator(self, creator_data: Dict[str, Any]) -> None:
+        """Set the currently targeted creator for outreach.
+
+        Args:
+            creator_data: Creator information (name, email, etc.)
+        """
+        self.initialize_outreach_context()
+        self.agent_contexts['outreach_message_agent']['current_creator'] = creator_data
+        print(f"[SessionMemory] Current creator set: {creator_data.get('name')}")
+
+    def get_current_creator(self) -> Optional[Dict[str, Any]]:
+        """Get the currently targeted creator.
+
+        Returns:
+            Creator data dictionary or None
+        """
+        if 'outreach_message_agent' not in self.agent_contexts:
+            return None
+        return self.agent_contexts['outreach_message_agent'].get('current_creator')
+
 
 class SessionManager:
     """Manages InMemoryRunners and Sessions for all users.
@@ -389,6 +506,10 @@ class SessionManager:
             # Add message to shared memory
             session_memory.add_message('user', message)
 
+        # Set session context for tools to access
+        from agents.onboarding_agent.tools import set_session_context
+        set_session_context(self, session_id)
+
         # Get runner and execute
         runner = self.get_or_create_runner(user_id)
 
@@ -402,12 +523,35 @@ class SessionManager:
         )
 
         # Run agent and yield events
-        for event in runner.run(
-            user_id=user_id,
-            session_id=session_id,
-            new_message=new_message,
-        ):
-            yield event
+        try:
+            for event in runner.run(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=new_message,
+            ):
+                yield event
+        except Exception as e:
+            # Check if it's a 503 service overload error
+            error_message = str(e)
+            if '503' in error_message and 'overloaded' in error_message.lower():
+                # Yield a fake error event that looks like a normal agent response
+                print(f"[SessionManager] ✓ Caught 503 error, yielding friendly error event")
+                error_event = types.Event(
+                    author="system",
+                    content=types.Content(
+                        role="model",
+                        parts=[types.Part(text=(
+                            "⚠️ Our AI service is experiencing high traffic right now. "
+                            "This is a temporary issue on Google's side.\n\n"
+                            "Please try again in a few minutes, or contact support if this persists.\n\n"
+                            "We apologize for the inconvenience!"
+                        ))]
+                    )
+                )
+                yield error_event
+            else:
+                # Re-raise other exceptions
+                raise
 
     def _build_message_with_context(self, session_id: str, user_message: str) -> str:
         """Build a message with session context prepended.
