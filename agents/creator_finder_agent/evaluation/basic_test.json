@@ -1,0 +1,35 @@
+[
+  {
+    "name": "two_diy_gb_fr_de_100_300k_20_50",
+    "description": "Find 2 DIY creators in GB, France, or Germany with budget 100-300K, audience aged 20-50",
+    "user_message": "I'm looking for 2 DIY creators in GB, France, or Germany with a budget of 100-300000$. Audience aged 20-50 on any platform",
+    "expected_behavior": {
+      "should_search_creators": true,
+      "should_parse_budget_range": true,
+      "should_filter_by_location": true,
+      "should_filter_by_category": true,
+      "should_return_creator_list": true
+    }
+  },
+  {
+    "name": "one_lifestyle_mxc_canada_12k_20_30_youtube_tiktok",
+    "description": "Find 1 lifestyle creator in Mexico City or Canada with 12K budget, audience aged 20-30",
+    "user_message": "I'm looking for a single lifestyle creator in Mexico City or Canada with a budget of 12K$. Audience aged 20-30 on YouTube or tiktok",
+    "expected_behavior": {
+      "should_ask_for_clarification": true,
+      "should_explain_budget_range": true,
+      "should_be_conversational": true
+    }
+  },
+  {
+    "name": "one_lifestyle_vancouver_8_13k_20_30_tiktok",
+    "description": "Find 1 lifestyle creator in Vancouver with budget 8K-13K, audience aged 20-30 on TikTok",
+    "user_message": "I'm looking for a single lifestyle creator in Vancouver with a budget of 8K-13K$. Audience aged 20-30 on tiktok",
+    "expected_behavior": {
+      "should_search_creators": true,
+      "should_parse_budget_range": true,
+      "should_filter_by_platform": true,
+      "should_return_creator_list": true
+    }
+  }
+]

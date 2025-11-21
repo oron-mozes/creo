@@ -31,8 +31,8 @@ def find_creators_helper(
         location: Geographic location at any level - country (e.g., 'US', 'UK'), region/state (e.g., 'California', 'Texas'),
                  city (e.g., 'New York', 'London'), or neighborhood (e.g., 'Queens NY', 'Brooklyn'). Optional.
         budget: Total budget for the campaign. Used to calculate follower range:
-                - If single value: min_followers = budget*6, max_followers = budget*20
-                - If used with min_price/max_price (range): min_followers = min_price*6, max_followers = max_price*20
+                - If single value: min_followers = budget*3, max_followers = budget*20
+                - If range (min_price/max_price): min_followers = min_price*6, max_followers = max_price*20
         min_price: Minimum price per creator based on budget calculation (default: 0.0)
         max_price: Maximum price per creator based on budget (default: 100000.0)
         max_results: Maximum number of creators to return (default: 10, max: 50)
@@ -64,7 +64,7 @@ def find_creators_helper(
     # TODO: when budget become a must, adjust this if to fit.
     if budget is not None:
         # Single budget value provided
-        min_followers = budget * 6
+        min_followers = budget * 3
         max_followers = budget * 20
         logger.info(f"Budget-based follower range: {min_followers:,.0f} - {max_followers:,.0f}")
     elif min_price > 0 or max_price < 100000.0:
@@ -121,13 +121,13 @@ def find_creators_helper(
         )
 
         if not search_results:
-            return f"No creators found matching the criteria: category='{category}', location='{location or 'any'}', platform='{platform or 'any'}', price range=${min_price}-${max_price}"
+            return f"No creators found matching the criteria: category='{category}', location='{location or 'any'}', platform='{platform or 'any'}'"
 
         logger.info(f"Pinecone returned {len(search_results)} results before filtering")
 
-        # Filter results by price range, location, followers, platform, category/niche, and target audience
+        # Filter results by location, followers, platform, category/niche, and target audience
         filtered_creators = []
-        filter_stats = {"follower_count": 0, "price": 0, "platform": 0, "location": 0, "category": 0, "target_audience": 0, "passed": 0}
+        filter_stats = {"follower_count": 0, "platform": 0, "location": 0, "category": 0, "target_audience": 0, "passed": 0}
 
         for result in search_results:
             creator = result["metadata"]
@@ -142,15 +142,6 @@ def find_creators_helper(
                     logger.info(f"Filtered out {creator_name}: followers {creator_followers} outside range {min_followers}-{max_followers}")
                     filter_stats["follower_count"] += 1
                     continue
-
-            # Filter by price range
-            creator_price = creator.get("price", 0)
-
-            # Skip if creator is too expensive or too cheap
-            if creator_price > max_price or creator_price < min_price:
-                logger.info(f"Filtered out {creator_name}: price ${creator_price} outside range ${min_price}-${max_price}")
-                filter_stats["price"] += 1
-                continue
 
             # Filter by platform (case-insensitive partial match)
             # Supports multiple platforms separated by commas (e.g., "YouTube, Instagram")
@@ -391,7 +382,6 @@ def find_creators_helper(
         logger.info("FILTER STATISTICS:")
         logger.info(f"  Total from Pinecone: {len(search_results)}")
         logger.info(f"  Filtered by follower count: {filter_stats['follower_count']}")
-        logger.info(f"  Filtered by price: {filter_stats['price']}")
         logger.info(f"  Filtered by platform: {filter_stats['platform']}")
         logger.info(f"  Filtered by location: {filter_stats['location']}")
         logger.info(f"  Filtered by category/niche: {filter_stats['category']}")
@@ -402,8 +392,8 @@ def find_creators_helper(
         if not filtered_creators:
             follower_msg = ""
             if min_followers is not None and max_followers is not None:
-                follower_msg = f", follower range {min_followers:,.0f}-{max_followers:,.0f}"
-            return f"Found creators but none match the price range ${min_price:,.2f}-${max_price:,.2f}{follower_msg} or location '{location or 'any'}'"
+                follower_msg = f" with follower range {min_followers:,.0f}-{max_followers:,.0f}"
+            return f"Found creators but none match the specified criteria{follower_msg} for location '{location or 'any'}'"
 
         # Sort by engagement rate (best match first)
         creators_sorted = sorted(
@@ -412,12 +402,19 @@ def find_creators_helper(
             reverse=True
         )[:max_results]
 
-        # Format results
-        result = f"Found {len(creators_sorted)} creator(s) matching your criteria:\n\n"
+        # Format results with greeting and budget explanation
+        result = "Hello! I'd be happy to help you find creators for your campaign.\n\n"
+
+        # Explain budget-to-follower calculation
+        if budget is not None:
+            result += f"Based on your budget of ${budget:,.0f}, I searched for creators with follower counts between {min_followers:,.0f}-{max_followers:,.0f} (calculated as budget × 3 for minimum and budget × 20 for maximum).\n\n"
+        elif min_followers is not None and max_followers is not None:
+            result += f"Based on your budget range, I searched for creators with follower counts between {min_followers:,.0f}-{max_followers:,.0f} (calculated as min budget × 6 for minimum and max budget × 20 for maximum).\n\n"
+
+        result += f"Found {len(creators_sorted)} creator(s) matching your criteria:\n\n"
         result += f"Category: {category}\n"
         result += f"Location: {location or 'Any'}\n"
         result += f"Platform: {platform or 'Any'}\n"
-        result += f"Price Range: ${min_price:,.2f} - ${max_price:,.2f}\n"
         if min_followers is not None and max_followers is not None:
             result += f"Follower Range: {min_followers:,.0f} - {max_followers:,.0f}\n"
         result += f"Target Audience: {target_audience or 'Not specified'}\n\n"

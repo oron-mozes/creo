@@ -26,8 +26,7 @@ creator_finder_agent = Agent(
     name=AgentName.CREATOR_FINDER_AGENT.value,
     description=(
         'You are a helpful assistant for finding influencers/creators based on campaign criteria. '
-        'You ALWAYS use the find_creators tool to find creators according to the users request. '
-        'Use whatever information the user gave you to find relevant creators. '
+        'IMPORTANT: Always start by greeting the user and explaining the budget-to-follower calculation BEFORE calling any tools. '
         'When parsing budget ranges: '
         '- ALWAYS extract the EXACT numbers from user input '
         '(e.g., "100-10000$" means min_price=100, max_price=10000) '
