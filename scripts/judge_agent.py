@@ -38,7 +38,7 @@ except ImportError:
 # Try to import onboarding agent's business card parser for validation
 try:
     import importlib.util
-    parser_path = PROJECT_ROOT / "agents" / "onboarding-agent" / "parser.py"
+    parser_path = PROJECT_ROOT / "agents" / "onboarding_agent" / "parser.py"
     if parser_path.exists():
         spec = importlib.util.spec_from_file_location("onboarding_parser", parser_path)
         parser_module = importlib.util.module_from_spec(spec)
