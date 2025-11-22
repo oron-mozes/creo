@@ -25,7 +25,6 @@ Business Name: Alma Cafe
 Location: Rehovot, Israel
 Service Type: Coffee shop
 Website: almacafe.co.il
-Social Links: Not provided
 
 Does everything look correct?
 ```
@@ -44,10 +43,9 @@ Business Name: Alma Cafe
 Location: Rehovot, Israel
 Service Type: Coffee shop
 Website: almacafe.co.il
-Social Links: Not provided
 
 BUSINESS_CARD_CONFIRMATION:
-{"name": "Alma Cafe", "location": "Rehovot, Israel", "service_type": "Coffee shop", "website": "almacafe.co.il", "social_links": "Not provided"}
+{"name": "Alma Cafe", "location": "Rehovot, Israel", "service_type": "Coffee shop", "website": "almacafe.co.il"}
 
 Saving business card now.
 
@@ -55,8 +53,7 @@ save_business_card(
 name="Alma Cafe",
 location="Rehovot, Israel",
 service_type="Coffee shop",
-website="almacafe.co.il",
-social_links="Not provided"
+website="almacafe.co.il"
 )
 ```
 
@@ -64,14 +61,16 @@ NOTE: This is Stage B - triggered after user confirms the Stage A review block. 
 
 ---
 
-## Example 3 — Name only → search fails → ask for location
+## Example 3 — Name only → try search → then ask for location
 
 User: "My business is called StyleHub"
 
 ```
 Extracted: name = StyleHub
 
-google_search("StyleHub") → insufficient info
+Try Google search to find missing info:
+google_search("StyleHub") → insufficient info (too generic, multiple businesses)
+Ask for location to help narrow down search
 ```
 
 Output:
@@ -81,41 +80,33 @@ What's your business location? (e.g., Austin, Texas, USA / London, UK / San Fran
 
 ---
 
-## Example 4 — Handle with platform → search → full info → save
+## Example 4 — Domain without protocol → normalize → search for details
 
-User: "Check out @designhub on Instagram"
+User: "Our site is almacafe.co.il"
 
 ```
-Extracted: social = @designhub
+Extracted:
+website raw = almacafe.co.il
 
-google_search("@designhub instagram") →
+Normalize URL and search to find business details:
+normalize_url("almacafe.co.il") → https://almacafe.co.il (domain: almacafe.co.il)
+
+google_search("site:almacafe.co.il") →
 {
-"name": "DesignHub Studio",
-"location": "New York, NY, USA",
-"service_type": "Graphic Design"
+"name": "Alma Cafe",
+"location": "Rehovot, Israel",
+"service_type": "Coffee shop"
 }
 ```
 
 Output:
 ```
-Business Name: DesignHub Studio
-Location: New York, NY, USA
-Service Type: Graphic Design
-Website: Not provided
-Social Links: @designhub
+Business Name: Alma Cafe
+Location: Rehovot, Israel
+Service Type: Coffee shop
+Website: almacafe.co.il
 
-BUSINESS_CARD_CONFIRMATION:
-{"name": "DesignHub Studio", "location": "New York, NY, USA", "service_type": "Graphic Design", "website": "Not provided", "social_links": "@designhub"}
-
-Saving business card now.
-
-save_business_card(
-name="DesignHub Studio",
-location="New York, NY, USA",
-service_type="Graphic Design",
-website="Not provided",
-social_links="@designhub"
-)
+Does everything look correct?
 ```
 
 ---
@@ -127,6 +118,7 @@ User: "We're at 123 Main Street, Suite 400, New York, NY 10001"
 ```
 Extracted location raw = "123 Main Street, Suite 400, New York, NY 10001"
 Normalized → "New York, NY"
+Missing: name, service_type
 ```
 
 Output:
@@ -162,7 +154,7 @@ What type of service does TechStart provide?
 
 ## Example 7 — All fields provided → search → confirm and save
 
-User: "My business is EcoWear, we're a sustainable fashion brand in Portland, Oregon. Check us out at ecowear.com or @ecowear_official on Instagram"
+User: "My business is EcoWear, we're a sustainable fashion brand in Portland, Oregon. Check us out at ecowear.com"
 
 ```
 Extracted:
@@ -170,7 +162,6 @@ name = EcoWear
 location = Portland, Oregon → normalized to Portland, OR
 service_type = sustainable fashion brand
 website = ecowear.com
-social_links = @ecowear_official
 
 google_search("site:ecowear.com") →
 {
@@ -186,10 +177,9 @@ Business Name: EcoWear
 Location: Portland, OR
 Service Type: Sustainable Fashion
 Website: ecowear.com
-Social Links: @ecowear_official
 
 BUSINESS_CARD_CONFIRMATION:
-{"name": "EcoWear", "location": "Portland, OR", "service_type": "Sustainable Fashion", "website": "ecowear.com", "social_links": "@ecowear_official"}
+{"name": "EcoWear", "location": "Portland, OR", "service_type": "Sustainable Fashion", "website": "ecowear.com"}
 
 Saving business card now.
 
@@ -197,8 +187,7 @@ save_business_card(
 name="EcoWear",
 location="Portland, OR",
 service_type="Sustainable Fashion",
-website="ecowear.com",
-social_links="@ecowear_official"
+website="ecowear.com"
 )
 ```
 

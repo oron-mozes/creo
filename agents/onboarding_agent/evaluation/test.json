@@ -14,8 +14,7 @@
       "name": "Alma Cafe",
       "website": "https://www.almacafe.co.il/ourplaces/rehovot",
       "location": "Rehovot, Israel",
-      "service_type": "Coffee shop",
-      "social_links": "Not provided"
+      "service_type": "Coffee shop"
     }
   },
   {
@@ -47,7 +46,7 @@
     "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
     "user_message": "yes it does. how did you do it? that is great",
     "session_context": {
-      "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\nSocial Links: Not provided\\n\\nDoes that all look good?"
+      "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\n\\nDoes that all look good?"
     },
     "expected_behavior": {
       "should_call_save_business_card_tool": true,
@@ -62,8 +61,7 @@
       "name": "Alma Cafe",
       "location": "Rehovot, Israel",
       "service_type": "Coffee shop",
-      "website": "https://www.almacafe.co.il/ourplaces/rehovot",
-      "social_links": "Not provided"
+      "website": "https://www.almacafe.co.il/ourplaces/rehovot"
     },
     "expected_tool_calls": [
       {
@@ -83,19 +81,18 @@
     "user_message": "I have a local coffee shop",
     "session_context": {},
     "expected_behavior": {
-      "should_ask_for_business_name": true,
-      "should_ask_for_location": true,
+      "should_ask_for_missing_info": true,
       "should_not_generate_confirmation_block": true
     }
   },
   {
     "name": "user_provides_social_media_handle",
-    "description": "User provides Instagram handle, agent should search for business info",
+    "description": "User provides Instagram handle, agent should ignore it and ask for business name (social discovery descoped)",
     "user_message": "My Instagram is @almacafe_rehovot",
     "session_context": {},
     "expected_behavior": {
-      "should_use_google_search": true,
-      "should_extract_business_info": true
+      "should_ask_for_business_name": true,
+      "should_not_use_google_search": true
     }
   },
   {
@@ -156,20 +153,18 @@
     "user_message": "My business is called StyleHub",
     "session_context": {},
     "expected_behavior": {
-      "should_use_google_search": true,
-      "should_ask_for_location_if_search_fails": true,
-      "should_not_generate_confirmation_block_yet": true
+      "should_ask_for_more_info": true,
+      "should_not_generate_confirmation_block": true
     }
   },
   {
     "name": "user_provides_tiktok_handle",
-    "description": "User provides TikTok handle, agent should search for business info",
+    "description": "User provides TikTok handle, agent should ignore it and ask for business name (social discovery descoped)",
     "user_message": "Check out our TikTok @ecowear_official",
     "session_context": {},
     "expected_behavior": {
-      "should_use_google_search": true,
-      "should_extract_business_info": true,
-      "should_mention_searching_tiktok": true
+      "should_ask_for_business_name": true,
+      "should_not_use_google_search": true
     }
   },
   {
@@ -191,13 +186,11 @@
   },
   {
     "name": "user_provides_linkedin_profile",
-    "description": "User provides LinkedIn company profile URL",
+    "description": "User provides LinkedIn company profile URL, agent should ignore it and ask for business name",
     "user_message": "Here's our LinkedIn: linkedin.com/company/techstart-inc",
     "session_context": {},
     "expected_behavior": {
-      "should_use_google_search": true,
-      "should_extract_business_info": true,
-      "should_include_linkedin_in_social_links": true
+      "should_ask_for_business_name": true
     }
   },
   {
@@ -219,225 +212,190 @@
       "last_agent_message": "What's your brand name and where is your business located?"
     },
     "expected_behavior": {
-      "should_extract_city_and_state": true,
-      "should_simplify_location_format": true,
-      "should_not_include_full_street_address": true
-    },
-    "expected_business_card_contains": {
-      "location": "New York, NY"
+      "should_ask_for_business_name": true
     }
   },
   {
-    "name": "happy_path_all_explicit_instant_save",
-    "description": "User provides all required and optional fields in one message. Agent extracts all, calls search for confirmation (assuming search results align), then proceeds directly to final confirmation and save.",
-    "user_message": "My company is 'Global Innovations', we're a software development firm located in Berlin, Germany. Our website is globalinnovations.de and you can find us on LinkedIn at linkedin.com/company/globalinnovations.",
+    "name": "all_fields_complex_url_happy_path",
+    "description": "Tests extraction of all required fields and an optional website with complex URL, including normalization, and displaying the initial review block.",
+    "user_message": "My business is 'Global Connect Solutions', we are a B2B SaaS company based in San Francisco, California. Our website is https://www.globalconnectsolutions.com/contact-us/index.html",
     "session_context": {},
     "expected_behavior": {
-      "should_call_google_search": true,
       "should_extract_all_fields": true,
-      "should_normalize_website": true,
-      "should_normalize_social_links": true,
-      "should_display_final_confirmation": true,
-      "should_call_save_business_card": true
-    },
-    "expected_response_contains": [
-      "BUSINESS_CARD_CONFIRMATION",
-      "Global Innovations",
-      "Berlin, Germany",
-      "Software Development",
-      "globalinnovations.de",
-      "linkedin.com/company/globalinnovations"
-    ],
-    "expected_business_card": {
-      "name": "Global Innovations",
-      "location": "Berlin, Germany",
-      "service_type": "Software Development",
-      "website": "globalinnovations.de",
-      "social_links": "linkedin.com/company/globalinnovations"
-    }
-  },
-  {
-    "name": "name_only_search_fails_asks_location",
-    "description": "User provides only the business name. Agent calls google_search, which returns insufficient information. Agent then asks for the missing location.",
-    "user_message": "Our business is called 'FutureTech Solutions'.",
-    "session_context": {},
-    "expected_behavior": {
-      "should_call_google_search": true,
-      "should_extract_name": true,
-      "should_ask_for_location": true,
+      "should_normalize_url": true,
+      "should_normalize_location": true,
+      "should_display_review_block": true,
       "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
-      "What's your business location?"
-    ],
-    "expected_business_card": null
+      "Business Name: Global Connect Solutions",
+      "Location: San Francisco, CA",
+      "Service Type: B2B SaaS company",
+      "Website: globalconnectsolutions.com",
+      "Does everything look correct?"
+    ]
   },
   {
-    "name": "website_provided_search_returns_all_instant_save",
-    "description": "User provides only a website. Agent normalizes it, calls google_search, which successfully finds all required fields. Agent proceeds directly to final confirmation and save (skipping review stage A).",
-    "user_message": "Check out our site: https://www.brightspark.com/contact-us",
+    "name": "website_only_search_then_review",
+    "description": "Tests agent's ability to use `google_search` with only a website to find all required fields, then display the review block. Assumes successful search.",
+    "user_message": "Check out our site: www.innovatehub.io/about",
     "session_context": {},
     "expected_behavior": {
-      "should_call_google_search": true,
-      "should_extract_website": true,
-      "should_normalize_website": true,
-      "should_display_final_confirmation": true,
-      "should_call_save_business_card": true
+      "should_normalize_url": true,
+      "should_call_google_search_with_site_domain": true,
+      "should_extract_from_search_results": true,
+      "should_display_review_block": true,
+      "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
-      "BUSINESS_CARD_CONFIRMATION",
-      "BrightSpark",
-      "London, UK",
-      "Digital Marketing",
-      "brightspark.com"
-    ],
-    "expected_business_card": {
-      "name": "BrightSpark",
-      "location": "London, UK",
-      "service_type": "Digital Marketing",
-      "website": "brightspark.com",
-      "social_links": "Not provided"
-    }
+      "Business Name: InnovateHub",
+      "Location: London, UK",
+      "Service Type: Software Development",
+      "Website: innovatehub.io",
+      "Does everything look correct?"
+    ]
   },
   {
-    "name": "full_address_normalize_then_asks_name",
-    "description": "User provides a full street address. Agent normalizes the location to city, state/country, then asks for the missing business name.",
-    "user_message": "We are located at 789 Oak Avenue, Suite 200, San Francisco, CA 94107.",
+    "name": "missing_name_initial_ask",
+    "description": "Tests initial message missing business name, prompting the agent to ask for it.",
+    "user_message": "We are a digital marketing agency in Sydney, Australia. Our website is digitalpros.au",
     "session_context": {},
     "expected_behavior": {
-      "should_extract_location": true,
-      "should_normalize_location": true,
+      "should_extract_partial_info": true,
       "should_ask_for_name": true,
-      "should_not_call_google_search": true,
       "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
       "What's your business name?"
-    ],
-    "expected_business_card": null
+    ]
   },
   {
-    "name": "name_location_search_partial_asks_service_type",
-    "description": "User provides business name and location. Agent calls google_search, which confirms name and location but doesn't find the service type. Agent then asks for the service type.",
-    "user_message": "We're 'Peak Fitness' in Denver, Colorado.",
+    "name": "missing_name_follow_up_confirm_save",
+    "description": "Tests providing the missing name in a follow-up, leading to immediate confirmation and save (Stage B) if all other info was extracted.",
+    "user_message": "It's Digital Pros",
+    "session_context": {
+      "extracted_name": null,
+      "extracted_location": "Sydney, Australia",
+      "extracted_service_type": "digital marketing agency",
+      "extracted_website": "digitalpros.au",
+      "last_agent_message": "What's your business name?"
+    },
+    "expected_behavior": {
+      "should_extract_name": true,
+      "should_display_confirmation_and_save": true,
+      "should_call_save_business_card": true
+    },
+    "expected_response_contains": [
+      "BUSINESS_CARD_CONFIRMATION",
+      "Saving business card now."
+    ],
+    "expected_business_card": {
+      "name": "Digital Pros",
+      "location": "Sydney, Australia",
+      "service_type": "digital marketing agency",
+      "website": "digitalpros.au"
+    }
+  },
+  {
+    "name": "name_location_search_service_type_then_ask",
+    "description": "Tests providing name and location, agent uses Google Search but `service_type` is still missing, so agent asks for it.",
+    "user_message": "My company is 'Green Harvest' located in Berlin, Germany.",
     "session_context": {},
     "expected_behavior": {
-      "should_call_google_search": true,
-      "should_extract_name_location": true,
-      "should_normalize_location": true,
+      "should_extract_name_and_location": true,
+      "should_call_google_search_with_name_location": true,
       "should_ask_for_service_type": true,
       "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
-      "What type of service does Peak Fitness provide?"
-    ],
-    "expected_business_card": null
+      "What type of service does Green Harvest provide?"
+    ]
   },
   {
-    "name": "irrelevant_text_mixed_with_info_search_partial_asks_location",
-    "description": "User provides name and website along with irrelevant text. Agent ignores the irrelevant text, extracts valid info, calls search for website which returns name and website but not location or service_type. Agent then asks for location.",
-    "user_message": "My cat's name is Whiskers, but my business is 'AquaClean Services' and our site is aquacleanservices.com.",
+    "name": "full_address_normalize_location_then_ask_name",
+    "description": "Tests agent's ability to normalize a full street address to city, state/country, then identify missing name and ask for it.",
+    "user_message": "You can find us at 789 Oak Avenue, Suite 200, Portland, Oregon 97204.",
     "session_context": {},
     "expected_behavior": {
-      "should_ignore_irrelevant_text": true,
-      "should_extract_name_website": true,
-      "should_normalize_website": true,
-      "should_call_google_search": true,
-      "should_ask_for_location": true,
-      "should_not_call_save_business_card": true
-    },
-    "expected_response_contains": [
-      "What's your business location?"
-    ],
-    "expected_business_card": null
-  },
-  {
-    "name": "user_corrects_field_after_review_stage",
-    "description": "Agent previously presented a review block (Stage A) with incorrect location. User corrects the location. Agent updates the field, then presents a new review block (Stage A) with the corrected information.",
-    "user_message": "No, the location is actually 'Sydney, Australia'.",
-    "session_context": {
-      "extracted_data": {
-        "name": "Oceanic Dive",
-        "location": "Auckland, New Zealand",
-        "service_type": "Scuba Diving School",
-        "website": "oceanicdive.com",
-        "social_links": "Not provided"
-      },
-      "last_agent_message": "Business Name: Oceanic Dive\nLocation: Auckland, New Zealand\nService Type: Scuba Diving School\nWebsite: oceanicdive.com\nSocial Links: Not provided\n\nDoes everything look correct?"
-    },
-    "expected_behavior": {
-      "should_update_field": true,
-      "should_normalize_location": true,
-      "should_display_review_block": true,
-      "should_not_call_google_search": true,
-      "should_not_call_save_business_card": true
-    },
-    "expected_response_contains": [
-      "Business Name: Oceanic Dive",
-      "Location: Sydney, Australia",
-      "Does everything look correct?"
-    ],
-    "expected_business_card": null
-  },
-  {
-    "name": "social_url_provided_search_returns_all_instant_save",
-    "description": "User provides a full social media URL. Agent extracts it, calls google_search (e.g., with handle/platform), which successfully finds all required fields. Agent proceeds directly to final confirmation and save.",
-    "user_message": "Find us on Facebook: https://www.facebook.com/PawsomePetsClinic",
-    "session_context": {},
-    "expected_behavior": {
-      "should_call_google_search": true,
-      "should_extract_social_links": true,
-      "should_display_final_confirmation": true,
-      "should_call_save_business_card": true
-    },
-    "expected_response_contains": [
-      "BUSINESS_CARD_CONFIRMATION",
-      "Pawsome Pets Clinic",
-      "Seattle, WA",
-      "Veterinary Services",
-      "facebook.com/PawsomePetsClinic"
-    ],
-    "expected_business_card": {
-      "name": "Pawsome Pets Clinic",
-      "location": "Seattle, WA",
-      "service_type": "Veterinary Services",
-      "website": "Not provided",
-      "social_links": "https://www.facebook.com/PawsomePetsClinic"
-    }
-  },
-  {
-    "name": "no_relevant_info_asks_name",
-    "description": "User message contains no relevant business information. Agent extracts nothing useful and asks for the business name.",
-    "user_message": "Hello there! How are you doing today?",
-    "session_context": {},
-    "expected_behavior": {
-      "should_not_call_google_search": true,
+      "should_normalize_full_address": true,
       "should_ask_for_name": true,
       "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
       "What's your business name?"
-    ],
-    "expected_business_card": null
+    ]
   },
   {
-    "name": "ambiguous_location_search_clarifies_then_review",
-    "description": "User provides name, service type, and an ambiguous location ('London'). Agent calls search, which clarifies the location to 'London, UK'. Agent then presents a Stage A review block.",
-    "user_message": "My business is 'Thames Books', a bookstore in London. We specialize in rare and antique books.",
+    "name": "irrelevant_text_mixed_with_valid_info",
+    "description": "Tests agent's ability to ignore irrelevant text while extracting valid business information and then display the review block.",
+    "user_message": "My business, 'PetCare Pals', is in Denver, CO. My cat's name is Whiskers, by the way. We offer pet grooming services.",
     "session_context": {},
     "expected_behavior": {
-      "should_call_google_search": true,
-      "should_extract_name_location_service_type": true,
-      "should_clarify_location_via_search": true,
+      "should_extract_all_fields": true,
+      "should_ignore_irrelevant_text": true,
       "should_display_review_block": true,
       "should_not_call_save_business_card": true
     },
     "expected_response_contains": [
-      "Business Name: Thames Books",
-      "Location: London, UK",
-      "Service Type: Bookstore",
+      "Business Name: PetCare Pals",
+      "Location: Denver, CO",
+      "Service Type: pet grooming services",
+      "Website: Not provided",
       "Does everything look correct?"
-    ],
-    "expected_business_card": null
+    ]
+  },
+  {
+    "name": "correction_during_review_stage",
+    "description": "Tests agent's ability to handle corrections from the user during the review stage by updating the field and re-displaying the review block.",
+    "user_message": "No, the location is actually Seattle, WA, not Portland.",
+    "session_context": {
+      "extracted_name": "EcoWear",
+      "extracted_location": "Portland, OR",
+      "extracted_service_type": "Sustainable Fashion",
+      "extracted_website": "ecowear.com",
+      "last_agent_message": "Business Name: EcoWear\nLocation: Portland, OR\nService Type: Sustainable Fashion\nWebsite: ecowear.com\n\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "should_update_field": true,
+      "should_redisplay_review_block": true,
+      "should_not_call_save_business_card": true
+    },
+    "expected_response_contains": [
+      "Business Name: EcoWear",
+      "Location: Seattle, WA",
+      "Service Type: Sustainable Fashion",
+      "Website: ecowear.com",
+      "Does everything look correct?"
+    ]
+  },
+  {
+    "name": "no_info_greeting_initial_ask",
+    "description": "Tests agent's behavior when no business information is provided in the initial message, leading to an ask for the business name.",
+    "user_message": "Hi there!",
+    "session_context": {},
+    "expected_behavior": {
+      "should_ask_for_name": true,
+      "should_not_extract_any_info": true,
+      "should_not_call_save_business_card": true
+    },
+    "expected_response_contains": [
+      "What's your business name?"
+    ]
+  },
+  {
+    "name": "google_search_insufficient_info_then_ask",
+    "description": "Tests a scenario where `google_search` returns insufficient information after a name is provided, prompting the agent to ask for the next missing required field (location).",
+    "user_message": "My business is 'Quantum Leap Consulting'.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_extract_name": true,
+      "should_call_google_search_with_name": true,
+      "should_find_google_search_insufficient": true,
+      "should_ask_for_location": true,
+      "should_not_call_save_business_card": true
+    },
+    "expected_response_contains": [
+      "What's your business location?"
+    ]
   }
 ]

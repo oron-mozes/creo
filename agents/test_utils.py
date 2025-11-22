@@ -237,8 +237,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
                 "name": "Alma Cafe",
                 "website": "https://www.almacafe.co.il/ourplaces/rehovot",
                 "location": "Rehovot, Israel",
-                "service_type": "Coffee shop",
-                "social_links": "Not provided"
+                "service_type": "Coffee shop"
             }
         },
         {
@@ -271,7 +270,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "user_message": "yes it does. how did you do it? that is great",
             "session_context": {
                 
-                "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\nSocial Links: Not provided\\n\\nDoes that all look good?"
+                "last_agent_message": "Great! I've found some details about your business. Can you take a quick look and tell me if everything here is correct for Alma Cafe?\\n\\nBusiness Name: Alma Cafe\\nLocation: Rehovot, Israel\\nService Type: Coffee shop\\nWebsite: https://www.almacafe.co.il/ourplaces/rehovot\\n\\nDoes that all look good?"
             },
             "expected_behavior": {
                 "should_call_save_business_card_tool": True,
@@ -286,8 +285,7 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
                 "name": "Alma Cafe",
                 "location": "Rehovot, Israel",
                 "service_type": "Coffee shop",
-                "website": "https://www.almacafe.co.il/ourplaces/rehovot",
-                "social_links": "Not provided"
+                "website": "https://www.almacafe.co.il/ourplaces/rehovot"
             },
             "expected_tool_calls": [
                 {
@@ -307,19 +305,18 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "user_message": "I have a local coffee shop",
             "session_context": {},
             "expected_behavior": {
-                "should_ask_for_business_name": True,
-                "should_ask_for_location": True,
+                "should_ask_for_missing_info": True,
                 "should_not_generate_confirmation_block": True
             }
         },
         {
             "name": "user_provides_social_media_handle",
-            "description": "User provides Instagram handle, agent should search for business info",
+            "description": "User provides Instagram handle, agent should ignore it and ask for business name (social discovery descoped)",
             "user_message": "My Instagram is @almacafe_rehovot",
             "session_context": {},
             "expected_behavior": {
-                "should_use_google_search": True,
-                "should_extract_business_info": True
+                "should_ask_for_business_name": True,
+                "should_not_use_google_search": True
             }
         },
         {
@@ -381,20 +378,18 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "user_message": "My business is called StyleHub",
             "session_context": {},
             "expected_behavior": {
-                "should_use_google_search": True,
-                "should_ask_for_location_if_search_fails": True,
-                "should_not_generate_confirmation_block_yet": True
+                "should_ask_for_more_info": True,
+                "should_not_generate_confirmation_block": True
             }
         },
         {
             "name": "user_provides_tiktok_handle",
-            "description": "User provides TikTok handle, agent should search for business info",
+            "description": "User provides TikTok handle, agent should ignore it and ask for business name (social discovery descoped)",
             "user_message": "Check out our TikTok @ecowear_official",
             "session_context": {},
             "expected_behavior": {
-                "should_use_google_search": True,
-                "should_extract_business_info": True,
-                "should_mention_searching_tiktok": True
+                "should_ask_for_business_name": True,
+                "should_not_use_google_search": True
             }
         },
         {
@@ -417,13 +412,11 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
         },
         {
             "name": "user_provides_linkedin_profile",
-            "description": "User provides LinkedIn company profile URL",
+            "description": "User provides LinkedIn company profile URL, agent should ignore it and ask for business name",
             "user_message": "Here's our LinkedIn: linkedin.com/company/techstart-inc",
             "session_context": {},
             "expected_behavior": {
-                "should_use_google_search": True,
-                "should_extract_business_info": True,
-                "should_include_linkedin_in_social_links": True
+                "should_ask_for_business_name": True
             }
         },
         {
@@ -442,16 +435,11 @@ def generate_onboarding_agent_tests() -> List[Dict[str, Any]]:
             "description": "User provides full street address instead of city",
             "user_message": "We're at 123 Main Street, Suite 400, New York, NY 10001",
             "session_context": {
-                
+
                 "last_agent_message": "What's your brand name and where is your business located?"
             },
             "expected_behavior": {
-                "should_extract_city_and_state": True,
-                "should_simplify_location_format": True,
-                "should_not_include_full_street_address": True
-            },
-            "expected_business_card_contains": {
-                "location": "New York, NY"
+                "should_ask_for_business_name": True
             }
         }
     ]
