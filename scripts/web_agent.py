@@ -17,11 +17,11 @@ AGENTS_INIT_BACKUP = PROJECT_ROOT / "agents" / "__init__.py.backup"
 
 # Map of agent names to (module_name, agent_variable_name, directory_name)
 AGENT_MODULES = {
-    "creator-finder": ("creator_finder_agent", "creator_finder_agent", "creator-finder-agent"),
-    "campaign-builder": ("campaign_builder_agent", "campaign_builder_agent", "campaign-builder-agent"),
-    "campaign-brief": ("campaign_brief_agent", "campaign_brief_agent", "campaign-brief-agent"),
-    "outreach-message": ("outreach_message_agent", "outreach_message_agent", "outreach-message-agent"),
-    "orchestrator": ("orchestrator_agent", "root_agent", "orchestrator-agent"),
+    "creator-finder": ("creator_finder_agent", "creator_finder_agent", "creator_finder_agent"),
+    "campaign-builder": ("campaign_builder_agent", "campaign_builder_agent", "campaign_builder_agent"),
+    "campaign-brief": ("campaign_brief_agent", "campaign_brief_agent", "campaign_brief_agent"),
+    "outreach-message": ("outreach_message_agent", "outreach_message_agent", "outreach_message_agent"),
+    "orchestrator": ("orchestrator_agent", "root_agent", "orchestrator_agent"),
 }
 
 def get_original_init_content() -> str:
@@ -53,19 +53,13 @@ root_agent = _agent_module.{agent_var}
 __all__ = ['root_agent']
 '''
     else:
-        # For other agents, we still need root_agent but can expose the specific agent
+        # For other agents, DON'T load orchestrator to avoid circular dependencies
+        # The agent should expose its own root_agent
         return f'''"""Agents package for the creo project - Single Agent Mode: {agent_name}."""
 import importlib.util
 from pathlib import Path
 
 _agents_dir = Path(__file__).parent
-
-# Load orchestrator-agent (required for root_agent)
-_orchestrator_path = _agents_dir / 'orchestrator-agent' / 'agent.py'
-_orchestrator_spec = importlib.util.spec_from_file_location('orchestrator_agent', _orchestrator_path)
-_orchestrator_module = importlib.util.module_from_spec(_orchestrator_spec)
-_orchestrator_spec.loader.exec_module(_orchestrator_module)
-root_agent = _orchestrator_module.root_agent
 
 # Load {agent_dir}
 _agent_path = _agents_dir / '{agent_dir}' / 'agent.py'
@@ -73,6 +67,7 @@ _agent_spec = importlib.util.spec_from_file_location('{module_name}', _agent_pat
 _agent_module = importlib.util.module_from_spec(_agent_spec)
 _agent_spec.loader.exec_module(_agent_module)
 {agent_var} = _agent_module.{agent_var}
+root_agent = _agent_module.root_agent  # Each agent should have root_agent
 
 __all__ = ['root_agent', '{agent_var}']
 '''
@@ -113,8 +108,23 @@ def main():
         print(f"  Press Ctrl+C to stop and restore original file\n")
         
         # Run adk web
-        venv_adk = PROJECT_ROOT / "venv" / "bin" / "adk"
-        subprocess.run([str(venv_adk), "web"], cwd=PROJECT_ROOT)
+        # Try to use venv if it exists, otherwise use system Python
+        if sys.platform == "win32":
+            venv_adk = PROJECT_ROOT / "venv" / "Scripts" / "adk.exe"
+        else:
+            venv_adk = PROJECT_ROOT / "venv" / "bin" / "adk"
+
+        if venv_adk.exists():
+            result = subprocess.run([str(venv_adk), "web", "agents", "--port", "3000"], cwd=PROJECT_ROOT, capture_output=False)
+            if result.returncode != 0:
+                print(f"Error: ADK web exited with code {result.returncode}")
+        else:
+            # Fall back to running adk from current Python environment
+            print(f"Running: {sys.executable} -m google.adk.cli web agents --port 3000")
+            print(f"Access the web UI at: http://localhost:3000")
+            result = subprocess.run([sys.executable, "-m", "google.adk.cli", "web", "agents", "--port", "3000"], cwd=PROJECT_ROOT, capture_output=False)
+            if result.returncode != 0:
+                print(f"Error: ADK web exited with code {result.returncode}")
         
     except KeyboardInterrupt:
         print("\n\nStopping...")

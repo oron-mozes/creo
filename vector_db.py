@@ -99,7 +99,7 @@ class EmbeddingGenerator:
 class VectorDB:
     """Vector database operations using Pinecone."""
 
-    def __init__(self, index_name: str = "creo-embeddings"):
+    def __init__(self, index_name: str = "creo-influencers"):
         self.index = get_or_create_index(index_name)
         self.embedding_gen = EmbeddingGenerator()
 

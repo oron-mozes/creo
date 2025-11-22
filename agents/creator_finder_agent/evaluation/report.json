@@ -1,0 +1,21 @@
+{
+  "average_confidence_score": 1.0,
+  "total_cases": 3,
+  "test_results": [
+    {
+      "description": "Find 2 DIY creators in GB, France, or Germany with budget 100-300K, audience aged 20-50",
+      "score": 1.0,
+      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, identified the category, location, and target audience, and presented a list of matching creators with a greeting and budget explanation, fulfilling all requirements."
+    },
+    {
+      "description": "Find 1 lifestyle creator in Mexico City or Canada with 12K budget, audience aged 20-30",
+      "score": 1.0,
+      "rationale": "The agent correctly greets the user, explains the budget-to-follower calculation as per instructions, and asks for a reasonable clarification regarding the platform preference before proceeding with the search. This aligns with all instructions and expected behaviors."
+    },
+    {
+      "description": "Find 1 lifestyle creator in Vancouver with budget 8K-13K, audience aged 20-30 on TikTok",
+      "score": 1.0,
+      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, included the required greeting and budget explanation, and presented a matching creator with all relevant details, fulfilling all instructions and expected behaviors."
+    }
+  ]
+}

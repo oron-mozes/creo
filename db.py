@@ -30,6 +30,7 @@ CONVERSATIONS = "conversations"
 SESSIONS = "sessions"
 CAMPAIGNS = "campaigns"
 ANALYTICS = "analytics"
+CREATORS = "creators"
 
 
 # Pydantic Models for type safety and validation
@@ -76,6 +77,28 @@ class AnalyticsEvent(BaseModel):
     data: Dict[str, Any] = Field(default_factory=dict)
     timestamp: Optional[datetime] = None
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class Creator(BaseModel):
+    """Creator/Influencer model."""
+    name: str
+    platform: str  # YouTube, Instagram, TikTok, etc.
+    category: str  # food, travel, tech, lifestyle, fashion, beauty, fitness, gaming
+    location: Optional[str] = None  # geographic location
+    subscriber_count: Optional[int] = None
+    follower_count: Optional[int] = None  # for non-YouTube platforms
+    view_count: Optional[int] = None
+    video_count: Optional[int] = None
+    engagement_rate: Optional[float] = None  # percentage
+    estimated_price_min: Optional[float] = None  # USD
+    estimated_price_max: Optional[float] = None  # USD
+    description: Optional[str] = None
+    channel_url: Optional[str] = None
+    profile_url: Optional[str] = None
+    tags: List[str] = Field(default_factory=list)  # additional searchable tags
+    metadata: Dict[str, Any] = Field(default_factory=dict)  # additional data
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class ConversationDB:
