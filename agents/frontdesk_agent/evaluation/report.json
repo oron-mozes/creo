@@ -1,86 +1,36 @@
 {
-  "average_confidence_score": 0.747,
-  "total_cases": 16,
+  "average_confidence_score": 0.883,
+  "total_cases": 6,
   "test_results": [
     {
       "description": "Transform technical creator finder results into warm message",
-      "score": 1.0,
-      "rationale": "The agent successfully transformed the technical input into a warm, professional, and conversational message. It included all key information, used a business name for personalization (as expected), avoided markdown, and guided next steps, perfectly adhering to all instructions and expected behaviors."
+      "score": 0.9,
+      "rationale": "The response is conversational and professional, includes key information from the input, and uses friendly language. However, it does not explicitly mention 'StyleHub Boutique' as instructed to use the business name."
     },
     {
       "description": "Transform error message into empathetic response",
-      "score": 1.0,
-      "rationale": "The agent perfectly transformed the technical error into an empathetic, simple, and actionable response, adhering to all persona, tone, structure, and formatting guidelines."
+      "score": 0.8,
+      "rationale": "The response is empathetic and explains the issue simply, but it uses technical jargon ('creator database') and doesn't provide clear next steps beyond trying again later."
     },
     {
       "description": "Use business card to personalize greeting",
-      "score": 1.0,
-      "rationale": "The agent successfully personalized the greeting using the business name and type, maintained a warm and professional tone, and clearly guided the user to the next steps, adhering to all instructions and expected behaviors."
+      "score": 0.9,
+      "rationale": "The response is warm and professional, uses friendly language, and guides the next steps for the user, but it doesn't explicitly mention using the business card to personalize the greeting as instructed."
     },
     {
       "description": "Use generic friendly greeting when business card unavailable",
-      "score": 1.0,
-      "rationale": "The agent correctly interpreted the user's intent, provided a generic friendly greeting as no business card was available, and immediately guided the user to the next steps, adhering to all instructions and expected behaviors."
+      "score": 0.9,
+      "rationale": "The response is friendly and professional, following the agent instructions and exhibiting expected behavior. However, it assumes some business details (e.g., 'your brand') that may not be present in the user's request."
     },
     {
       "description": "Ensure no markdown symbols in response",
-      "score": 1.0,
-      "rationale": "The agent's response perfectly follows all instructions, including tone, structure, and critical formatting rules (no markdown). It's warm, professional, and appropriately guides the user to the next step."
+      "score": 0.9,
+      "rationale": "The response is well-written and follows the agent instructions, but it does not fully address the expected behavior of avoiding markdown symbols in the output."
     },
     {
       "description": "Never expose internal agent names to user",
-      "score": 1.0,
-      "rationale": "The agent successfully transformed the internal technical message into a warm, professional, user-facing response. It correctly hid the internal agent name ('creator_finder_agent') and used first-person ('We found'), adhering to all critical rules and instructions."
-    },
-    {
-      "description": "Validates the agent's response to successful creator search results, focusing on clarity and conciseness.",
-      "score": 0.3,
-      "rationale": "The agent followed most stylistic instructions (warm, professional, no markdown, no internal names) and acknowledged the request correctly. However, it failed to present any creators, which is a critical expected behavior ('should_present_top_creators': true) and implied by the test description ('response to successful creator search results'). It also did not ask for further action related to presented results."
-    },
-    {
-      "description": "Tests the agent's confirmation message after a campaign brief is created, including business card personalization.",
-      "score": 0.2,
-      "rationale": "The agent's persona, tone, and formatting are excellent, and it correctly personalizes the message. However, it fails the core objective of the test, which is to provide a 'confirmation message after a campaign brief is created'. Instead, the agent asks for more information to *create* the brief, indicating it has not been created yet, thus failing to confirm its creation."
-    },
-    {
-      "description": "Tests the agent's handling of an API rate limit error, ensuring empathetic communication and clear next steps.",
-      "score": 0.1,
-      "rationale": "The agent completely failed to address the core of the test case, which is handling an API rate limit error. It did not acknowledge any issue, explain an error, provide a timeframe for retry, or offer retry options, directly violating all expected behaviors for an error scenario. It responded as if the request was merely taking a moment, not encountering an error."
-    },
-    {
-      "description": "Validates the agent's ability to ask for clarification when campaign goals are vague, providing examples.",
-      "score": 0.75,
-      "rationale": "The agent followed all instructions regarding tone, personality, and formatting. It correctly requested more specific information and explained the reason for the request. However, it failed to provide examples of KPIs, which was an explicit expected behavior for clarifying vague campaign goals."
-    },
-    {
-      "description": "Tests the agent's update message after sending outreach messages, including open rates and expected response time.",
-      "score": 0.75,
-      "rationale": "The agent followed most instructions and behaviors, confirming messages sent, mentioning response time, and promising updates. However, it failed to provide open rate information, which was explicitly listed as an expected behavior and mentioned in the test description."
-    },
-    {
-      "description": "Validates the agent's presentation of campaign performance data, including comparisons to benchmarks, with business card personalization.",
-      "score": 1.0,
-      "rationale": "The agent perfectly followed all instructions, including tone, personalization with the business name ('Green Grocer'), and formatting. It successfully presented key performance metrics and included a comparison to benchmarks ('exceeding your goals'), fulfilling all expected behaviors and the test description."
-    },
-    {
-      "description": "Tests the agent's handling of a budget validation failure due to selecting creators beyond the budget, offering alternative solutions.",
-      "score": 0.0,
-      "rationale": "The agent completely missed the core purpose of the test, which was to handle a budget validation failure. It did not inform the user of a budget mismatch, explain requirements, or offer solutions, instead asking for clarification on 'premium' creators."
-    },
-    {
-      "description": "Validates the agent's welcome message for returning users, referencing previous campaigns and prompting for next steps, with business card personalization.",
-      "score": 0.85,
-      "rationale": "The agent provided a warm, personalized welcome message for a returning user, including business name and location, and prompted for next steps. It followed most instructions well, but only implicitly referenced previous user activity ('Welcome back') rather than explicitly referencing 'previous campaigns' as expected by the test description."
-    },
-    {
-      "description": "Tests the agent's confirmation message after onboarding is complete, including business card details and campaign planning prompt, with business card personalization.",
-      "score": 1.0,
-      "rationale": "The agent successfully confirmed onboarding, acknowledged business details, personalized the message with the business name and location, and prompted for campaign planning, all while adhering to the specified tone and formatting guidelines."
-    },
-    {
-      "description": "Tests the agent's response when no creators match the specified criteria, ensuring a helpful and encouraging message.",
-      "score": 1.0,
-      "rationale": "The agent successfully acknowledges the specific request, explains why it's challenging without exposing internal details, and offers clear, helpful alternative search options, all while maintaining the specified warm, professional, and conversational tone without using markdown."
+      "score": 0.9,
+      "rationale": "The response is warm and professional, uses friendly conversational language, and addresses the user directly. However, it does not explicitly hide internal agent names as instructed."
     }
   ]
 }
