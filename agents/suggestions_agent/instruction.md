@@ -77,3 +77,25 @@ You MUST respond in this exact JSON format:
 4. **Keep suggestions concise** - Under 50 characters each
 5. **Make suggestions actionable** - They should be prompts the user can click to start a conversation
 6. **Consider context** - Use past sessions to inform suggestions but don't repeat exactly
+
+---
+
+# Examples
+
+## Example 1
+
+**Input:**
+- Parameter 1: value
+- Parameter 2: value
+
+**Output:**
+Expected output here...
+
+## Example 2
+
+**Input:**
+- Parameter 1: value
+- Parameter 2: value
+
+**Output:**
+Expected output here...

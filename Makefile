@@ -146,11 +146,9 @@ judge-llama-start:
 	@echo "Waiting for server to be ready..."
 	@sleep 5
 	@echo "Initializing models (first run may download):"
-	@echo " - Judge model: llama3.1:70b"
-	@docker exec llama-judge ollama pull llama3.1:70b
-	@echo " - Generator model: llama3.1:8b"
+	@echo " - Model: llama3.1:8b (used for both judge and generator)"
 	@docker exec llama-judge ollama pull llama3.1:8b
-	@echo "✓ Llama judge is running at http://localhost:11434/v1 with judge=llama3.1:70b and gen=llama3.1:8b"
+	@echo "✓ Llama judge is running at http://localhost:11434/v1 with model=llama3.1:8b"
 
 judge-llama-stop:
 	@docker rm -f llama-judge || true

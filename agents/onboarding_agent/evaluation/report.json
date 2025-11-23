@@ -1,56 +1,56 @@
 {
-  "average_confidence_score": 0.834,
+  "average_confidence_score": 0.804,
   "total_cases": 25,
   "test_results": [
     {
       "description": "User provides a website URL, agent should search and extract business info",
       "score": 0.9,
-      "rationale": "The agent's response is mostly correct, but it does not follow the expected output type, which was left unspecified."
+      "rationale": "The agent's response is mostly correct, but it does not follow the instruction to normalize the domain in the 'website' field."
     },
     {
       "description": "User provides business name and location, agent should search for details",
       "score": 0.8,
-      "rationale": "The agent's response is mostly correct but it does not follow the instructions for extracting the service type from the user message."
+      "rationale": "The agent's response follows the instructions and exhibits most of the expected behavior, but it does not explicitly extract the business name from the user message."
     },
     {
       "description": "User confirms the business details presented",
       "score": 0.8,
-      "rationale": "The agent correctly extracted the business name and location from the user's message, but failed to extract the service type and did not produce a confirmation block as expected."
+      "rationale": "The agent's response is mostly accurate and follows the instructions, but it fails to extract the business name correctly from the user message."
     },
     {
       "description": "CRITICAL: After user confirms extracted business details, agent MUST call save_business_card tool",
-      "score": 1.0,
-      "rationale": "The agent's response perfectly follows the instructions and exhibits all expected behaviors, producing structured system output that describes what actions were taken."
+      "score": 0.8,
+      "rationale": "The agent's response is mostly correct but it doesn't explicitly mention calling the save_business_card tool as required by the instructions."
     },
     {
       "description": "New user provides minimal information, agent should ask for more",
-      "score": 0.8,
-      "rationale": "The agent's response is mostly correct in asking for the business name, but it doesn't explicitly state that it will ask for more information if not provided, which is a key aspect of the 'Ask for Missing' step."
+      "score": 0.5,
+      "rationale": "The agent's response is partially correct as it asks for the business name, but it does not follow the instructions to extract information from the user message first and it also does not exhibit the expected behavior of asking for missing info."
     },
     {
       "description": "User provides Instagram handle, agent should ignore it and ask for business name (social discovery descoped)",
       "score": 1.0,
-      "rationale": "The agent's response 'What's your business name?' directly addresses the user's social media handle and asks for the required business name, following the instructions to ignore irrelevant text."
+      "rationale": "The agent's response 'What's your business name?' directly addresses the missing information and follows the instructions to ask for the business name."
     },
     {
       "description": "User asks vague question with no business context clues",
       "score": 0.8,
-      "rationale": "The agent's response is clear and concise, but it doesn't fully follow the instructions as it doesn't attempt to extract any information from the user request."
+      "rationale": "The agent's response is mostly correct in following the instructions and exhibiting expected behavior, but it doesn't explicitly ask for missing information or confirm with the user before saving the business card."
     },
     {
       "description": "User volunteers multiple pieces of info in one sentence",
       "score": 0.8,
-      "rationale": "The agent's response is mostly correct, but it incorrectly identifies the location as Los Angeles, CA when the input only mentions LA."
+      "rationale": "The agent's response is mostly correct but it incorrectly identifies 'LA' as the location instead of extracting the city and state from the input."
     },
     {
       "description": "User confused about what agent is asking, seeks clarification",
       "score": 0.8,
-      "rationale": "The agent's response provides clarification on the location field and offers examples, but it does not explicitly state that it will help find missing information or remain patient and helpful."
+      "rationale": "The agent's response provides clarification on the location field and gives examples, but it does not explicitly state that it will help find missing information using google_search if necessary."
     },
     {
       "description": "User provides only business name, no location or other context",
       "score": 0.8,
-      "rationale": "The agent's response follows the instructions and exhibits the expected behavior of asking for missing information, but it does not produce the expected output type as specified in the test description."
+      "rationale": "The agent's response is mostly correct in following the instructions and exhibiting expected behavior, but it does not fully address the missing location information as required by the workflow."
     },
     {
       "description": "User provides TikTok handle, agent should ignore it and ask for business name (social discovery descoped)",
@@ -64,23 +64,23 @@
     },
     {
       "description": "User provides LinkedIn company profile URL, agent should ignore it and ask for business name",
-      "score": 0.8,
-      "rationale": "The agent correctly ignored the LinkedIn URL and asked for the business name as expected, but failed to provide a structured system output with all required fields."
+      "score": 1.0,
+      "rationale": "The agent's response 'What's your business name?' directly addresses the user's LinkedIn URL and asks for the business name as instructed."
     },
     {
       "description": "User provides domain without https protocol",
-      "score": 0.9,
-      "rationale": "The agent's response is mostly correct, but it incorrectly assumes the website should be normalized to include https protocol when the instructions explicitly state that the output should not have a protocol."
+      "score": 0.8,
+      "rationale": "The agent's response is mostly correct but it incorrectly assumes the location as 'Israel' instead of extracting the country from the domain."
     },
     {
       "description": "User provides full street address instead of city",
-      "score": 0.8,
+      "score": 0.5,
       "rationale": "The agent's response follows the instructions and exhibits the expected behavior of asking for missing information, but it does not produce the expected output type as specified in the test description."
     },
     {
       "description": "Tests extraction of all required fields and an optional website with complex URL, including normalization, and displaying the initial review block.",
       "score": 0.8,
-      "rationale": "The agent's response is mostly correct but it does not normalize the website URL as expected."
+      "rationale": "The agent's response is mostly correct, but it does not normalize the website URL as expected and does not display an initial review block."
     },
     {
       "description": "Tests agent's ability to use `google_search` with only a website to find all required fields, then display the review block. Assumes successful search.",
@@ -89,33 +89,33 @@
     },
     {
       "description": "Tests initial message missing business name, prompting the agent to ask for it.",
-      "score": 0.8,
-      "rationale": "The agent's response is mostly correct but it should not have called the save_business_card function as per the expected behavior."
+      "score": 0.75,
+      "rationale": "The agent's response is mostly correct in following the instructions and exhibiting expected behavior, but it does not fully address the missing business name as required by the test case."
     },
     {
       "description": "Tests providing the missing name in a follow-up, leading to immediate confirmation and save (Stage B) if all other info was extracted.",
       "score": 1.0,
-      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, extracting the required fields from the user request, confirming with a Google search (though not explicitly shown), and saving the business card with accurate information."
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, extracting the required information from the user request and producing a structured system output that describes what actions were taken."
     },
     {
       "description": "Tests providing name and location, agent uses Google Search but `service_type` is still missing, so agent asks for it.",
       "score": 0.8,
-      "rationale": "The agent correctly extracted the name and location from the user request, asked Google for missing information, and requested the service type, but did not follow instructions to ignore irrelevant text as it responded to the entire user message."
+      "rationale": "The agent correctly extracted the name and location from the user request, asked Google for missing information, and requested the service type, but failed to follow instructions by not providing a structured system output."
     },
     {
       "description": "Tests agent's ability to normalize a full street address to city, state/country, then identify missing name and ask for it.",
       "score": 0.75,
-      "rationale": "The agent correctly identifies the need to normalize the full address and asks for the business name, but fails to produce a structured system output as expected."
+      "rationale": "The agent correctly identifies the need to normalize the full address and asks for the business name, but fails to follow instructions by not providing a clear indication of its actions in the output."
     },
     {
       "description": "Tests agent's ability to ignore irrelevant text while extracting valid business information and then display the review block.",
       "score": 0.8,
-      "rationale": "The agent's response is mostly correct, but it does not follow the instruction to ignore irrelevant text as it still extracted 'pet grooming services' which includes a service type description."
+      "rationale": "The agent correctly extracted the required fields and ignored irrelevant text, but failed to provide a website as it was not provided in the input."
     },
     {
       "description": "Tests agent's ability to handle corrections from the user during the review stage by updating the field and re-displaying the review block.",
       "score": 0.8,
-      "rationale": "The agent's response correctly updates the location field to Seattle, WA and re-displays the review block as expected, but it does not handle the user correction properly by updating the field in place instead of replacing the entire output."
+      "rationale": "The agent's response correctly updates the location field to 'Seattle, WA' in response to the user correction, but it does not re-display the review block as expected."
     },
     {
       "description": "Tests agent's behavior when no business information is provided in the initial message, leading to an ask for the business name.",
@@ -125,7 +125,7 @@
     {
       "description": "Tests a scenario where `google_search` returns insufficient information after a name is provided, prompting the agent to ask for the next missing required field (location).",
       "score": 0.8,
-      "rationale": "The agent's response follows the instructions and exhibits most of the expected behavior, but it does not explicitly state that it is asking for location due to insufficient information from Google search."
+      "rationale": "The agent's response is mostly correct in following the instructions and exhibiting expected behavior, but it does not explicitly state that it should call google_search with the name to find more information."
     }
   ]
 }

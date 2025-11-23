@@ -1,6 +1,6 @@
 """LLM-based test case generator for agents.
 
-This script reads an agent's instruction.md and examples.md files and uses
+This script reads an agent's instruction.md file (which includes examples) and uses
 an LLM to generate diverse, comprehensive test cases automatically.
 
 Supports two modes:
@@ -125,25 +125,20 @@ def generate_tests_with_llm(
 ) -> List[Dict[str, Any]]:
     """Generate test cases for an agent using LLM."""
 
-    # Read instruction and examples files
+    # Read instruction file (now includes examples)
     instruction_file = agent_dir / "instruction.md"
-    examples_file = agent_dir / "examples.md"
 
     if not instruction_file.exists():
         print(f"Warning: {instruction_file} not found")
         return []
 
     instruction_content = instruction_file.read_text()
-    examples_content = examples_file.read_text() if examples_file.exists() else "No examples provided."
 
     # Create prompt for LLM
     prompt = f"""You are a test case generator for AI agents. Your task is to generate comprehensive, diverse test cases in JSON format.
 
-# AGENT INSTRUCTIONS:
+# AGENT INSTRUCTIONS AND EXAMPLES:
 {instruction_content}
-
-# AGENT EXAMPLES:
-{examples_content}
 
 # YOUR TASK:
 Generate {num_tests} diverse test cases in JSON array format. Each test case should:
