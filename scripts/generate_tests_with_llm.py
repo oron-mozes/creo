@@ -16,9 +16,16 @@ import re
 import google.generativeai as genai
 import os
 import requests
+from dotenv import load_dotenv
+
+# Load .env file BEFORE importing agents (agents may require env vars at import time)
+project_root = Path(__file__).resolve().parent.parent
+env_file = project_root / '.env'
+if env_file.exists():
+    load_dotenv(env_file)
 
 # Add parent directory to path for imports
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(project_root))
 from agents.utils import AgentName, load_agent_env
 
 # Configure Gemini if key is present (used when backend=gemini)
@@ -399,7 +406,8 @@ def main():
             "campaign_brief_agent",
             "outreach_message_agent",
             "campaign_builder_agent",
-            "orchestrator_agent"
+            "orchestrator_agent",
+            "suggestions_agent"
         ]
 
         for agent_name in testable_agents:

@@ -28,7 +28,6 @@
     "description": "Transform error message into empathetic response",
     "user_message": "Error: Unable to connect to creator database",
     "session_context": {
-      "business_card": null,
       "context": "User tried to search for creators"
     },
     "expected_behavior": {
@@ -69,7 +68,6 @@
     "description": "Use generic friendly greeting when business card unavailable",
     "user_message": "Ready to help you find creators",
     "session_context": {
-      "business_card": null,
       "context": "New user, no business card yet"
     },
     "expected_behavior": {
@@ -87,7 +85,6 @@
     "description": "Ensure no markdown symbols in response",
     "user_message": "Campaign includes: 1. Instagram posts 2. TikTok videos 3. YouTube reviews",
     "session_context": {
-      "business_card": null,
       "context": "User asked about campaign plan"
     },
     "expected_behavior": {
@@ -108,7 +105,6 @@
     "description": "Never expose internal agent names to user",
     "user_message": "creator_finder_agent found 10 results",
     "session_context": {
-      "business_card": null,
       "context": "User asked to find creators"
     },
     "expected_behavior": {
@@ -127,6 +123,266 @@
       "I found",
       "we found",
       "10 results"
+    ]
+  },
+  {
+    "name": "creator_search_results_no_business_card",
+    "description": "Tests a happy path scenario where creator search results are returned without a business card in context, ensuring generic greeting and clear presentation of results.",
+    "user_message": "Find me some tech influencers in the US with 50k-200k followers for a new product.",
+    "session_context": {
+      "message_content": "Found 12 creators matching criteria: tech niche, 50K-200K followers, US-based. Top matches: @techguru (145K followers, 4.2% engagement), @gadgetqueen (98K followers, 5.1% engagement), @codewithsarah (156K followers, 3.8% engagement)",
+      "context": "User searched for tech influencers for a new product launch",
+      "message_type": "Response with results"
+    },
+    "expected_behavior": {
+      "should_present_results_clearly": true,
+      "should_suggest_next_steps": true,
+      "should_use_generic_greeting": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Great news",
+      "12 creators",
+      "@techguru",
+      "What do you think?"
+    ]
+  },
+  {
+    "name": "campaign_brief_confirmation_with_business_card",
+    "description": "Validates personalization using business card information when confirming a campaign brief, ensuring details are presented clearly and next steps are guided.",
+    "user_message": "I've finished setting up the campaign brief.",
+    "session_context": {
+      "message_content": "Campaign brief generated successfully. Campaign name: Spring Bloom. Target audience: Garden enthusiasts 30-55. Budget allocated: $10,000. Timeline: 4 weeks. Deliverables: 2 Instagram posts, 1 YouTube short per creator.",
+      "context": "User completed campaign planning",
+      "message_type": "Confirmation",
+      "business_card": {
+        "name": "Green Thumb Nurseries",
+        "location": "Austin, TX",
+        "service_type": "Plant Nursery"
+      }
+    },
+    "expected_behavior": {
+      "should_confirm_brief": true,
+      "should_personalize_with_business_name": true,
+      "should_list_details_clearly": true,
+      "should_guide_next_steps": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Green Thumb Nurseries",
+      "Spring Bloom",
+      "Ready to start reaching out"
+    ]
+  },
+  {
+    "name": "error_handling_api_rate_limit_exceeded",
+    "description": "Tests error handling for an API rate limit issue, ensuring an empathetic explanation, clear next steps, and no internal jargon.",
+    "user_message": "Can you get me the analytics for @plantlover?",
+    "session_context": {
+      "message_content": "Unable to retrieve creator analytics. API rate limit exceeded. Retry available in 15 minutes.",
+      "context": "User requested detailed analytics for a creator",
+      "message_type": "Error"
+    },
+    "expected_behavior": {
+      "should_acknowledge_issue_empathetically": true,
+      "should_explain_simply": true,
+      "should_provide_clear_next_steps": true,
+      "should_not_use_corporate_speak": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "We hit a snag",
+      "15 minutes",
+      "grab the analytics automatically"
+    ]
+  },
+  {
+    "name": "clarification_vague_campaign_goals_no_business_card",
+    "description": "Tests the agent's ability to ask for clarification when campaign goals are vague, providing examples to guide the user without personalization.",
+    "user_message": "I want to run a campaign to make people aware of my brand.",
+    "session_context": {
+      "message_content": "Need clarification on campaign goals to proceed with creator matching. Current input lacks specific KPIs and success metrics.",
+      "context": "User provided vague campaign requirements",
+      "message_type": "Question"
+    },
+    "expected_behavior": {
+      "should_ask_clarifying_questions": true,
+      "should_explain_why_asking": true,
+      "should_provide_examples": true,
+      "should_use_generic_language": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "bit more info",
+      "main goals",
+      "Brand awareness",
+      "Engagement",
+      "Conversions"
+    ]
+  },
+  {
+    "name": "outreach_update_partial_openings_no_business_card",
+    "description": "Tests providing an update on outreach status, including partial openings and managing expectations for response times, without personalization.",
+    "user_message": "What's the status on my outreach messages?",
+    "session_context": {
+      "message_content": "Outreach message sent to 3 creators: @fashionista, @styleguru, @trendsetter. 1 creator opened message. 0 responses yet. Average response time: 24-48 hours.",
+      "context": "User sent outreach messages to selected creators",
+      "message_type": "Update"
+    },
+    "expected_behavior": {
+      "should_provide_clear_update": true,
+      "should_manage_expectations_for_responses": true,
+      "should_promise_follow_up": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Your messages are out",
+      "1 of them has opened",
+      "24-48 hours",
+      "I'll let you know"
+    ]
+  },
+  {
+    "name": "edge_case_budget_mismatch_with_business_card",
+    "description": "Tests handling a budget mismatch when selecting creators, offering clear options to the user, and personalizing with business name.",
+    "user_message": "I've picked these 5 creators for my campaign.",
+    "session_context": {
+      "message_content": "Budget validation failed. Requested creator tier requires minimum $20,000. Current budget: $5,000.",
+      "context": "User selected premium creators beyond their budget",
+      "message_type": "Issue requiring decision",
+      "business_card": {
+        "name": "Gamer's Hub",
+        "location": "Seattle, WA",
+        "service_type": "Gaming Accessories"
+      }
+    },
+    "expected_behavior": {
+      "should_explain_issue_clearly": true,
+      "should_offer_multiple_solutions": true,
+      "should_personalize_with_business_name": true,
+      "should_ask_for_user_decision": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Gamer's Hub",
+      "Quick heads up",
+      "$20K",
+      "$5K",
+      "What works best for you?"
+    ]
+  },
+  {
+    "name": "greeting_returning_user_with_business_card",
+    "description": "Tests a warm greeting for a returning user, referencing past activity and personalizing with business card details.",
+    "user_message": "Hi Creo, I'm back!",
+    "session_context": {
+      "message_content": "User returning to platform. Previous campaign: 'Holiday Special' completed 1 month ago.",
+      "context": "Returning user starting new session",
+      "message_type": "Greeting",
+      "business_card": {
+        "name": "Pet Paradise",
+        "location": "Miami, FL",
+        "service_type": "Pet Supplies"
+      }
+    },
+    "expected_behavior": {
+      "should_provide_warm_greeting": true,
+      "should_personalize_with_business_name": true,
+      "should_reference_past_activity": true,
+      "should_ask_what_user_wants_to_do_next": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Welcome back",
+      "Pet Paradise",
+      "Holiday Special campaign",
+      "looking for something different"
+    ]
+  },
+  {
+    "name": "onboarding_complete_first_time_user_with_business_card",
+    "description": "Tests the confirmation message after a user completes onboarding, confirming business details and guiding them to the next step of campaign planning.",
+    "user_message": "I've entered my business details.",
+    "session_context": {
+      "message_content": "Business card created successfully. User can now proceed with campaign planning.",
+      "context": "User just completed onboarding",
+      "message_type": "Confirmation",
+      "business_card": {
+        "name": "Fresh Harvest Juices",
+        "location": "Denver, CO",
+        "service_type": "Juice Bar"
+      }
+    },
+    "expected_behavior": {
+      "should_confirm_details": true,
+      "should_personalize_with_business_name": true,
+      "should_guide_to_next_step": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Perfect!",
+      "Fresh Harvest Juices",
+      "Denver",
+      "campaign are you thinking about?"
+    ]
+  },
+  {
+    "name": "challenging_internal_agent_name_in_content",
+    "description": "Tests the critical rule of never exposing internal agent names, ensuring any such references in the message content are removed and rephrased with 'I' or 'we'.",
+    "user_message": "What's happening with my campaigns?",
+    "session_context": {
+      "message_content": "The campaign_manager_agent has 2 active campaigns. outreach_agent sent 7 messages. analytics_agent processing data for campaign_ID_123.",
+      "context": "User asked for a summary of current tasks",
+      "message_type": "Update"
+    },
+    "expected_behavior": {
+      "should_summarize_tasks": true,
+      "should_take_ownership_with_i_or_we": true,
+      "should_completely_remove_agent_names": true,
+      "should_not_expose_system_details": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "We have 2 active campaigns",
+      "sent 7 messages",
+      "processing data",
+      "campaign_ID_123"
+    ],
+    "expected_response_not_contains": [
+      "campaign_manager_agent",
+      "outreach_agent",
+      "analytics_agent"
+    ]
+  },
+  {
+    "name": "formatting_test_list_with_many_items",
+    "description": "Tests the correct formatting of a list with multiple items, ensuring plain text with dashes or line breaks, and no markdown bullets.",
+    "user_message": "What types of campaigns can I run?",
+    "session_context": {
+      "message_content": "Available campaign types: Brand Awareness, Product Launch, Sales Promotion, Content Collaboration, Event Promotion, Lead Generation, App Downloads.",
+      "context": "User asking for available options",
+      "message_type": "Response"
+    },
+    "expected_behavior": {
+      "should_present_list_clearly": true,
+      "should_use_dashes_or_line_breaks_for_list": true,
+      "should_not_use_markdown_bullets": true,
+      "should_not_expose_agent_names": true,
+      "should_not_use_markdown": true
+    },
+    "expected_response_contains": [
+      "Here are some campaign types",
+      "Brand Awareness",
+      "Sales Promotion",
+      "App Downloads"
     ]
   }
 ]

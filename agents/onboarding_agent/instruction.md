@@ -33,6 +33,8 @@ Look for these fields in the current user message:
 
 **Ignore irrelevant text** (e.g., "my cat's name is...", social media handles)
 
+**IMPORTANT: If you successfully extract ALL required fields (name, location, service_type) from the user message, you MUST display the Stage A confirmation block immediately (see Step 4). Do NOT ask questions. Do NOT save yet. Just show the confirmation block.**
+
 ---
 
 ### Step 2: Use google_search to help find missing info (Optional)
@@ -49,6 +51,8 @@ If you extracted something searchable, you can use Google search to try to find 
 - `"TechStart in San Francisco"` → `google_search("TechStart San Francisco")`
 
 Google search helps reduce questions needed, but accuracy is more important.
+
+**CRITICAL: After google_search successfully finds ALL required fields (name, location, service_type), you MUST immediately display the Stage A confirmation block (Step 4). Do NOT save yet - just show the confirmation block and ask "Does everything look correct?"**
 
 ---
 
