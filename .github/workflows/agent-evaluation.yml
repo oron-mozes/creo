@@ -131,6 +131,21 @@ jobs:
           echo "score=N/A" >> $GITHUB_OUTPUT
         fi
 
+    - name: Evaluate suggestions_agent
+      id: eval_suggestions
+      continue-on-error: true
+      env:
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      run: |
+        make judge AGENT=suggestions_agent 2>&1 | tee suggestions_output.txt
+        if [ -f agents/suggestions_agent/evaluation/report.json ]; then
+          SCORE=$(cat agents/suggestions_agent/evaluation/report.json | python3 -c "import sys, json; print(json.load(sys.stdin)['average_confidence_score'])")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+        else
+          echo "score=N/A" >> $GITHUB_OUTPUT
+        fi
+
     - name: Upload evaluation reports
       uses: actions/upload-artifact@v4
       if: always()
@@ -152,7 +167,8 @@ jobs:
             'campaign_brief_agent': '${{ steps.eval_campaign_brief.outputs.score }}',
             'outreach_message_agent': '${{ steps.eval_outreach_message.outputs.score }}',
             'campaign_builder_agent': '${{ steps.eval_campaign_builder.outputs.score }}',
-            'orchestrator_agent': '${{ steps.eval_orchestrator.outputs.score }}'
+            'orchestrator_agent': '${{ steps.eval_orchestrator.outputs.score }}',
+            'suggestions_agent': '${{ steps.eval_suggestions.outputs.score }}'
           };
 
           // Build score table
@@ -193,3 +209,4 @@ jobs:
         echo "| outreach_message_agent | ${{ steps.eval_outreach_message.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
         echo "| campaign_builder_agent | ${{ steps.eval_campaign_builder.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
         echo "| orchestrator_agent | ${{ steps.eval_orchestrator.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| suggestions_agent | ${{ steps.eval_suggestions.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
