@@ -1,21 +1,71 @@
 {
-  "average_confidence_score": 1.0,
-  "total_cases": 3,
+  "average_confidence_score": 0.727,
+  "total_cases": 13,
   "test_results": [
     {
-      "description": "Find 2 DIY creators in GB, France, or Germany with budget 100-300K, audience aged 20-50",
+      "description": "Find fashion influencers on Instagram and TikTok targeting Gen Z and young professionals",
       "score": 1.0,
-      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, identified the category, location, and target audience, and presented a list of matching creators with a greeting and budget explanation, fulfilling all requirements."
+      "rationale": "The agent correctly identified that it only supports YouTube, as per instructions, and informed the user about this limitation. It then appropriately pivoted to collect the necessary information for a YouTube search, fulfilling its role as an information-gathering agent before a search can be performed."
     },
     {
-      "description": "Find 1 lifestyle creator in Mexico City or Canada with 12K budget, audience aged 20-30",
-      "score": 1.0,
-      "rationale": "The agent correctly greets the user, explains the budget-to-follower calculation as per instructions, and asks for a reasonable clarification regarding the platform preference before proceeding with the search. This aligns with all instructions and expected behaviors."
+      "description": "Find tech review YouTubers for gaming audience",
+      "score": 0.4,
+      "rationale": "The agent correctly identified the niche and returned a list of YouTube channels, but critically failed to filter by the requested subscriber count (100K-1M), returning many channels far below 100K. It also incorrectly stated the subscriber range was 'inferred from budget' when the user explicitly provided it and no budget was given."
     },
     {
-      "description": "Find 1 lifestyle creator in Vancouver with budget 8K-13K, audience aged 20-30 on TikTok",
+      "description": "Find LinkedIn thought leaders for B2B audience",
       "score": 1.0,
-      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, included the required greeting and budget explanation, and presented a matching creator with all relevant details, fulfilling all instructions and expected behaviors."
+      "rationale": "The agent correctly identified that it only searches YouTube and informed the user about this limitation, as per instructions. It then offered to help if the user wanted YouTube creators, collecting the necessary information."
+    },
+    {
+      "description": "Tests the agent's ability to process all required and optional information for a single budget, calculate follower range, and call the find_creators tool.",
+      "score": 0.3,
+      "rationale": "The agent correctly identified the platform mismatch and location nuance, but failed to call the `find_creators` tool as expected by the test. It also did not explain the follower range."
+    },
+    {
+      "description": "Tests processing a budget range, calculating follower range using min_price * 6 and max_price * 20, and calling the find_creators tool.",
+      "score": 0.9,
+      "rationale": "The agent successfully processed the budget range, category, and number of creators, calling the tool with the correct price parameters and explaining the derived follower range. It failed to greet the user as expected."
+    },
+    {
+      "description": "Tests the agent's ability to identify and ask for both missing required pieces of information: category and budget.",
+      "score": 1.0,
+      "rationale": "The agent correctly greeted the user, clarified its YouTube-only scope, and accurately identified and asked for both missing required pieces of information (category and budget) as specified in the test description and expected behavior. It did not attempt to call a tool prematurely."
+    },
+    {
+      "description": "Tests the agent's ability to identify and ask for only the missing required budget.",
+      "score": 1.0,
+      "rationale": "The agent correctly greets the user, identifies the category ('beauty') from the request without asking for it again, and asks for all the remaining required campaign information, including the budget. It adheres to all specified expected behaviors and agent instructions, being thorough and conversational."
+    },
+    {
+      "description": "Tests the agent's ability to collect required info, then ask for optional details (platform, location, target audience) in a follow-up.",
+      "score": 0.2,
+      "rationale": "The agent failed to greet the user and immediately called the find_creators tool without first asking for optional details like platform, location, or target audience, directly violating multiple expected behaviors and the test's core objective."
+    },
+    {
+      "description": "Tests handling of specific platform, age keyword, and multiple interests in target audience, along with budget.",
+      "score": 0.8,
+      "rationale": "The agent successfully processed the complex request, including platform, age keyword, multiple interests, and budget, and called the tool to find creators. However, it failed to greet the user and its explanation of the budget-to-subscriber calculation was a disclaimer rather than a clear explanation of the follower range used."
+    },
+    {
+      "description": "Tests the agent's robustness in parsing budget ranges with non-standard formatting.",
+      "score": 0.2,
+      "rationale": "The agent failed to effectively parse and apply the budget range, returning creators with estimated prices far outside the specified $7,500 to $25,000 range. It also did not greet the user or explain the follower range as expected."
+    },
+    {
+      "description": "Tests budget calculation and explanation for a very low single budget value.",
+      "score": 0.9,
+      "rationale": "The agent correctly identified the niche, handled the platform constraint, accurately calculated and explained the subscriber range based on the budget, and asked for further clarifying details, demonstrating thoroughness. It met most expected behaviors, though it did not immediately call the `find_creators` tool, instead offering to do so after gathering more information, which is a reasonable step for a 'thorough' agent."
+    },
+    {
+      "description": "Tests the agent's response when the find_creators tool returns no results, suggesting criteria adjustment. This assumes the tool call has been made and returned no results.",
+      "score": 0.95,
+      "rationale": "The agent successfully identified the difficulty of the search, explained the lack of suitable results, provided context on the budget-to-subscriber calculation, and crucially, suggested adjusting the search criteria, fulfilling the core objective of the test. It missed a greeting, which was an expected behavior."
+    },
+    {
+      "description": "Tests the agent's ability to handle multi-turn conversation, update criteria, and incorporate new details from a follow-up message.",
+      "score": 0.8,
+      "rationale": "The agent successfully updated the location, budget, and target audience, and called the creator-finding tool. However, it failed to explain the follower range derived from the budget, which was an explicit expected behavior."
     }
   ]
 }

@@ -1,4 +1,4 @@
-"""Creator Finder Agent module for finding influencers/creators based on campaign criteria."""
+"""Creator Finder Agent module for finding YouTube creators based on campaign criteria."""
 
 from pathlib import Path
 import logging
@@ -25,25 +25,18 @@ creator_finder_agent = Agent(
     model='gemini-2.5-flash',
     name=AgentName.CREATOR_FINDER_AGENT.value,
     description=(
-        'You are a helpful assistant for finding influencers/creators based on campaign criteria. '
-        'IMPORTANT: Always start by greeting the user and explaining the budget-to-follower calculation BEFORE calling any tools. '
+        'You are a helpful assistant for finding YouTube creators/influencers based on campaign criteria. '
+        'IMPORTANT: You search YouTube Data API v3 exclusively - only YouTube channels are returned. '
+        'BUDGET FILTERING: Searches use expanded budget range (80%-120%) with subscriber-based filtering. '
+        'Results are flagged when estimated price exceeds max budget or is below 90% of min budget. '
+        'Always start by greeting the user and explaining the budget-to-subscriber calculation BEFORE calling any tools. '
         'When parsing budget ranges: '
         '- ALWAYS extract the EXACT numbers from user input '
         '(e.g., "100-10000$" means min_price=100, max_price=10000) '
-        '- Do NOT interpret or modify budget values '
-        '(e.g., do NOT change "100-10000" to "10000-15000") '
-        'When the user mentions target audience: '
-        '- Age ranges (e.g., "18-24", "25-34") and age keywords '
-        '(e.g., "millennials"=28-43, "gen z"=18-27, "teens"=13-19) '
-        'are converted to numeric ranges and matched against audience_age_range. '
-        'A creator matches if ANY part of their age range falls within the target range. '
-        '- Topics/interests (e.g., "fitness", "gaming", "food") are matched against '
-        'the audience_interests field. '
-        'When referencing a gender, see which field is higher: '
-        'audience_gender_male or audience_gender_female. '
-        'When referencing a geographical area, look at the location_country and location_city fields. '
-        'When referencing a category or niche, look at the subcategory, '
-        'audience_interests, and content_themes fields.'
+        '- Do NOT interpret or modify budget values. '
+        'Treat subscribers as followers - they are equivalent metrics. '
+        'Present results with subscriber count, engagement rate (views-based), video count, estimated pricing, '
+        'and budget status (clearly mark ⚠️ "Above your budget" or 💡 "Below budget threshold").'
     ),
     instruction=_full_instruction,
     tools=[find_creators],
