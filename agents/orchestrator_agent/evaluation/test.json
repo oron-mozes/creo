@@ -281,9 +281,9 @@
     }
   },
   {
-    "name": "new_user_vague_query",
-    "description": "Tests routing for a new user with a general, vague question when no business card exists.",
-    "user_message": "Can you help me with marketing?",
+    "name": "new_user_initial_greeting",
+    "description": "Tests a brand new user with no business card or stage, expecting routing to onboarding_agent.",
+    "user_message": "Hi, I'd like to start a new campaign.",
     "session_context": {
       "business_card": null,
       "workflow_state": {
@@ -293,13 +293,15 @@
     "expected_behavior": {
       "should_call_onboarding_agent_first": true,
       "should_call_frontdesk_agent_second": true,
-      "should_not_call_campaign_brief_agent_first": true
-    }
+      "should_not_handle_request_directly": true,
+      "should_not_switch_stage": true
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "new_user_providing_business_info",
-    "description": "Tests routing for a new user who immediately provides business details, without an existing business card.",
-    "user_message": "I have a small bakery called 'Sweet Treats' in Brooklyn.",
+    "name": "new_user_providing_url",
+    "description": "Tests a new user providing a business URL, but without a business card yet, expecting routing to onboarding_agent.",
+    "user_message": "Our website is https://example.com/brand",
     "session_context": {
       "business_card": null,
       "workflow_state": {
@@ -308,17 +310,17 @@
     },
     "expected_behavior": {
       "should_call_onboarding_agent_first": true,
-      "should_call_frontdesk_agent_second": true
-    }
+      "should_call_frontdesk_agent_second": true,
+      "should_not_extract_info_from_url": true
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "onboarding_in_progress_url_input",
-    "description": "Tests routing when the user is already in the onboarding stage and provides a URL.",
-    "user_message": "Our website is https://www.sweettreats.com",
+    "name": "onboarding_stage_follow_up",
+    "description": "Tests a user already in the onboarding stage, asking a follow-up question, expecting to stay in onboarding_agent.",
+    "user_message": "What kind of business details do you need?",
     "session_context": {
-      "business_card": {
-        "name": "Sweet Treats Bakery"
-      },
+      "business_card": null,
       "workflow_state": {
         "stage": "onboarding"
       }
@@ -326,17 +328,17 @@
     "expected_behavior": {
       "should_call_onboarding_agent_first": true,
       "should_call_frontdesk_agent_second": true,
-      "should_not_extract_info_directly": true
-    }
+      "should_stay_in_onboarding_stage": true
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "business_card_exists_wants_influencers",
-    "description": "Tests routing when a business card exists and the user explicitly asks for influencers, with no active stage.",
-    "user_message": "Find me some food bloggers for my bakery.",
+    "name": "business_card_exists_request_influencers",
+    "description": "Tests a user with an existing business card and no active stage, requesting influencers, expecting routing to campaign_brief_agent.",
+    "user_message": "I need to find some tech influencers.",
     "session_context": {
       "business_card": {
-        "name": "Sweet Treats Bakery",
-        "industry": "Food"
+        "name": "Tech Innovations Inc."
       },
       "workflow_state": {
         "stage": null
@@ -345,34 +347,17 @@
     "expected_behavior": {
       "should_call_campaign_brief_agent_first": true,
       "should_call_frontdesk_agent_second": true,
-      "should_not_call_creator_finder_agent_first": true
-    }
-  },
-  {
-    "name": "campaign_brief_stage_continuation",
-    "description": "Tests routing when the user is already in the campaign brief stage.",
-    "user_message": "Let's focus on Instagram for the campaign.",
-    "session_context": {
-      "business_card": {
-        "name": "Sweet Treats Bakery"
-      },
-      "workflow_state": {
-        "stage": "campaign_brief"
-      }
+      "should_not_call_creator_finder_directly": true
     },
-    "expected_behavior": {
-      "should_call_campaign_brief_agent_first": true,
-      "should_call_frontdesk_agent_second": true
-    }
+    "expected_response_contains": []
   },
   {
-    "name": "business_card_exists_wants_marketing_campaign",
-    "description": "Tests routing when a business card exists and the user wants to create a marketing campaign, with no active stage.",
-    "user_message": "I want to launch a new marketing campaign for our seasonal pastries.",
+    "name": "business_card_exists_request_marketing_campaign",
+    "description": "Tests a user with an existing business card and no active stage, requesting a marketing campaign, expecting routing to campaign_brief_agent.",
+    "user_message": "Help me set up a new marketing campaign for our product launch.",
     "session_context": {
       "business_card": {
-        "name": "Sweet Treats Bakery",
-        "product": "Pastries"
+        "name": "Product Launch Co."
       },
       "workflow_state": {
         "stage": null
@@ -381,15 +366,16 @@
     "expected_behavior": {
       "should_call_campaign_brief_agent_first": true,
       "should_call_frontdesk_agent_second": true
-    }
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "business_card_exists_wants_outreach_message",
-    "description": "Tests routing when a business card exists and the user specifically asks for an outreach message, with no active stage.",
-    "user_message": "Write a message to a local influencer about collaborating.",
+    "name": "business_card_exists_request_outreach_message",
+    "description": "Tests a user with an existing business card and no active stage, requesting help with an outreach message, expecting routing to outreach_message_agent.",
+    "user_message": "Draft an email to a potential creator.",
     "session_context": {
       "business_card": {
-        "name": "Sweet Treats Bakery"
+        "name": "Creative Agency"
       },
       "workflow_state": {
         "stage": null
@@ -398,15 +384,16 @@
     "expected_behavior": {
       "should_call_outreach_message_agent_first": true,
       "should_call_frontdesk_agent_second": true
-    }
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "creator_finder_stage_continuation",
-    "description": "Tests routing when the user is already in the creator finder stage.",
-    "user_message": "Filter by followers between 10k-50k.",
+    "name": "creator_finder_stage_active_follow_up",
+    "description": "Tests a user already in the creator_finder stage, asking for more options, expecting to stay in creator_finder_agent.",
+    "user_message": "Can you find creators with a younger audience?",
     "session_context": {
       "business_card": {
-        "name": "Sweet Treats Bakery"
+        "name": "Youth Brand"
       },
       "workflow_state": {
         "stage": "creator_finder"
@@ -414,16 +401,37 @@
     },
     "expected_behavior": {
       "should_call_creator_finder_agent_first": true,
-      "should_call_frontdesk_agent_second": true
-    }
+      "should_call_frontdesk_agent_second": true,
+      "should_stay_in_creator_finder_stage": true
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "business_card_exists_general_marketing_question",
-    "description": "Tests routing for a general marketing question when a business card exists and no stage is active.",
-    "user_message": "What's the best platform to reach Gen Z for a new snack product?",
+    "name": "campaign_brief_stage_active_clarification",
+    "description": "Tests a user in the campaign_brief stage, asking for clarification, expecting to stay in campaign_brief_agent.",
+    "user_message": "What do you mean by target demographic?",
     "session_context": {
       "business_card": {
-        "name": "Crunchy Bites Snacks"
+        "name": "Market Research Co."
+      },
+      "workflow_state": {
+        "stage": "campaign_brief"
+      }
+    },
+    "expected_behavior": {
+      "should_call_campaign_brief_agent_first": true,
+      "should_call_frontdesk_agent_second": true,
+      "should_stay_in_campaign_brief_stage": true
+    },
+    "expected_response_contains": []
+  },
+  {
+    "name": "business_card_exists_general_question_no_stage",
+    "description": "Tests a user with an existing business card and no active stage, asking a general question not directly matching specific intent keywords, expecting default routing to campaign_brief_agent.",
+    "user_message": "What are the next steps after planning?",
+    "session_context": {
+      "business_card": {
+        "name": "Consulting Firm"
       },
       "workflow_state": {
         "stage": null
@@ -431,25 +439,27 @@
     },
     "expected_behavior": {
       "should_call_campaign_brief_agent_first": true,
-      "should_call_frontdesk_agent_second": true,
-      "should_not_call_onboarding_agent_first": true
-    }
+      "should_call_frontdesk_agent_second": true
+    },
+    "expected_response_contains": []
   },
   {
-    "name": "campaign_builder_stage_continuation",
-    "description": "Tests routing when the user is already in the campaign builder stage.",
-    "user_message": "Let's finalize the budget for this campaign.",
+    "name": "outreach_message_stage_active_refinement",
+    "description": "Tests a user in the outreach_message stage, asking for a refinement, expecting to stay in outreach_message_agent.",
+    "user_message": "Can you make the tone more professional?",
     "session_context": {
       "business_card": {
-        "name": "Sweet Treats Bakery"
+        "name": "PR Experts"
       },
       "workflow_state": {
-        "stage": "campaign_builder"
+        "stage": "outreach_message"
       }
     },
     "expected_behavior": {
-      "should_call_campaign_builder_agent_first": true,
-      "should_call_frontdesk_agent_second": true
-    }
+      "should_call_outreach_message_agent_first": true,
+      "should_call_frontdesk_agent_second": true,
+      "should_stay_in_outreach_message_stage": true
+    },
+    "expected_response_contains": []
   }
 ]

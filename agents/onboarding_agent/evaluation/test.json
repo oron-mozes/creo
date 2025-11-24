@@ -216,206 +216,237 @@
     }
   },
   {
-    "name": "extract_all_fields_display_stage_a",
-    "description": "User provides all required fields (name, location, service_type) and an optional website in one message. Agent should extract, normalize, and immediately display the Stage A confirmation block.",
-    "user_message": "My company is 'Global Innovations', we're based in Berlin, Germany, and we do software development. Our site is globalinnovations.com/contact",
+    "name": "full_info_direct_save_happy_path",
+    "description": "Tests the happy path where all required and optional fields are provided in the initial message, leading to immediate confirmation (Stage B) and saving.",
+    "user_message": "My business is 'Global Solutions Inc.', we're an IT consulting firm located in Seattle, WA, and our website is globalsolutions.com.",
     "session_context": {},
     "expected_behavior": {
-      "should_extract_name": true,
-      "should_extract_location": true,
-      "should_extract_service_type": true,
-      "should_extract_website": true,
-      "should_normalize_location": true,
-      "should_normalize_website": true,
-      "should_not_call_google_search": true,
-      "should_display_stage_a_confirmation": true,
-      "should_not_save_business_card": true
+      "extract_all_fields": true,
+      "normalize_location": true,
+      "normalize_website": true,
+      "perform_google_search": true,
+      "display_stage_b_confirmation": true,
+      "call_save_business_card": true,
+      "ask_no_questions": true
     },
     "expected_response_contains": [
-      "Business Name: Global Innovations",
-      "Location: Berlin, Germany",
-      "Service Type: software development",
-      "Website: globalinnovations.com",
-      "Does everything look correct?"
-    ]
-  },
-  {
-    "name": "website_with_path_search_finds_all_stage_a",
-    "description": "User provides only a website with protocol and path. Agent should normalize the URL, use google_search to find all required fields, and then display the Stage A confirmation.",
-    "user_message": "Check out our website: https://www.creativecreations.co.uk/about-us",
-    "session_context": {},
-    "expected_behavior": {
-      "should_extract_website": true,
-      "should_normalize_website": true,
-      "should_call_normalize_url": true,
-      "should_call_google_search": true,
-      "should_display_stage_a_confirmation": true,
-      "should_not_save_business_card": true
-    },
-    "expected_response_contains": [
-      "Business Name: Creative Creations",
-      "Location: London, UK",
-      "Service Type: Digital Marketing Agency",
-      "Website: creativecreations.co.uk",
-      "Does everything look correct?"
-    ]
-  },
-  {
-    "name": "confirm_stage_a_to_stage_b_and_save",
-    "description": "Agent previously displayed a Stage A confirmation block. User confirms the information. Agent should display Stage B confirmation and call save_business_card.",
-    "user_message": "Yes, that's all correct!",
-    "session_context": {
-      "business_card_data": {
-        "name": "Creative Creations",
-        "location": "London, UK",
-        "service_type": "Digital Marketing Agency",
-        "website": "creativecreations.co.uk"
-      },
-      "last_agent_message": "Business Name: Creative Creations\nLocation: London, UK\nService Type: Digital Marketing Agency\nWebsite: creativecreations.co.uk\n\nDoes everything look correct?"
-    },
-    "expected_behavior": {
-      "should_display_stage_b_confirmation": true,
-      "should_call_save_business_card": true
-    },
-    "expected_response_contains": [
-      "BUSINESS_CARD_CONFIRMATION:",
+      "Business Name: Global Solutions Inc.",
+      "Location: Seattle, WA",
+      "Service Type: IT consulting firm",
+      "Website: globalsolutions.com",
+      "BUSINESS_CARD_CONFIRMATION",
       "Saving business card now."
     ],
     "expected_business_card": {
-      "name": "Creative Creations",
-      "location": "London, UK",
-      "service_type": "Digital Marketing Agency",
-      "website": "creativecreations.co.uk"
+      "name": "Global Solutions Inc.",
+      "location": "Seattle, WA",
+      "service_type": "IT consulting firm",
+      "website": "globalsolutions.com"
     }
   },
   {
-    "name": "missing_name_prompt",
-    "description": "User provides location, service_type, and website, but no business name. Agent should extract available info and prompt for the missing name.",
-    "user_message": "We're a small coffee shop in Portland, Oregon. Our website is thedailygrind.com",
+    "name": "website_only_trigger_search_stage_a",
+    "description": "Tests providing only a website URL, requiring the agent to normalize, search Google, and then present the Stage A confirmation block.",
+    "user_message": "Check out our site: https://www.innovatex.io/contact",
     "session_context": {},
     "expected_behavior": {
-      "should_extract_location": true,
-      "should_extract_service_type": true,
-      "should_extract_website": true,
-      "should_normalize_location": true,
-      "should_normalize_website": true,
-      "should_not_call_google_search": true,
-      "should_prompt_for_name": true,
-      "should_not_display_confirmation": true
+      "extract_website": true,
+      "normalize_url": true,
+      "perform_google_search": true,
+      "display_stage_a_confirmation": true,
+      "ask_no_questions": true,
+      "call_save_business_card": false
     },
     "expected_response_contains": [
-      "What's your business name?"
-    ]
-  },
-  {
-    "name": "name_and_full_address_search_missing_service_type",
-    "description": "User provides name and a full street address. Agent should normalize the location, attempt a google_search, and if service_type is still missing, prompt for it.",
-    "user_message": "Our business is 'Urban Gardens' and we're located at 789 Oak Avenue, Suite 100, Seattle, WA 98101.",
-    "session_context": {},
-    "expected_behavior": {
-      "should_extract_name": true,
-      "should_extract_location": true,
-      "should_normalize_location": true,
-      "should_call_google_search": true,
-      "should_prompt_for_service_type": true,
-      "should_not_display_confirmation": true
-    },
-    "expected_response_contains": [
-      "What type of service does Urban Gardens provide?"
-    ]
-  },
-  {
-    "name": "irrelevant_text_extract_partial_info_prompt",
-    "description": "User message contains irrelevant text mixed with some valid business information. Agent should extract only the relevant parts and prompt for missing required fields.",
-    "user_message": "Hey there! My cat's name is Mittens. Anyway, my business is 'FutureTech Solutions'. We're in Boston. I need to register it.",
-    "session_context": {},
-    "expected_behavior": {
-      "should_extract_name": true,
-      "should_extract_location": true,
-      "should_ignore_irrelevant_text": true,
-      "should_not_call_google_search": true,
-      "should_prompt_for_service_type": true,
-      "should_not_display_confirmation": true
-    },
-    "expected_response_contains": [
-      "What type of service does FutureTech Solutions provide?"
-    ]
-  },
-  {
-    "name": "user_corrects_location_redisplay_stage_a",
-    "description": "Agent previously displayed Stage A confirmation with an incorrect location. User corrects the location. Agent should update the field and redisplay Stage A.",
-    "user_message": "Actually, we're in Dallas, Texas, not Austin.",
-    "session_context": {
-      "business_card_data": {
-        "name": "Pioneer Logistics",
-        "location": "Austin, TX",
-        "service_type": "Logistics Services",
-        "website": "pioneerlogistics.com"
-      },
-      "last_agent_message": "Business Name: Pioneer Logistics\nLocation: Austin, TX\nService Type: Logistics Services\nWebsite: pioneerlogistics.com\n\nDoes everything look correct?"
-    },
-    "expected_behavior": {
-      "should_update_location": true,
-      "should_normalize_location": true,
-      "should_display_stage_a_confirmation": true,
-      "should_not_call_google_search": true,
-      "should_not_save_business_card": true
-    },
-    "expected_response_contains": [
-      "Business Name: Pioneer Logistics",
-      "Location: Dallas, TX",
-      "Service Type: Logistics Services",
-      "Website: pioneerlogistics.com",
+      "Business Name:",
+      "Location:",
+      "Service Type:",
+      "Website: innovatex.io",
       "Does everything look correct?"
-    ]
+    ],
+    "expected_business_card": null
   },
   {
-    "name": "generic_name_only_insufficient_search_prompt_location",
-    "description": "User provides only a generic business name. Agent attempts google_search, finds insufficient info due to ambiguity, and then prompts for location.",
-    "user_message": "My business is 'The Corner Store'.",
+    "name": "name_location_search_for_service_type_then_ask",
+    "description": "Tests providing name and location, requiring a Google search to find the service type. If service type is still missing, the agent should ask for it.",
+    "user_message": "We are 'Green Gardens' in Portland, Oregon.",
     "session_context": {},
     "expected_behavior": {
-      "should_extract_name": true,
-      "should_call_google_search": true,
-      "should_find_search_insufficient": true,
-      "should_prompt_for_location": true,
-      "should_not_display_confirmation": true
+      "extract_name": true,
+      "extract_location": true,
+      "normalize_location": true,
+      "perform_google_search": true,
+      "ask_for_missing_service_type": true,
+      "display_stage_a_confirmation": false,
+      "call_save_business_card": false
+    },
+    "expected_response_contains": [
+      "What type of service does Green Gardens provide?"
+    ],
+    "expected_business_card": null
+  },
+  {
+    "name": "generic_name_only_insufficient_search_ask_location",
+    "description": "Tests providing only a generic business name. The agent should attempt a Google search, find it insufficient, and then ask for the location.",
+    "user_message": "I own 'The Cafe'.",
+    "session_context": {},
+    "expected_behavior": {
+      "extract_name": true,
+      "perform_google_search": true,
+      "ask_for_missing_location": true,
+      "display_stage_a_confirmation": false,
+      "call_save_business_card": false
     },
     "expected_response_contains": [
       "What's your business location?"
-    ]
+    ],
+    "expected_business_card": null
   },
   {
-    "name": "website_search_finds_only_name_prompt_location",
-    "description": "User provides only a website. Agent normalizes URL, performs google_search, which only yields the business name. Agent then prompts for location.",
-    "user_message": "Our website is innovatesolutions.net",
+    "name": "full_address_normalization_ask_name",
+    "description": "Tests providing a full street address. The agent should normalize the location to City, State/Country and then ask for the business name.",
+    "user_message": "Our office is at 789 Tech Lane, Suite 200, San Jose, CA 95113.",
     "session_context": {},
     "expected_behavior": {
-      "should_extract_website": true,
-      "should_normalize_website": true,
-      "should_call_normalize_url": true,
-      "should_call_google_search": true,
-      "should_find_name_only_from_search": true,
-      "should_prompt_for_location": true,
-      "should_not_display_confirmation": true
-    },
-    "expected_response_contains": [
-      "What's your business location?"
-    ]
-  },
-  {
-    "name": "multiple_missing_fields_first_prompt_name",
-    "description": "User provides minimal information (only service type). Agent should identify name as the first missing required field and prompt for it.",
-    "user_message": "We provide custom software development.",
-    "session_context": {},
-    "expected_behavior": {
-      "should_extract_service_type": true,
-      "should_not_call_google_search": true,
-      "should_prompt_for_name": true,
-      "should_not_display_confirmation": true
+      "extract_location": true,
+      "normalize_location": true,
+      "ask_for_missing_name": true,
+      "display_stage_a_confirmation": false,
+      "call_save_business_card": false
     },
     "expected_response_contains": [
       "What's your business name?"
-    ]
+    ],
+    "expected_business_card": null
+  },
+  {
+    "name": "correction_after_stage_a_reconfirm",
+    "description": "Tests a correction scenario. Agent initially presents Stage A confirmation, user corrects a field, and agent updates and re-displays Stage A.",
+    "user_message": "Actually, our service type is 'digital marketing solutions'.",
+    "session_context": {
+      "extracted_data": {
+        "name": "Bright Spark",
+        "location": "London, UK",
+        "service_type": "marketing agency",
+        "website": null
+      },
+      "last_agent_message": "Business Name: Bright Spark\nLocation: London, UK\nService Type: marketing agency\nWebsite: Not provided\n\nDoes everything look correct?"
+    },
+    "expected_behavior": {
+      "update_service_type": true,
+      "display_stage_a_confirmation": true,
+      "call_save_business_card": false
+    },
+    "expected_response_contains": [
+      "Business Name: Bright Spark",
+      "Location: London, UK",
+      "Service Type: digital marketing solutions",
+      "Website: Not provided",
+      "Does everything look correct?"
+    ],
+    "expected_business_card": null
+  },
+  {
+    "name": "irrelevant_text_mixed_with_partial_info",
+    "description": "Tests the agent's ability to ignore irrelevant text while extracting valid business information and then asking for missing fields.",
+    "user_message": "Hey there! My business is 'Pet Palace', we sell pet supplies. My cat's name is Whiskers. What's next?",
+    "session_context": {},
+    "expected_behavior": {
+      "extract_name": true,
+      "extract_service_type": true,
+      "ignore_irrelevant_text": true,
+      "ask_for_missing_location": true,
+      "display_stage_a_confirmation": false,
+      "call_save_business_card": false
+    },
+    "expected_response_contains": [
+      "What's your business location?"
+    ],
+    "expected_business_card": null
+  },
+  {
+    "name": "malformed_url_normalization_then_ask",
+    "description": "Tests providing a slightly malformed URL with a path and query parameters. Agent should normalize it correctly and then ask for other required fields.",
+    "user_message": "Our site is www.example.com/products?id=123",
+    "session_context": {},
+    "expected_behavior": {
+      "extract_website": true,
+      "normalize_url": true,
+      "ask_for_missing_name": true,
+      "display_stage_a_confirmation": false,
+      "call_save_business_card": false
+    },
+    "expected_response_contains": [
+      "What's your business name?"
+    ],
+    "expected_business_card": null
+  },
+  {
+    "name": "complete_fields_after_question_trigger_stage_b",
+    "description": "Tests a scenario where the agent asks for a missing field, and the user provides all remaining required fields in the follow-up, triggering Stage B confirmation and saving.",
+    "user_message": "We're in Berlin, Germany, and we do software development.",
+    "session_context": {
+      "extracted_data": {
+        "name": "CodeCraft",
+        "location": null,
+        "service_type": null,
+        "website": null
+      },
+      "last_agent_message": "What's your business location? (e.g., Austin, Texas, USA / London, UK / San Francisco, CA, USA)"
+    },
+    "expected_behavior": {
+      "extract_location": true,
+      "extract_service_type": true,
+      "display_stage_b_confirmation": true,
+      "call_save_business_card": true,
+      "ask_no_questions": true
+    },
+    "expected_response_contains": [
+      "Business Name: CodeCraft",
+      "Location: Berlin, Germany",
+      "Service Type: software development",
+      "BUSINESS_CARD_CONFIRMATION",
+      "Saving business card now."
+    ],
+    "expected_business_card": {
+      "name": "CodeCraft",
+      "location": "Berlin, Germany",
+      "service_type": "software development",
+      "website": null
+    }
+  },
+  {
+    "name": "provide_missing_and_correct_existing_in_one_message",
+    "description": "Tests a complex scenario where the user provides a previously missing field AND corrects an already extracted field in a single follow-up message, leading to Stage B confirmation and saving.",
+    "user_message": "We're in Paris, France. Actually, we're a 'gourmet pastry shop'.",
+    "session_context": {
+      "extracted_data": {
+        "name": "Artisan Bakes",
+        "location": null,
+        "service_type": "bakery",
+        "website": null
+      },
+      "last_agent_message": "What's your business location? (e.g., Austin, Texas, USA / London, UK / San Francisco, CA, USA)"
+    },
+    "expected_behavior": {
+      "extract_location": true,
+      "update_service_type": true,
+      "display_stage_b_confirmation": true,
+      "call_save_business_card": true,
+      "ask_no_questions": true
+    },
+    "expected_response_contains": [
+      "Business Name: Artisan Bakes",
+      "Location: Paris, France",
+      "Service Type: gourmet pastry shop",
+      "BUSINESS_CARD_CONFIRMATION",
+      "Saving business card now."
+    ],
+    "expected_business_card": {
+      "name": "Artisan Bakes",
+      "location": "Paris, France",
+      "service_type": "gourmet pastry shop",
+      "website": null
+    }
   }
 ]
