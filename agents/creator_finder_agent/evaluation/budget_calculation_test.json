@@ -1,0 +1,33 @@
+[
+  {
+    "name": "single_budget_12k",
+    "description": "Single budget value with subscriber calculation",
+    "user_message": "Find tech creators with a budget of $12,000",
+    "expected_behavior": {
+      "should_calculate_subscribers": true,
+      "min_subscribers_should_be": 36000,
+      "max_subscribers_should_be": 240000,
+      "should_explain_calculation": true
+    }
+  },
+  {
+    "name": "budget_range_100_10000",
+    "description": "Budget range parsing - tricky formatting",
+    "user_message": "I need gaming creators with 100-10000$ budget",
+    "expected_behavior": {
+      "should_parse_min_budget": 100,
+      "should_parse_max_budget": 10000,
+      "should_not_modify_values": true,
+      "should_calculate_subscriber_range": true
+    }
+  },
+  {
+    "name": "budget_range_with_k",
+    "description": "Budget with K notation",
+    "user_message": "Find beauty influencers, budget 5K-15K",
+    "expected_behavior": {
+      "should_parse_k_notation": true,
+      "should_search_creators": true
+    }
+  }
+]
