@@ -36,9 +36,9 @@
     }
   },
   {
-    "name": "no_business_card_hard_gate",
-    "description": "Tests the hard gate when no business card is present.",
-    "user_message": "I want to promote my new product.",
+    "name": "hard_gate_missing_business_card",
+    "description": "Tests the hard gate condition where business card information is missing from the session context. The agent should stop immediately and ask for business info.",
+    "user_message": "I want to find influencers to promote my new clothing line.",
     "session_context": {
       "business_card": null
     },
@@ -48,208 +48,244 @@
       "should_request_business_info": true
     },
     "expected_response_contains": [
-      "I need to know more about your business first"
+      "I need to know more about your business first."
     ]
   },
   {
-    "name": "extract_all_info_from_one_message",
-    "description": "Tests extraction of all campaign details from a single user message.",
-    "user_message": "I want to find 5 Instagram influencers in Austin, TX to promote my new vegan cookies. Budget is $150 per creator.",
+    "name": "full_info_in_first_message_happy_path",
+    "description": "Tests a scenario where the user provides all necessary campaign details in their initial message, including a budget range. The agent should extract all information, use the upper budget value, and go straight to confirmation without asking questions.",
+    "user_message": "I want to increase brand awareness for my new vegan restaurant in Austin. Looking for 3 TikTok creators, budget $200-400 per post, targeting foodies ages 18-35.",
     "session_context": {
       "business_card": {
-        "name": "Austin Vegan Bakery",
+        "name": "Green Eats",
         "location": "Austin, TX",
-        "service_type": "Bakery",
-        "website": "https://austinveganbakery.com",
-        "social_links": "@austinveganbakery"
+        "service_type": "Vegan Restaurant",
+        "website": "https://greeneats.com"
       }
     },
     "expected_behavior": {
-      "should_extract_all_fields": true,
-      "should_not_ask_further_questions": true,
-      "should_present_confirmation": true
+      "should_extract_goal": true,
+      "should_extract_platform": true,
+      "should_extract_num_creators": true,
+      "should_extract_budget_upper_value": true,
+      "should_extract_target_audience": true,
+      "should_go_to_confirmation_immediately": true,
+      "should_not_ask_any_questions": true
     },
     "expected_response_contains": [
-      "Campaign Goal: Promote new vegan cookies",
-      "Platform: Instagram",
-      "Budget per Creator: $150",
-      "Number of Creators: 5"
+      "Let me confirm",
+      "Green Eats",
+      "increase brand awareness",
+      "TikTok",
+      "$400",
+      "3 influencers",
+      "foodies ages 18-35"
     ]
   },
   {
-    "name": "budget_range_extraction",
-    "description": "Tests budget range extraction, ensuring the upper value is used.",
-    "user_message": "I want to promote my new app. My budget is $200-400 per creator.",
+    "name": "goal_not_explicitly_stated_agent_asks_goal",
+    "description": "Tests when the user provides a generic request without a clear goal pattern. The agent should prioritize asking for the campaign goal.",
+    "user_message": "Can you help me with an influencer campaign?",
     "session_context": {
       "business_card": {
-        "name": "AppDev Inc",
+        "name": "Adventure Gear Co.",
+        "location": "Denver, CO",
+        "service_type": "Outdoor Equipment Retailer",
+        "website": "https://adventuregear.com"
+      }
+    },
+    "expected_behavior": {
+      "should_ask_for_goal_first": true,
+      "should_reference_business_name": true,
+      "should_not_ask_other_questions": true
+    },
+    "expected_response_contains": [
+      "Adventure Gear Co.",
+      "What's the main goal of this campaign?"
+    ]
+  },
+  {
+    "name": "goal_extracted_agent_asks_platform",
+    "description": "Tests when the goal is clearly stated in the user's first message using a goal-oriented pattern. The agent should extract the goal and then ask for the next priority missing field: platform.",
+    "user_message": "I want to drive more foot traffic to my cafe.",
+    "session_context": {
+      "business_card": {
+        "name": "The Daily Grind",
+        "location": "Portland, OR",
+        "service_type": "Coffee Shop",
+        "website": "https://dailygrind.com"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_goal": true,
+      "should_not_ask_for_goal_again": true,
+      "should_ask_for_platform_next": true,
+      "should_reference_business_name": true
+    },
+    "expected_response_contains": [
+      "The Daily Grind",
+      "drive more foot traffic",
+      "Which platform do you want to focus on?"
+    ]
+  },
+  {
+    "name": "location_override_and_budget_range_extraction",
+    "description": "Tests the agent's ability to override the business card location if the user specifies a different target location for the campaign, and correctly extract the upper value from a budget range.",
+    "user_message": "I want to promote my online art classes to customers across the US, specifically targeting art enthusiasts in California. Budget is $150-350 per creator.",
+    "session_context": {
+      "business_card": {
+        "name": "Creative Canvas",
+        "location": "New York, NY",
+        "service_type": "Online Art School",
+        "website": "https://creativecanvas.art"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_goal": true,
+      "should_override_location": true,
+      "should_extract_budget_upper_value": true,
+      "should_ask_for_platform_next": true
+    },
+    "expected_response_contains": [
+      "Creative Canvas",
+      "promote my online art classes",
+      "California",
+      "$350",
+      "Which platform do you want to focus on?"
+    ]
+  },
+  {
+    "name": "number_of_creators_and_audience_hint_extraction",
+    "description": "Tests the extraction of the number of creators and a target audience hint from the initial message, then asking for the next missing field (platform).",
+    "user_message": "I need 5 influencers for my new line of eco-friendly skincare products. Target audience is conscious consumers.",
+    "session_context": {
+      "business_card": {
+        "name": "Pure Earth Beauty",
+        "location": "Seattle, WA",
+        "service_type": "Sustainable Skincare",
+        "website": "https://pureearth.com"
+      }
+    },
+    "expected_behavior": {
+      "should_extract_goal": true,
+      "should_extract_num_creators": true,
+      "should_extract_audience_hint": true,
+      "should_ask_for_platform_next": true
+    },
+    "expected_response_contains": [
+      "Pure Earth Beauty",
+      "5 influencers",
+      "conscious consumers",
+      "Which platform would you like to focus on?"
+    ]
+  },
+  {
+    "name": "multi_turn_goal_and_platform_collection",
+    "description": "Simulates a multi-turn conversation where the agent first asks for the goal, then extracts it from the user's response, and then asks for the platform.",
+    "user_message": "I want to increase online sales for my handmade jewelry.",
+    "session_context": {
+      "business_card": {
+        "name": "Sparkle & Stone",
+        "location": "Miami, FL",
+        "service_type": "Handmade Jewelry",
+        "website": "https://sparkleandstone.com"
+      },
+      "last_agent_message": "Great! I can help you plan an influencer campaign for Sparkle & Stone. What's the main goal of this campaign?"
+    },
+    "expected_behavior": {
+      "should_extract_goal_from_current_message": true,
+      "should_ask_for_platform_next": true,
+      "should_not_ask_multiple_questions": true
+    },
+    "expected_response_contains": [
+      "increase online sales",
+      "Which platform do you want to focus on?"
+    ]
+  },
+  {
+    "name": "budget_without_currency_symbol",
+    "description": "Tests the agent's ability to extract a budget value even when no currency symbol is provided, assuming it's a monetary amount.",
+    "user_message": "I want to launch my new productivity app. Budget 750 per creator.",
+    "session_context": {
+      "business_card": {
+        "name": "FocusFlow",
         "location": "San Francisco, CA",
         "service_type": "Software Development",
-        "website": "https://appdev.com",
-        "social_links": null
+        "website": "https://focusflow.app"
       }
     },
     "expected_behavior": {
-      "should_extract_budget_upper_value": true,
       "should_extract_goal": true,
-      "should_ask_platform": true
+      "should_extract_budget_without_symbol": true,
+      "should_ask_for_platform_next": true
     },
     "expected_response_contains": [
-      "budget in mind per creator"
+      "FocusFlow",
+      "launch my new productivity app",
+      "750",
+      "Which platform would work best?"
     ]
   },
   {
-    "name": "location_override",
-    "description": "Tests location override when the user specifies a different target location.",
-    "user_message": "I want to promote my product to customers in Canada.",
+    "name": "generic_start_agent_greets_and_asks_goal",
+    "description": "Tests a very generic user opening. The agent should greet, reference the business, and then ask for the goal as the first priority.",
+    "user_message": "Hello, I need some help.",
     "session_context": {
       "business_card": {
-        "name": "GlobalGadgets",
-        "location": "New York, NY",
-        "service_type": "Electronics Retail",
-        "website": "https://globalgadgets.com",
-        "social_links": "@globalgadgets"
+        "name": "Wellness Retreats",
+        "location": "Sedona, AZ",
+        "service_type": "Wellness Travel Agency",
+        "website": "https://wellnessretreats.com"
       }
     },
     "expected_behavior": {
-      "should_override_business_location": true,
-      "should_extract_goal": true,
-      "should_ask_platform": true
+      "should_greet_user": true,
+      "should_reference_business_name": true,
+      "should_ask_for_goal_first": true
     },
     "expected_response_contains": [
-      "promote my product to customers in Canada"
+      "Great!",
+      "Wellness Retreats",
+      "What's the main goal of this campaign?"
     ]
   },
   {
-    "name": "number_of_creators_specified",
-    "description": "Tests handling when the user specifies the number of creators.",
-    "user_message": "I need 3 influencers to promote my new service.",
+    "name": "confirmation_and_tool_call_simulation",
+    "description": "Simulates the final step where all information has been gathered and the user confirms the brief. The agent should output the CAMPAIGN_BRIEF_CONFIRMATION JSON.",
+    "user_message": "Yes, that looks perfect!",
     "session_context": {
       "business_card": {
-        "name": "Service Solutions",
-        "location": "London, UK",
-        "service_type": "Consulting",
-        "website": "https://servicesolutions.com",
-        "social_links": null
-      }
-    },
-    "expected_behavior": {
-      "should_extract_num_creators": true,
-      "should_not_ask_num_creators_again": true,
-      "should_ask_platform": true
-    },
-    "expected_response_contains": [
-      "Which platform would you like to focus on"
-    ]
-  },
-  {
-    "name": "goal_detection_promotion_pattern",
-    "description": "Tests goal detection using a promotion pattern in the user message.",
-    "user_message": "I want to promote my new organic coffee.",
-    "session_context": {
-      "business_card": {
-        "name": "Coffee Bliss",
-        "location": "Seattle, WA",
-        "service_type": "Cafe",
-        "website": "https://coffeebliss.com",
-        "social_links": "@coffeebliss"
-      }
-    },
-    "expected_behavior": {
-      "should_extract_goal_automatically": true,
-      "should_not_ask_goal_again": true,
-      "should_ask_platform": true
-    },
-    "expected_response_contains": [
-      "Which platform do you want to focus on"
-    ]
-  },
-  {
-    "name": "goal_detection_goal_oriented_pattern",
-    "description": "Tests goal detection using a goal-oriented pattern in the user message.",
-    "user_message": "Looking for influencers to increase brand awareness.",
-    "session_context": {
-      "business_card": {
-        "name": "BrandBoost Agency",
-        "location": "Los Angeles, CA",
-        "service_type": "Marketing Agency",
-        "website": "https://brandboost.com",
-        "social_links": "@brandboost"
-      }
-    },
-    "expected_behavior": {
-      "should_extract_goal_automatically": true,
-      "should_not_ask_goal_again": true,
-      "should_ask_platform": true
-    },
-    "expected_response_contains": [
-      "Which platform do you want to focus on"
-    ]
-  },
-  {
-    "name": "platform_extraction_from_message",
-    "description": "Tests platform extraction when the user mentions it directly.",
-    "user_message": "I need some TikTok creators to promote my new dance studio.",
-    "session_context": {
-      "business_card": {
-        "name": "Dance Mania",
-        "location": "Miami, FL",
-        "service_type": "Dance Studio",
-        "website": "https://dancemania.com",
-        "social_links": "@dancemania"
-      }
-    },
-    "expected_behavior": {
-      "should_extract_platform": true,
-      "should_extract_goal": true,
-      "should_not_ask_platform_again": true,
-      "should_ask_audience": true
-    },
-    "expected_response_contains": [
-      "Any specific audience you want to reach?"
-    ]
-  },
-  {
-    "name": "audience_extraction_from_message",
-    "description": "Tests audience extraction when the user mentions it directly.",
-    "user_message": "I want to promote my product to young professionals.",
-    "session_context": {
-      "business_card": {
-        "name": "OfficeSupplies",
+        "name": "Gourmet Bites",
         "location": "Chicago, IL",
-        "service_type": "Office Supplies",
-        "website": "https://officesupplies.com",
-        "social_links": null
-      }
+        "service_type": "Fine Dining Restaurant",
+        "website": "https://gourmetbites.com"
+      },
+      "campaign_brief_draft": {
+        "goal": "Drive foot traffic to the restaurant",
+        "platform": "Instagram",
+        "location": "Chicago",
+        "niche": "Food",
+        "budget_per_creator": 300.0,
+        "num_creators": 2,
+        "business_name": "Gourmet Bites",
+        "product_info": "New seasonal menu",
+        "audience_demographics": "Foodies ages 30-50",
+        "audience_interests": "Fine dining, culinary experiences"
+      },
+      "last_agent_message": "Let me confirm the campaign brief for Gourmet Bites:\n\n**Campaign Goal:** Drive foot traffic to the restaurant\n**Location:** Chicago, IL\n**Platform:** Instagram\n**Niche:** Food/Fine Dining\n**Budget per Creator:** $300\n**Number of Creators:** 2 creators\n**Target Audience:** Foodies ages 30-50 interested in fine dining\n\nDoes this look good?"
     },
     "expected_behavior": {
-      "should_extract_audience": true,
-      "should_extract_goal": true,
-      "should_ask_platform": true
+      "should_output_confirmation_json": true,
+      "should_not_ask_further_questions": true,
+      "should_confirm_saving_brief": true
     },
     "expected_response_contains": [
-      "Which platform do you want to focus on"
-    ]
-  },
-  {
-    "name": "follow_up_question_priority",
-    "description": "Tests the correct order of follow-up questions when multiple fields are missing.",
-    "user_message": "I want to promote my cafe.",
-    "session_context": {
-      "business_card": {
-        "name": "The Cozy Cafe",
-        "location": "Paris, France",
-        "service_type": "Cafe",
-        "website": "https://thecozycafe.fr",
-        "social_links": "@thecozycafe"
-      }
-    },
-    "expected_behavior": {
-      "should_ask_platform_first": true,
-      "should_not_ask_goal_again": true
-    },
-    "expected_response_contains": [
-      "Which platform do you want to focus on"
+      "CAMPAIGN_BRIEF_CONFIRMATION",
+      "\"goal\": \"Drive foot traffic to the restaurant\"",
+      "\"platform\": \"Instagram\"",
+      "\"budget_per_creator\": 300.0",
+      "\"num_creators\": 2",
+      "\"business_name\": \"Gourmet Bites\""
     ]
   }
 ]

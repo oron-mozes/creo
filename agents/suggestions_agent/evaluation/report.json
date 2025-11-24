@@ -1,0 +1,56 @@
+{
+  "average_confidence_score": 0.96,
+  "total_cases": 10,
+  "test_results": [
+    {
+      "description": "Tests the agent's response for a brand new user with no business card or past sessions, expecting a generic welcome and diverse general suggestions.",
+      "score": 0.8,
+      "rationale": "The agent's response is mostly correct, but it does not fully utilize the business information provided in the input (e.g., 'I have a local coffee shop' could be more personalized with location or service type)."
+    },
+    {
+      "description": "Tests the agent's response for a returning user with a complete business card but no prior sessions, expecting a personalized welcome and specific suggestions.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, producing a personalized welcome message and specific campaign suggestions that utilize the user's business information."
+    },
+    {
+      "description": "Tests the agent's response for a returning user with a complete business card and past sessions, expecting a personalized welcome and suggestions building on past activities without repetition.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, producing a personalized welcome message and campaign suggestions that build on past activities without repetition."
+    },
+    {
+      "description": "Tests the agent's response when only location information is available in the business card (along with name and service type), expecting personalization based on location.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, producing a personalized welcome message and campaign suggestions that utilize location information."
+    },
+    {
+      "description": "Tests the agent's response when only the business name is provided in the business card, expecting personalization using the name.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, producing a personalized welcome message and four campaign suggestions that meet all the specified criteria."
+    },
+    {
+      "description": "Tests the agent's response when only the service type is provided in the business card, expecting personalization using the service type.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, generating a personalized welcome message using the service type and providing four campaign suggestions that use the service type."
+    },
+    {
+      "description": "Tests the agent's robustness when business card fields (location, service_type) are present but contain empty strings instead of null, expecting graceful handling (ignoring empty strings for personalization).",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, generating a personalized welcome message and campaign suggestions that meet all the specified criteria."
+    },
+    {
+      "description": "Tests the agent's ability to consider multiple diverse past sessions and offer new, complementary suggestions, avoiding direct repetition.",
+      "score": 0.9,
+      "rationale": "The agent's response is mostly satisfactory, following the instructions and exhibiting most of the expected behaviors, but it could improve by providing more diverse suggestions that build on multiple past sessions."
+    },
+    {
+      "description": "Tests the agent's ability to take a broad past session and suggest more specific or new angles for future campaigns, given a full business card.",
+      "score": 1.0,
+      "rationale": "The agent's response perfectly satisfies all expectations and follows the instructions, producing a personalized welcome message and four campaign suggestions that are tailored to the user's business."
+    },
+    {
+      "description": "Tests if the agent's suggestions respect the 50-character limit even when the business name and service type are very long, forcing conciseness.",
+      "score": 0.9,
+      "rationale": "The agent's response is mostly satisfactory, but it exceeds the 50-character limit for two of the campaign suggestions and does not fully utilize business information concisely in all suggestions."
+    }
+  ]
+}

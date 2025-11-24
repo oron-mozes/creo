@@ -197,217 +197,202 @@
     }
   },
   {
-    "name": "basic_campaign_planning",
-    "description": "Tests a simple campaign plan generation for Instagram and Gen Z.",
-    "user_message": "Plan a campaign for Instagram targeting Gen Z.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "test_case_1_happy_path_single_budget",
+    "description": "Tests the agent's ability to process all required and optional information for a single budget, calculate follower range, and call the find_creators tool.",
+    "user_message": "I need 5 food creators on Instagram in New York City, targeting millennials interested in healthy eating. My budget is $12,000.",
+    "session_context": {},
     "expected_behavior": {
-      "should_suggest_visual_content": true,
-      "should_mention_influencers": true,
-      "should_not_recommend_linkedin": true
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_use_budget_parameter": true,
+      "should_set_max_results_to_5": true,
+      "should_include_platform_and_location": true,
+      "should_include_age_keyword_and_interest_in_target_audience": true
     },
     "expected_response_contains": [
+      "Hello!",
+      "Based on your budget of $12,000",
+      "36,000-240,000 followers",
       "Instagram",
+      "New York City",
+      "food content creators"
+    ]
+  },
+  {
+    "name": "test_case_2_happy_path_budget_range",
+    "description": "Tests processing a budget range, calculating follower range using min_price * 6 and max_price * 20, and calling the find_creators tool.",
+    "user_message": "I have a budget range of $6,000 to $24,000 for travel influencers. I need 10 creators.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_use_min_price_and_max_price_parameters": true,
+      "should_set_max_results_to_10": true
+    },
+    "expected_response_contains": [
+      "Hello!",
+      "Based on your budget range of $6,000-$24,000",
+      "36,000-480,000 followers",
+      "travel creators"
+    ]
+  },
+  {
+    "name": "test_case_3_missing_category_and_budget",
+    "description": "Tests the agent's ability to identify and ask for both missing required pieces of information: category and budget.",
+    "user_message": "I need creators in London, targeting Gen Z.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_greet_user": true,
+      "should_ask_for_category": true,
+      "should_ask_for_budget": true,
+      "should_not_call_find_creators_tool": true
+    },
+    "expected_response_contains": [
+      "Hello!",
+      "What type of content?",
+      "What's your total campaign budget?"
+    ]
+  },
+  {
+    "name": "test_case_4_missing_budget_only",
+    "description": "Tests the agent's ability to identify and ask for only the missing required budget.",
+    "user_message": "I need some beauty bloggers for my new skincare line.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_greet_user": true,
+      "should_ask_for_budget": true,
+      "should_not_ask_for_category": true,
+      "should_not_call_find_creators_tool": true
+    },
+    "expected_response_contains": [
+      "Hello!",
+      "What's your total campaign budget?"
+    ]
+  },
+  {
+    "name": "test_case_5_partial_info_follow_up_optional",
+    "description": "Tests the agent's ability to collect required info, then ask for optional details (platform, location, target audience) in a follow-up.",
+    "user_message": "I need food bloggers, budget $5000.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_greet_user": true,
+      "should_ask_for_platform": true,
+      "should_ask_for_location": true,
+      "should_ask_for_target_audience": true,
+      "should_not_call_find_creators_tool_yet": true
+    },
+    "expected_response_contains": [
+      "Hello!",
+      "Which platform do you prefer?",
+      "Any specific location/region you're targeting?",
+      "Who is your target audience?"
+    ]
+  },
+  {
+    "name": "test_case_6_complex_target_audience_and_platform",
+    "description": "Tests handling of specific platform, age keyword, and multiple interests in target audience, along with budget.",
+    "user_message": "Find tech creators on YouTube, budget $10,000, target Gen Z interested in gaming and new gadgets.",
+    "session_context": {},
+    "expected_behavior": {
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_set_platform_to_youtube": true,
+      "should_include_age_keyword_and_multiple_interests_in_target_audience": true
+    },
+    "expected_response_contains": [
+      "Hello!",
+      "Based on your budget of $10,000",
+      "30,000-200,000 followers",
+      "YouTube tech creators",
       "Gen Z",
-      "influencers",
-      "visual content"
-    ],
-    "expected_business_card": {}
+      "gaming and new gadgets"
+    ]
   },
   {
-    "name": "b2b_campaign_linkedin_twitter",
-    "description": "Tests campaign planning for B2B decision makers on LinkedIn and Twitter.",
-    "user_message": "I need a campaign for LinkedIn and Twitter targeting B2B decision makers.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "test_case_7_budget_range_unusual_format",
+    "description": "Tests the agent's robustness in parsing budget ranges with non-standard formatting.",
+    "user_message": "I'm looking for lifestyle creators, my budget is from $7,500 to $25,000 dollars.",
+    "session_context": {},
     "expected_behavior": {
-      "should_suggest_thought_leadership": true,
-      "should_mention_case_studies": true,
-      "should_not_recommend_tiktok": true
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_parse_min_price_correctly": true,
+      "should_parse_max_price_correctly": true
     },
     "expected_response_contains": [
-      "LinkedIn",
-      "Twitter",
-      "B2B",
-      "thought leadership",
-      "case studies"
-    ],
-    "expected_business_card": {}
+      "Hello!",
+      "Based on your budget range of $7,500-$25,000",
+      "45,000-500,000 followers"
+    ]
   },
   {
-    "name": "multiple_platforms_and_audiences",
-    "description": "Tests campaign planning with multiple platforms and target audiences.",
-    "user_message": "Plan a campaign for Facebook, Instagram, and TikTok targeting Gen Z and Millennials.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "test_case_8_very_low_budget_single",
+    "description": "Tests budget calculation and explanation for a very low single budget value.",
+    "user_message": "I need beauty creators, budget $100, any platform.",
+    "session_context": {},
     "expected_behavior": {
-      "should_suggest_different_content_types": true,
-      "should_recommend_ads": true,
-      "should_address_both_audiences": true
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_use_budget_parameter": true
     },
     "expected_response_contains": [
-      "Facebook",
-      "Instagram",
-      "TikTok",
-      "Gen Z",
-      "Millennials",
-      "ads"
-    ],
-    "expected_business_card": {}
+      "Hello!",
+      "Based on your budget of $100",
+      "300-2,000 followers",
+      "beauty creators"
+    ]
   },
   {
-    "name": "unsupported_platform",
-    "description": "Tests error handling when an unsupported platform is provided.",
-    "user_message": "Plan a campaign for MySpace targeting Baby Boomers.",
+    "name": "test_case_9_no_results_scenario_agent_response",
+    "description": "Tests the agent's response when the find_creators tool returns no results, suggesting criteria adjustment. This assumes the tool call has been made and returned no results.",
+    "user_message": "Find fitness creators in Antarctica for $5000.",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
+      "last_tool_call_result": "No creators found matching the criteria."
     },
     "expected_behavior": {
-      "should_warn_about_unsupported_platform": true,
-      "should_still_suggest_alternatives": false
+      "should_greet_user": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true,
+      "should_suggest_adjusting_criteria_if_no_results": true
     },
     "expected_response_contains": [
-      "MySpace",
-      "not supported"
-    ],
-    "expected_business_card": {}
+      "Hello!",
+      "Based on your budget of $5,000",
+      "15,000-100,000 followers",
+      "no results",
+      "adjusting the criteria"
+    ]
   },
   {
-    "name": "vague_target_audience",
-    "description": "Tests campaign planning with a vague target audience.",
-    "user_message": "Plan a campaign for Instagram targeting everyone.",
+    "name": "test_case_10_correction_and_refinement_multi_turn",
+    "description": "Tests the agent's ability to handle multi-turn conversation, update criteria, and incorporate new details from a follow-up message.",
+    "user_message": "Actually, make it London, and budget $8,000. Target young adults.",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
+      "last_agent_message": "Hello! I'd be happy to help you find fashion influencers. To find the best matches, I need to know: What's your total campaign budget? Which platform do you prefer? (YouTube, Instagram, TikTok, or any) Who is your target audience?",
+      "previous_user_request": {
+        "category": "fashion",
+        "location": "Paris"
+      }
     },
     "expected_behavior": {
-      "should_ask_for_clarification": true,
-      "should_not_assume_demographics": true
+      "should_update_location_to_london": true,
+      "should_add_budget": true,
+      "should_add_target_audience": true,
+      "should_explain_follower_range": true,
+      "should_call_find_creators_tool": true
     },
     "expected_response_contains": [
-      "clarify",
-      "target audience"
-    ],
-    "expected_business_card": {}
-  },
-  {
-    "name": "no_platforms_specified",
-    "description": "Tests error handling when no platforms are specified.",
-    "user_message": "Plan a campaign targeting Gen Z.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_ask_for_platforms": true,
-      "should_not_suggest_specific_content": false
-    },
-    "expected_response_contains": [
-      "platforms",
-      "specify"
-    ],
-    "expected_business_card": {}
-  },
-  {
-    "name": "complex_demographics",
-    "description": "Tests campaign planning with complex demographic targeting.",
-    "user_message": "Plan a campaign for LinkedIn targeting CEOs and CFOs of Fortune 500 companies in the tech industry.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_suggest_highly_targeted_ads": true,
-      "should_recommend_premium_content": true
-    },
-    "expected_response_contains": [
-      "LinkedIn",
-      "CEOs",
-      "CFOs",
-      "Fortune 500",
-      "tech",
-      "sponsored content"
-    ],
-    "expected_business_card": {}
-  },
-  {
-    "name": "budget_constraints",
-    "description": "Tests campaign planning while accounting for budget constraints.",
-    "user_message": "Plan a campaign for Instagram and TikTok targeting Gen Z with a budget of $500.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_suggest_organic_strategies": true,
-      "should_prioritize_low_cost_ads": true
-    },
-    "expected_response_contains": [
-      "Instagram",
-      "TikTok",
-      "Gen Z",
-      "budget",
-      "organic",
-      "cost-effective"
-    ],
-    "expected_business_card": {}
-  },
-  {
-    "name": "campaign_goal_specification",
-    "description": "Tests campaign planning with a specified campaign goal.",
-    "user_message": "Plan a campaign for Twitter targeting tech professionals to increase brand awareness.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
-    "expected_behavior": {
-      "should_focus_on_engagement": true,
-      "should_suggest_hashtag_strategies": true
-    },
-    "expected_response_contains": [
-      "Twitter",
-      "tech professionals",
-      "brand awareness",
-      "engagement",
-      "hashtags"
-    ],
-    "expected_business_card": {}
-  },
-  {
-    "name": "correction_of_platform",
-    "description": "Tests the agent's ability to recover from a correction of platform choice.",
-    "user_message": "Actually, let's switch that to TikTok instead.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": "Okay, I can plan a campaign for Facebook targeting Gen Z.  We should focus on visual content and short videos. Does that sound right?"
-    },
-    "expected_behavior": {
-      "should_acknowledge_previous_suggestion": true,
-      "should_allow_user_to_correct_platform": true
-    },
-    "expected_response_contains": [
-      "TikTok",
-      "Gen Z",
-      "short-form video"
-    ],
-    "expected_business_card": {}
+      "Great!",
+      "London",
+      "Based on your budget of $8,000",
+      "24,000-160,000 followers",
+      "young adults",
+      "fashion content creators"
+    ]
   }
 ]

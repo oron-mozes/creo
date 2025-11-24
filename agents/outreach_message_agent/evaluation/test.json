@@ -48,242 +48,251 @@
     }
   },
   {
-    "name": "happy_path_tech_review",
-    "description": "Tests the happy path for a tech review collaboration with a YouTuber.",
-    "user_message": "I need to reach out to @techguru (Tech YouTuber, 1M subscribers) for a product review of our new noise-canceling headphones. Key points: early access, honest review, affiliate link. Tone: Professional and enthusiastic.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "send_first_email_happy_path",
+    "description": "Tests the complete happy path: user provides all info, agent confirms, user approves, and email is sent via tool.",
+    "user_message": "I want to send an email to John Doe at john.doe@example.com. The campaign is for a product review of a new gaming keyboard, budget is $1000, platform is YouTube. Please confirm and send.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_include_key_points": true,
-      "should_match_tone": true,
-      "should_include_call_to_action": true
+      "should_ask_for_user_approval": true,
+      "should_call_send_outreach_email": true,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "techguru",
-      "noise-canceling headphones",
-      "early access",
-      "affiliate link"
-    ],
-    "expected_business_card": {}
+      "confirm",
+      "send",
+      "John Doe",
+      "john.doe@example.com"
+    ]
   },
   {
-    "name": "fashion_influencer_sustainability",
-    "description": "Tests collaboration with a fashion influencer for a sustainable brand.",
-    "user_message": "Write an outreach message to @eco_chic (Fashion Instagram influencer, 300K followers) for a sponsored post about our sustainable activewear. Key points: eco-friendly materials, ethical production, brand values. Tone: Casual and friendly, emphasizing shared values.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "missing_creator_email",
+    "description": "Tests agent's ability to identify and request missing creator email when only name and campaign are provided.",
+    "user_message": "Send an email to Jane Smith for the fashion brand collaboration. The campaign is for 3 Instagram posts promoting sustainable clothing, budget $750.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_emphasize_sustainability": true,
-      "should_match_casual_tone": true,
-      "should_include_call_to_action": true
+      "should_ask_for_creator_info": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "eco_chic",
-      "sustainable activewear",
-      "eco-friendly",
-      "ethical production",
-      "brand values"
-    ],
-    "expected_business_card": {}
+      "Jane Smith",
+      "email address"
+    ]
   },
   {
-    "name": "ambiguous_creator_description",
-    "description": "Tests handling of an ambiguous creator description.",
-    "user_message": "Reach out to @randomguy who posts 'stuff' on TikTok, 10k followers. It's for a new energy drink. Key points: fun, energetic, try the drink. Tone: Very casual, like you're already friends.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "missing_campaign_brief_details",
+    "description": "Tests agent's ability to identify and request more campaign details when a creator is provided but the campaign brief is vague.",
+    "user_message": "I want to send an email to @influencer_x (influencer.x@mail.com). It's for a collaboration opportunity.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_adapt_to_limited_info": true,
-      "should_use_casual_tone": true,
-      "should_include_call_to_action": true
+      "should_ask_for_campaign_info": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "randomguy",
-      "energy drink",
-      "fun",
-      "energetic"
-    ],
-    "expected_business_card": {}
+      "campaign details",
+      "goal",
+      "budget",
+      "platform"
+    ]
   },
   {
-    "name": "missing_tone_information",
-    "description": "Tests handling of missing tone information.",
-    "user_message": "Contact @gamergirl (Gaming Twitch streamer, 50K followers) for a sponsored stream of our new indie game. Key points: unique gameplay, engaging story, community interaction.",
+    "name": "user_declines_sending_after_confirmation",
+    "description": "Tests agent's ability to cancel the sending process if the user explicitly declines after initial confirmation.",
+    "user_message": "No, actually, don't send it yet. I need to review the campaign brief first.",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
+      "last_agent_message": "I have all the details for John Doe (john.doe@example.com) for the gaming keyboard review campaign ($1000 budget). Do you approve sending this outreach email?"
     },
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_default_to_appropriate_tone": true,
-      "should_include_key_points": true,
-      "should_include_call_to_action": true
+      "should_cancel_sending": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false
     },
     "expected_response_contains": [
-      "gamergirl",
-      "indie game",
-      "unique gameplay",
-      "engaging story",
-      "Twitch"
-    ],
-    "expected_business_card": {}
+      "not send",
+      "cancelled"
+    ]
   },
   {
-    "name": "negative_constraints",
-    "description": "Tests handling of negative constraints (what NOT to do).",
-    "user_message": "Reach out to @chef_joe (Food Instagrammer, 100K followers) for a recipe collaboration. Key points: use our olive oil, healthy recipe, don't mention competitors. Tone: Professional and respectful.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "attempt_to_send_to_multiple_creators",
+    "description": "Tests the 'one email at a time' rule, ensuring the agent refuses group emails and explains the policy.",
+    "user_message": "Send emails to creator1@mail.com (Alice) and creator2@mail.com (Bob) for the new app promotion. Campaign is for 2 stories each, $500 per creator.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_avoid_mentioning_competitors": true,
-      "should_include_key_points": true,
-      "should_match_tone": true,
-      "should_include_call_to_action": true
+      "should_refuse_group_email": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "chef_joe",
-      "olive oil",
-      "healthy recipe"
-    ],
-    "expected_business_card": {}
+      "one email at a time",
+      "individual attention"
+    ]
   },
   {
-    "name": "complex_key_points",
-    "description": "Tests handling of complex and detailed key points.",
-    "user_message": "Contact @travel_vlogger (Travel YouTuber, 200K subscribers) for a sponsored video of our luxury resort. Key points: highlight the spa, mention the Michelin-star restaurant, show the ocean view, emphasize the exclusivity, use drone footage. Tone: Sophisticated and aspirational.",
+    "name": "correct_info_before_sending",
+    "description": "Tests agent's ability to process corrections to campaign details from the user before the email is sent.",
+    "user_message": "Actually, it's not a product review, it's for an *unboxing video*.",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
+      "last_agent_message": "So you want to send to John Doe at john.doe@example.com for a product review campaign with a budget of $1000? Please confirm."
     },
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_include_all_key_points": true,
-      "should_match_tone": true,
-      "should_include_call_to_action": true
+      "should_update_campaign_details": true,
+      "should_ask_for_user_approval": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_refuse_group_email": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "travel_vlogger",
-      "luxury resort",
-      "spa",
-      "Michelin-star restaurant",
-      "ocean view",
-      "exclusivity"
-    ],
-    "expected_business_card": {}
+      "unboxing video",
+      "confirm"
+    ]
   },
   {
-    "name": "non_standard_platform",
-    "description": "Tests outreach to a creator on a less common platform.",
-    "user_message": "Reach out to @musician (SoundCloud artist, 5K followers) for a collaboration on a jingle for our new ad. Key points: catchy tune, positive message, use our brand name. Tone: Energetic and creative.",
+    "name": "query_campaign_details_during_waiting_period",
+    "description": "Tests agent's ability to provide campaign details when asked during the waiting period after an email has been sent.",
+    "user_message": "What was the budget we offered for that campaign again for Sarah Connor?",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
+      "last_agent_message": "Great! The outreach email to Sarah Connor (sarah.connor@example.com) for the fitness app promotion has been sent. I'll notify you when she responds. While you wait, you can review the campaign details.",
+      "sent_email_details": {
+        "creator_name": "Sarah Connor",
+        "creator_email": "sarah.connor@example.com",
+        "campaign_description": "Fitness app promotion, Instagram stories, 3 posts, goal app downloads.",
+        "budget": "open to proposals"
+      }
     },
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_adapt_to_platform": true,
-      "should_include_key_points": true,
-      "should_match_tone": true,
-      "should_include_call_to_action": true
+      "should_provide_campaign_details": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "musician",
-      "SoundCloud",
-      "jingle",
-      "catchy tune",
-      "positive message"
-    ],
-    "expected_business_card": {}
+      "budget",
+      "open to proposals",
+      "Sarah Connor"
+    ]
   },
   {
-    "name": "follow_up_message",
-    "description": "Tests creating a follow-up message to a previous outreach.",
-    "user_message": "Create a follow up message for @techguru, referencing that we contacted them last week about reviewing our headphones.",
+    "name": "attempt_to_modify_offer_during_waiting_period",
+    "description": "Tests agent's enforcement of the rule that offers cannot be modified after an email has been sent, requiring new outreach.",
+    "user_message": "Can we increase the budget to $1500 for John Doe's campaign? I just realized we have more funds.",
     "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": "Hi @techguru,\n\nI've been following your channel for a while and really appreciate your honest, in-depth tech reviews. Your recent video on smartphone audio was particularly insightful!\n\nWe're launching new noise-canceling headphones next month and would love to send you an early unit for review. We're looking for creators who value authenticity and creative freedom - no scripted talking points, just your genuine thoughts and experience.  We can offer an affiliate link for any sales generated.\n\nWould you be interested in checking them out? I'd be happy to share more details about the device and answer any questions you might have.\n\nLooking forward to hearing from you!\n\nBest,\n[Your Name]"
+      "last_agent_message": "Great! The outreach email to John Doe (john.doe@example.com) for the gaming keyboard review has been sent. I'll notify you when he responds. While you wait, you can review the campaign details.",
+      "sent_email_details": {
+        "creator_name": "John Doe",
+        "creator_email": "john.doe@example.com",
+        "campaign_description": "Product review of new gaming keyboard.",
+        "budget": "$1000"
+      }
     },
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_reference_previous_contact": true,
-      "should_maintain_original_tone": true,
-      "should_include_call_to_action": true
+      "should_prevent_offer_modification": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "techguru",
-      "headphones",
-      "last week",
-      "review"
-    ],
-    "expected_business_card": {}
+      "cannot modify",
+      "new outreach",
+      "already sent"
+    ]
   },
   {
-    "name": "creator_with_multiple_platforms",
-    "description": "Tests identifying the best platform for outreach when the creator is on multiple platforms.",
-    "user_message": "Reach out to @artist who is on Instagram (100k followers) and TikTok (50k followers). We want them to promote our new art supplies. Key points: vibrant colors, high quality, inspiring creativity. Tone: Enthusiastic and encouraging.",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "malformed_creator_email",
+    "description": "Tests agent's ability to detect and request correction for a malformed email address.",
+    "user_message": "Send an email to Alice Wonderland at alice@wonderland for the beauty product launch. Campaign brief: 2 TikTok videos, $600 budget, goal brand awareness.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_prioritize_instagram": true,
-      "should_include_key_points": true,
-      "should_match_tone": true,
-      "should_include_call_to_action": true
+      "should_ask_for_valid_email": true,
+      "should_call_send_outreach_email": false,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_ask_for_user_approval": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "artist",
-      "Instagram",
-      "art supplies",
-      "vibrant colors",
-      "high quality",
-      "inspiring creativity"
-    ],
-    "expected_business_card": {}
+      "valid email address",
+      "alice@wonderland"
+    ]
   },
   {
-    "name": "vague_campaign_description",
-    "description": "Tests how the agent handles a vague campaign description with few details.",
-    "user_message": "Contact @influencer about a 'thing'. They have 20k followers. Just make it sound good. Tone: positive",
-    "session_context": {
-      "business_card": null,
-      "workflow_state": {},
-      "last_agent_message": ""
-    },
+    "name": "no_budget_in_campaign_brief",
+    "description": "Tests agent's handling of a campaign brief where the budget is explicitly stated as 'open to proposals' or not yet set, proceeding with confirmation.",
+    "user_message": "I want to send an email to Emily White (emily.white@example.com) for a new travel app promotion. The campaign is for Instagram reels, 1 post. Goal is app downloads. No specific budget set yet, we're open to proposals.",
+    "session_context": {},
     "expected_behavior": {
-      "should_create_personalized_message": true,
-      "should_request_more_information": true,
-      "should_maintain_positive_tone": true,
-      "should_include_call_to_action": false
+      "should_ask_for_user_approval": true,
+      "should_call_send_outreach_email": true,
+      "should_ask_for_creator_info": false,
+      "should_ask_for_campaign_info": false,
+      "should_refuse_group_email": false,
+      "should_update_campaign_details": false,
+      "should_provide_campaign_details": false,
+      "should_prevent_offer_modification": false,
+      "should_ask_for_valid_email": false,
+      "should_cancel_sending": false
     },
     "expected_response_contains": [
-      "influencer",
-      "thing",
-      "more information",
-      "campaign"
-    ],
-    "expected_business_card": {}
+      "Emily White",
+      "travel app promotion",
+      "open to proposals",
+      "confirm and send"
+    ]
   }
 ]

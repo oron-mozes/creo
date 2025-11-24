@@ -176,6 +176,16 @@ def load_business_card_tool() -> str:
             "error": "Session not found"
         })
 
+    # First check session memory (the orchestrator may have injected a business card already)
+    in_memory_card = session_memory.get_business_card()
+    if in_memory_card:
+        print(f"[TOOL] ✓ Business card found in session memory: {in_memory_card.get('name')}")
+        return json.dumps({
+            "success": True,
+            "business_card": in_memory_card,
+            "message": "Business card loaded from session"
+        })
+
     user_id = session_memory.user_id
 
     print(f"[TOOL] load_business_card called for user: {user_id}")
@@ -213,6 +223,82 @@ def load_business_card_tool() -> str:
         })
 
 
+def normalize_url_tool(url: str) -> str:
+    """Normalize a URL or domain to a standard format.
+
+    This tool converts various URL formats into a normalized domain name:
+    - Adds 'https://' if no protocol is present
+    - Removes www. prefix
+    - Removes paths, query parameters, and fragments
+    - Handles social media URLs and naked domains
+
+    Examples:
+        - "example.com" → "https://example.com"
+        - "www.example.com/about" → "https://example.com"
+        - "http://example.com?param=value" → "https://example.com"
+        - "@username" → "@username" (preserved for social handles)
+
+    Args:
+        url: The URL or domain to normalize
+
+    Returns:
+        JSON string with normalized URL
+    """
+    import json
+    from urllib.parse import urlparse
+
+    print(f"[TOOL] normalize_url called with: {url}")
+
+    # Preserve social media handles (start with @)
+    if url.strip().startswith('@'):
+        print(f"[TOOL] Preserving social handle: {url}")
+        return json.dumps({
+            "success": True,
+            "original": url,
+            "normalized": url.strip(),
+            "type": "social_handle"
+        })
+
+    # Clean the input
+    url = url.strip()
+
+    # Add protocol if missing
+    if not url.startswith(('http://', 'https://')):
+        url = f'https://{url}'
+
+    try:
+        # Parse the URL
+        parsed = urlparse(url)
+
+        # Get the domain (netloc)
+        domain = parsed.netloc or parsed.path
+
+        # Remove www. prefix
+        if domain.startswith('www.'):
+            domain = domain[4:]
+
+        # Construct normalized URL (always https, no path)
+        normalized = f'https://{domain}'
+
+        print(f"[TOOL] ✓ URL normalized: {url} → {normalized}")
+
+        return json.dumps({
+            "success": True,
+            "original": url,
+            "normalized": normalized,
+            "domain": domain,
+            "type": "url"
+        })
+    except Exception as e:
+        print(f"[TOOL ERROR] Failed to normalize URL: {e}")
+        return json.dumps({
+            "success": False,
+            "error": str(e),
+            "original": url
+        })
+
+
 # Create the tool instances
 save_business_card = FunctionTool(save_business_card_tool)
 load_business_card = FunctionTool(load_business_card_tool)
+normalize_url = FunctionTool(normalize_url_tool)

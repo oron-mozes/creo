@@ -41,6 +41,60 @@ make judge AGENT=onboarding-agent
 
 That's it! The evaluation report will be saved to `agents/onboarding-agent/evaluation/report.json`.
 
+### Use a Self-Hosted Judge (e.g., Llama 3.1 via Ollama)
+
+By default the judge uses Gemini (needs `GOOGLE_API_KEY`). To run evaluations with a local OpenAI-compatible endpoint (no Gemini cost), export:
+
+```bash
+export JUDGE_BACKEND=openai
+export JUDGE_MODEL=llama3.1              # or your served model name
+export JUDGE_BASE_URL=http://localhost:11434/v1  # Ollama default /v1 Chat Completions
+# export JUDGE_API_KEY=...               # only if your endpoint requires it
+
+make judge AGENT=onboarding-agent
+```
+
+CI/CD: set the same env vars in the pipeline step before calling `make judge`. If the vars are absent, the flow falls back to Gemini.
+
+### Start a Local Llama Judge with Docker
+
+If you have Docker available, the Makefile can spin up an Ollama-based Llama 3.1 judge locally:
+
+```bash
+# Start and load the model (first run pulls images/models)
+make judge-llama-start
+
+# Run evaluation (uses env defaults from .env to target the local judge)
+make judge AGENT=onboarding-agent
+
+# Tail logs (optional)
+make judge-llama-logs
+
+# Stop when done
+make judge-llama-stop
+```
+
+Notes:
+- The first start may take time to download the Ollama image and Llama 3.1 model.
+- If you prefer a different model, update `JUDGE_MODEL` and adjust the make target accordingly.
+- If Docker isn’t available, point `JUDGE_BASE_URL` to any OpenAI-compatible endpoint you control.
+
+### Use a Self-Hosted Generator for Tests (Ollama)  
+
+`make generate-tests` defaults to Gemini. To generate tests with an OpenAI-compatible endpoint (e.g., Ollama) instead:
+
+```bash
+export LLM_GEN_BACKEND=openai
+export LLM_GEN_MODEL=llama3.1:8b        # or your served model tag
+export LLM_GEN_BASE_URL=http://localhost:11434/v1
+# export LLM_GEN_API_KEY=...            # only if required
+# export LLM_GEN_MAX_TOKENS=800         # optional
+
+make generate-tests AGENT=onboarding_agent
+```
+
+Unset `LLM_GEN_*` to fall back to Gemini (requires `GOOGLE_API_KEY`) for CI/prod.
+
 ---
 
 ## Test Generation

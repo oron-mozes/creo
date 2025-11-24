@@ -1,0 +1,293 @@
+[
+  {
+    "name": "new_user_no_info",
+    "description": "Tests the agent's response for a brand new user with no business card or past sessions, expecting a generic welcome and diverse general suggestions.",
+    "user_message": "Start a new session",
+    "session_context": {
+      "business_card": null,
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_generic_welcome": true,
+      "generates_diverse_general_suggestions": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Hey! \ud83d\udc4b",
+      "amazing influencers",
+      "coffee shop",
+      "handmade jewelry"
+    ]
+  },
+  {
+    "name": "full_business_card_no_past_sessions",
+    "description": "Tests the agent's response for a returning user with a complete business card but no prior sessions, expecting a personalized welcome and specific suggestions.",
+    "user_message": "Welcome back!",
+    "session_context": {
+      "business_card": {
+        "name": "Alma Cafe",
+        "location": "Rehovot, Israel",
+        "service_type": "Coffee shop",
+        "website": "almacafe.co.il"
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome": true,
+      "generates_specific_suggestions": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_use_business_info": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Alma Cafe",
+      "Rehovot",
+      "Coffee shop",
+      "Find influencers for Alma Cafe",
+      "Promote our coffee shop"
+    ]
+  },
+  {
+    "name": "full_business_card_with_past_sessions",
+    "description": "Tests the agent's response for a returning user with a complete business card and past sessions, expecting a personalized welcome and suggestions building on past activities without repetition.",
+    "user_message": "Let's do another campaign!",
+    "session_context": {
+      "business_card": {
+        "name": "EcoWear",
+        "location": "Portland, OR",
+        "service_type": "Sustainable Fashion",
+        "website": "ecowear.com"
+      },
+      "past_sessions": [
+        {
+          "summary": "Created campaign targeting eco-conscious millennials on Instagram"
+        }
+      ]
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome": true,
+      "suggestions_build_on_past": true,
+      "suggestions_avoid_repetition": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "EcoWear",
+      "sustainable fashion",
+      "Find more eco-influencers",
+      "Expand to TikTok creators",
+      "Target Gen Z"
+    ]
+  },
+  {
+    "name": "business_card_location_only",
+    "description": "Tests the agent's response when only location information is available in the business card (along with name and service type), expecting personalization based on location.",
+    "user_message": "What can you do for me?",
+    "session_context": {
+      "business_card": {
+        "name": "TechStart",
+        "location": "San Francisco, CA",
+        "service_type": "Tech startup",
+        "website": null
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome_with_location": true,
+      "suggestions_use_location": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "TechStart",
+      "San Francisco",
+      "tech startup",
+      "Target San Francisco creators",
+      "Promote TechStart in the Bay Area"
+    ]
+  },
+  {
+    "name": "business_card_name_only",
+    "description": "Tests the agent's response when only the business name is provided in the business card, expecting personalization using the name.",
+    "user_message": "I'm ready for ideas!",
+    "session_context": {
+      "business_card": {
+        "name": "The Cozy Corner",
+        "location": null,
+        "service_type": null,
+        "website": null
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome_with_name": true,
+      "suggestions_use_name": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "The Cozy Corner",
+      "Find influencers for The Cozy Corner",
+      "Promote The Cozy Corner",
+      "Campaign for Cozy Corner"
+    ]
+  },
+  {
+    "name": "business_card_service_type_only",
+    "description": "Tests the agent's response when only the service type is provided in the business card, expecting personalization using the service type.",
+    "user_message": "Give me some suggestions.",
+    "session_context": {
+      "business_card": {
+        "name": null,
+        "location": null,
+        "service_type": "Pet Grooming",
+        "website": null
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome_with_service_type": true,
+      "suggestions_use_service_type": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Pet Grooming",
+      "Find pet influencers",
+      "Promote pet grooming",
+      "Campaign for pet services"
+    ]
+  },
+  {
+    "name": "business_card_empty_strings_fields",
+    "description": "Tests the agent's robustness when business card fields (location, service_type) are present but contain empty strings instead of null, expecting graceful handling (ignoring empty strings for personalization).",
+    "user_message": "What's new?",
+    "session_context": {
+      "business_card": {
+        "name": "Green Gardens",
+        "location": "",
+        "service_type": "",
+        "website": "greengardens.com"
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome_with_name": true,
+      "ignores_empty_strings_for_personalization": true,
+      "suggestions_use_name_only": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Green Gardens",
+      "Find influencers for Green Gardens",
+      "Promote Green Gardens",
+      "Campaign for Green Gardens"
+    ]
+  },
+  {
+    "name": "multiple_past_sessions_diverse",
+    "description": "Tests the agent's ability to consider multiple diverse past sessions and offer new, complementary suggestions, avoiding direct repetition.",
+    "user_message": "I'm back, what next?",
+    "session_context": {
+      "business_card": {
+        "name": "Urban Fitness",
+        "location": "Downtown, NYC",
+        "service_type": "Gym",
+        "website": "urbanfitness.com"
+      },
+      "past_sessions": [
+        {
+          "summary": "Ran a local gym membership drive on Instagram"
+        },
+        {
+          "summary": "Promoted new spin classes with fitness bloggers"
+        }
+      ]
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome": true,
+      "suggestions_build_on_multiple_past_sessions": true,
+      "suggestions_avoid_repetition": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Urban Fitness",
+      "Downtown, NYC",
+      "Find nutrition influencers",
+      "Cross-promote with local cafes",
+      "Online fitness challenge"
+    ]
+  },
+  {
+    "name": "past_session_broad_topic_refinement",
+    "description": "Tests the agent's ability to take a broad past session and suggest more specific or new angles for future campaigns, given a full business card.",
+    "user_message": "Time for more ideas.",
+    "session_context": {
+      "business_card": {
+        "name": "Global Travel Agency",
+        "location": "Online",
+        "service_type": "Travel Agency",
+        "website": "globaltravel.com"
+      },
+      "past_sessions": [
+        {
+          "summary": "General brand awareness campaign for travel agency"
+        }
+      ]
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome": true,
+      "suggestions_offer_new_angles": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_are_under_50_chars": true
+    },
+    "expected_response_contains": [
+      "Global Travel Agency",
+      "Promote specific destinations",
+      "Find adventure travel bloggers",
+      "Campaign for family vacations"
+    ]
+  },
+  {
+    "name": "long_business_name_service_type_char_limit",
+    "description": "Tests if the agent's suggestions respect the 50-character limit even when the business name and service type are very long, forcing conciseness.",
+    "user_message": "New campaign ideas please.",
+    "session_context": {
+      "business_card": {
+        "name": "The Enchanted Forest Artisan Jewelry & Mystical Curiosities Emporium",
+        "location": "Faerie Glen, CA",
+        "service_type": "Handcrafted Mystical Jewelry and Curiosities",
+        "website": "enchantedforest.com"
+      },
+      "past_sessions": []
+    },
+    "expected_behavior": {
+      "generates_personalized_welcome": true,
+      "suggestions_are_under_50_chars": true,
+      "suggestions_count_is_4": true,
+      "welcome_message_contains_emoji": true,
+      "suggestions_use_business_info_concisely": true
+    },
+    "expected_response_contains": [
+      "Enchanted Forest",
+      "Faerie Glen",
+      "jewelry",
+      "curiosities",
+      "Promote Enchanted Forest",
+      "Find jewelry influencers",
+      "Mystical Curiosities campaign"
+    ]
+  }
+]

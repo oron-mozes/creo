@@ -82,6 +82,7 @@ export function HomePage() {
 
   const scrollToChat = () => {
     chatRef.current?.scrollIntoView({ behavior: 'smooth' })
+    textareaRef.current?.focus()
   }
 
   // Auto-scroll to chat when messages exist

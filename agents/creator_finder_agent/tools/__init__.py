@@ -17,7 +17,7 @@ if str(parent_dir) not in sys.path:
 
 # Now import from tools.py (the file, not the directory)
 import importlib.util
-spec = importlib.util.spec_from_file_location("creator_finder_tools_module", Path(__file__).parent.parent / "tools.py")       
+spec = importlib.util.spec_from_file_location("creator_finder_tools_module", Path(__file__).parent.parent / "tools.py")
 if spec and spec.loader:
     creator_finder_tools_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(creator_finder_tools_module)

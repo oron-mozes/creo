@@ -96,29 +96,18 @@ def load_agent_env(agent_name: Union[AgentName, str], project_root: Optional[Pat
 
 def load_agent_instruction(agent_dir: Path) -> str:
     """
-    Load and combine instruction and examples from an agent directory.
-    
+    Load instruction from an agent directory.
+
     Args:
-        agent_dir: Path to the agent directory containing instruction.md and optionally examples.md
-        
+        agent_dir: Path to the agent directory containing instruction.md
+
     Returns:
-        Combined instruction string with examples appended (if examples.md exists)
+        Instruction string (includes examples if they were merged)
     """
-    # Read instruction from external file
+    # Read instruction from external file (now includes merged examples)
     instruction_path = agent_dir / 'instruction.md'
     with open(instruction_path, 'r', encoding='utf-8') as f:
         instruction = f.read().strip()
 
-    # Read examples from external file (optional)
-    examples_path = agent_dir / 'examples.md'
-    if examples_path.exists():
-        with open(examples_path, 'r', encoding='utf-8') as f:
-            examples = f.read().strip()
-        # Combine instruction and examples
-        full_instruction = f"{instruction}\n\n{examples}"
-    else:
-        # If no examples file, just return the instruction
-        full_instruction = instruction
-    
-    return full_instruction
+    return instruction
 
