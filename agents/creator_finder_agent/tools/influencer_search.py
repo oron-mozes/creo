@@ -137,8 +137,16 @@ class InfluencerSearch:
         return "\n".join(output)
 
 
-# Initialize singleton instance for agent use
-_search = InfluencerSearch()
+# Lazy initialization of singleton instance for agent use
+_search = None
+
+
+def _get_search():
+    """Get or create the singleton InfluencerSearch instance."""
+    global _search
+    if _search is None:
+        _search = InfluencerSearch()
+    return _search
 
 
 def search_influencers(
@@ -160,8 +168,9 @@ def search_influencers(
     Example:
         search_influencers("coffee influencers", filters={"location_country": {"$eq": "Israel"}}, top_k=3)
     """
-    results = _search.search(query=query, filters=filters, top_k=top_k)
-    return _search.format_results(results, include_scores=False)
+    search = _get_search()
+    results = search.search(query=query, filters=filters, top_k=top_k)
+    return search.format_results(results, include_scores=False)
 
 
 # Example usage
