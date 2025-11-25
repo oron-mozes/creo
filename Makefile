@@ -235,7 +235,7 @@ docker-build:
 	@if [ ! -f .env ]; then \
 		echo "Warning: .env file not found. Make sure to pass GOOGLE_API_KEY when running."; \
 	fi
-	docker build -t $(DOCKER_IMAGE):latest .
+	docker build --build-arg FRONTEND_HASH="$$(git rev-parse HEAD 2>/dev/null || date +%s)" -t $(DOCKER_IMAGE):latest .
 	@echo "✓ Docker image built: $(DOCKER_IMAGE):latest"
 
 # Run Docker container locally

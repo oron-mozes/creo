@@ -103,10 +103,10 @@ export function ChatView() {
     <div className="h-screen flex flex-col">
       <Header onNewChat={handleNewChat} />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar currentSessionId={sessionId} onSelectSession={handleSelectSession} />
 
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 min-h-0 flex flex-col overflow-hidden">
           {/* Error Banner */}
           {error && (
             <div className="bg-red-50 border-b border-red-200 px-4 py-3 flex items-center justify-between">

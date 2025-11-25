@@ -19,10 +19,14 @@ export function HomepageQuickStartCard({ onSelect, fallbackSuggestions = DEFAULT
   useEffect(() => {
     // Try to load cached suggestions from storage
     const cached = storageService.get<string[]>(STORAGE_KEYS.SUGGESTIONS, [])
+    console.log('[QuickStart] Cached suggestions:', cached)
+    console.log('[QuickStart] Fallback suggestions:', fallbackSuggestions)
     if (cached && cached.length) {
       setSuggestions(cached)
+    } else if (fallbackSuggestions?.length) {
+      setSuggestions(fallbackSuggestions)
     }
-  }, [])
+  }, [fallbackSuggestions])
 
   return (
     <div className="bg-white p-6 border border-gray-200 rounded-3xl animate-fade-in">

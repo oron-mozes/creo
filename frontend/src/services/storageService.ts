@@ -4,7 +4,13 @@ class StorageService {
   get<T>(key: string, defaultValue?: T): T | null {
     try {
       const item = localStorage.getItem(key)
-      return item ? JSON.parse(item) : defaultValue ?? null
+      if (!item) return defaultValue ?? null
+      try {
+        return JSON.parse(item)
+      } catch {
+        // Support legacy plain-string values (e.g., anon IDs stored without JSON encoding)
+        return (item as unknown as T) ?? defaultValue ?? null
+      }
     } catch (error) {
       console.error(`Error reading from localStorage: ${key}`, error)
       return defaultValue ?? null

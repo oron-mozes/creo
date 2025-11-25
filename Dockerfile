@@ -10,6 +10,8 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 # Copy frontend source
+ARG FRONTEND_HASH=dev
+RUN echo "Using FRONTEND_HASH=${FRONTEND_HASH}"
 COPY frontend/ ./
 
 # Build frontend for production

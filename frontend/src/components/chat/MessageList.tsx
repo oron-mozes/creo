@@ -22,13 +22,28 @@ export function MessageList({
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const container = containerRef.current
+    const anchor = messagesEndRef.current
+    if (!container || !anchor) return
+
+    const rafId = window.requestAnimationFrame(() => {
+      // Scroll the container itself
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      })
+
+      // Also scroll the anchor into view as a fallback for nested layouts
+      anchor.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    })
+
+    return () => window.cancelAnimationFrame(rafId)
   }, [messages, streamingMessage])
 
   return (
     <div
       ref={containerRef}
-      className={`flex-1 overflow-y-auto px-4 py-6 space-y-4 ${className}`}
+      className={`flex-1 min-h-0 overflow-y-auto px-4 py-6 space-y-4 ${className}`}
     >
       {messages.length === 0 && !isLoading && !streamingMessage && (
         <div className="flex items-center justify-center h-full text-gray-400 text-center">

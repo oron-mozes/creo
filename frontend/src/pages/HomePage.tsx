@@ -45,7 +45,9 @@ export function HomePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('[HomePage] Fetching suggestions for user:', userId)
         const data = await apiService.getSuggestions(userId)
+        console.log('[HomePage] Suggestions response:', data)
         // Type out welcome message
         const fullText = data.welcome_message
         let index = 0
@@ -57,8 +59,12 @@ export function HomePage() {
             clearInterval(interval)
           }
         }, 30)
-
-        setSuggestions(data.suggestions || [])
+        
+        const fetchedSuggestions = data.suggestions || []
+        console.log('[HomePage] Parsed suggestions:', fetchedSuggestions)
+        setSuggestions(fetchedSuggestions)
+        // Cache suggestions for quick-start cards
+        storageService.set(STORAGE_KEYS.SUGGESTIONS, fetchedSuggestions)
       } catch (error) {
         console.error('Failed to load suggestions:', error)
         setWelcomeText("Hi! I'm Creo, your AI assistant for finding the perfect creators and influencers. Tell me about your business and what you're looking for!")
@@ -139,7 +145,7 @@ export function HomePage() {
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <a href="/" className="pl-2">
-              <img src="/creo-logo-BesatB3H.png" alt="Creo" style={{ height: '3rem' }} />
+              <img src="/static/creo-logo-BesatB3H.png" alt="Creo" style={{ height: '3rem' }} />
             </a>
 
             <div className="pr-4 flex items-center gap-3">
@@ -243,7 +249,7 @@ export function HomePage() {
             <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                  <source src="/creo-teaser-CBjoFzhL.mp4" type="video/mp4" />
+                  <source src="/static/creo-teaser-CBjoFzhL.mp4" type="video/mp4" />
                 </video>
               </div>
               <div className="absolute -bottom-4 -right-4 w-32 h-32 rounded-full blur-3xl opacity-50" style={{ backgroundColor: 'rgba(0, 160, 235, 0.2)' }}></div>

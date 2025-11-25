@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from collections import OrderedDict
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import pycountry
 
 logger = logging.getLogger(__name__)
 
