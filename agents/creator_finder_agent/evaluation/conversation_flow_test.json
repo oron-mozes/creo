@@ -1,0 +1,43 @@
+[
+  {
+    "name": "missing_category",
+    "description": "Budget provided but no category",
+    "user_message": "I have a budget of $15,000 for influencer marketing",
+    "expected_behavior": {
+      "should_ask_for_category": true,
+      "should_ask_for_other_details": true,
+      "should_not_search_yet": true,
+      "should_be_conversational": true
+    }
+  },
+  {
+    "name": "missing_budget",
+    "description": "Category provided but no budget",
+    "user_message": "I'm looking for fitness creators on YouTube",
+    "expected_behavior": {
+      "should_ask_for_budget": true,
+      "should_explain_why_budget_needed": true,
+      "should_not_search_yet": true
+    }
+  },
+  {
+    "name": "complete_info_first_message",
+    "description": "All required info in first message",
+    "user_message": "Find 3 gaming YouTubers in US with budget $20K-$40K, targeting gamers aged 18-30",
+    "expected_behavior": {
+      "should_search_immediately": true,
+      "should_explain_calculation_first": true,
+      "should_return_results": true
+    }
+  },
+  {
+    "name": "refine_search_request",
+    "description": "User wants to refine previous search",
+    "user_message": "Can you find similar creators but in Europe instead?",
+    "expected_behavior": {
+      "should_remember_previous_criteria": true,
+      "should_modify_location_only": true,
+      "should_search_with_updated_params": true
+    }
+  }
+]

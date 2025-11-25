@@ -1,0 +1,30 @@
+[
+  {
+    "name": "specific_country",
+    "description": "Search with specific country",
+    "user_message": "Find food creators in Japan with $15,000 budget targeting foodies aged 25-45",
+    "expected_behavior": {
+      "should_search_creators": true,
+      "should_filter_by_country": true,
+      "should_include_target_audience": true
+    }
+  },
+  {
+    "name": "multiple_countries",
+    "description": "Multiple country request",
+    "user_message": "I want travel vloggers in US, UK, or Canada, budget 50K",
+    "expected_behavior": {
+      "should_handle_multiple_locations": true,
+      "should_search_creators": true
+    }
+  },
+  {
+    "name": "city_instead_of_country",
+    "description": "User provides city instead of country",
+    "user_message": "Find tech reviewers in San Francisco, budget $30,000",
+    "expected_behavior": {
+      "should_search_creators": true,
+      "should_use_location_in_search": true
+    }
+  }
+]

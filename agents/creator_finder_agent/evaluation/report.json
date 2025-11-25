@@ -1,21 +1,146 @@
 {
-  "average_confidence_score": 1.0,
-  "total_cases": 3,
+  "average_confidence_score": 0.877,
+  "total_cases": 28,
   "test_results": [
     {
-      "description": "Find 2 DIY creators in GB, France, or Germany with budget 100-300K, audience aged 20-50",
-      "score": 1.0,
-      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, identified the category, location, and target audience, and presented a list of matching creators with a greeting and budget explanation, fulfilling all requirements."
+      "description": "Single budget value with subscriber calculation",
+      "score": 0.5,
+      "rationale": "The agent failed to greet the user, explain the budget-to-subscriber calculation before presenting results as explicitly instructed, and incorrectly applied the 'within_budget' status to several channels whose estimated maximum price exceeds the user's budget, contradicting the provided budget status rules and example."
     },
     {
-      "description": "Find 1 lifestyle creator in Mexico City or Canada with 12K budget, audience aged 20-30",
+      "description": "Budget range parsing - tricky formatting",
       "score": 1.0,
-      "rationale": "The agent correctly greets the user, explains the budget-to-follower calculation as per instructions, and asks for a reasonable clarification regarding the platform preference before proceeding with the search. This aligns with all instructions and expected behaviors."
+      "rationale": "The agent correctly parsed the tricky budget range '100-10000$' as $100 - $10,000 without modification, accurately calculated the subscriber range based on the instructions, and followed the conversational flow by explaining the budget calculation and then asking for missing optional information."
     },
     {
-      "description": "Find 1 lifestyle creator in Vancouver with budget 8K-13K, audience aged 20-30 on TikTok",
+      "description": "Budget with K notation",
+      "score": 0.6,
+      "rationale": "The agent correctly parsed the K notation for the budget and performed a search for creators. However, it failed to explain the budget-to-subscriber calculation as instructed and incorrectly classified the 'within_budget' status for the top 10 results, as their estimated minimum prices were below the specified 90% threshold of the user's minimum budget."
+    },
+    {
+      "description": "User asks for TikTok - should inform YouTube only",
       "score": 1.0,
-      "rationale": "The agent correctly parsed the budget range, calculated the follower range as per instructions, included the required greeting and budget explanation, and presented a matching creator with all relevant details, fulfilling all instructions and expected behaviors."
+      "rationale": "The agent correctly identified that TikTok is not supported, informed the user about the YouTube-only limitation, and offered to search on YouTube while asking for the necessary missing information (category/niche)."
+    },
+    {
+      "description": "User asks for Instagram creators",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the platform mismatch (Instagram vs. YouTube), clearly states its limitation, offers to search on YouTube, and then proactively asks for more details to refine the required 'Category/Niche' for the search, all in line with instructions and expected behavior."
+    },
+    {
+      "description": "User asks for multiple platforms",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the multi-platform request, clarified that only YouTube is supported, and asked for confirmation to proceed. It also correctly identified and requested the missing optional campaign details (location, number of creators) before explaining the budget calculation, adhering to all instructions and expected behaviors."
+    },
+    {
+      "description": "Search with specific country",
+      "score": 1.0,
+      "rationale": "The agent correctly identified all parameters, performed the budget calculation, and followed the error handling instructions for when no results are found, including suggesting adjustments to the target audience, budget, and location."
+    },
+    {
+      "description": "Multiple country request",
+      "score": 0.8,
+      "rationale": "The agent correctly greeted the user, explained the budget calculation, and identified missing information (target audience, number of creators). However, it failed to acknowledge or ask for clarification on the multiple locations provided by the user (US, UK, or Canada) before proceeding to the search."
+    },
+    {
+      "description": "User provides city instead of country",
+      "score": 0.7,
+      "rationale": "The agent correctly handled the location limitation and explained it well, and followed most instructions. However, it incorrectly applied the 'within_budget' status to a creator whose estimated price range exceeded the user's maximum budget, which is a direct violation of the budget status definitions."
+    },
+    {
+      "description": "Results should have clear budget status indicators",
+      "score": 0.3,
+      "rationale": "The agent failed to correctly apply the budget status indicators for the primary list of creators. All 5 channels marked '✅ Within your budget' are misclassified, as their estimated minimum prices are significantly below 90% of the user's minimum budget ($7,200). One channel (Soul Food Cooking) should have been flagged as '⚠️ Above your budget' based on its maximum estimated price. The agent also missed including 'Total Views' for each channel, which was explicitly required."
+    },
+    {
+      "description": "High budget should find larger creators",
+      "score": 0.6,
+      "rationale": "The agent successfully found large tech creators for the high budget, fulfilling the test description and expected behavior. However, it failed to explain the budget calculation before presenting results and incorrectly applied the 'within_budget' status logic, mislabeling several creators whose estimated prices did not strictly meet the defined criteria."
+    },
+    {
+      "description": "Budget provided but no category",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the missing required information (category) and asks for it, along with an optional detail (location), while being conversational and not attempting to search yet."
+    },
+    {
+      "description": "Category provided but no budget",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the missing required information (budget), asked for it, and explained why it's needed, without attempting to search prematurely. This aligns perfectly with the instructions and expected behavior."
+    },
+    {
+      "description": "All required info in first message",
+      "score": 0.9,
+      "rationale": "The agent correctly calculated the subscriber range and handled the 'no results' scenario by offering relevant suggestions. It missed the initial greeting and the explicit explanation of the budget calculation *method* as shown in the example interaction."
+    },
+    {
+      "description": "User wants to refine previous search",
+      "score": 0.3,
+      "rationale": "The agent correctly identified the location change to Europe but failed to remember any previous search criteria, asking for all required information again. This violates the 'should_remember_previous_criteria' and 'should_modify_location_only' expected behaviors."
+    },
+    {
+      "description": "Find fashion influencers on Instagram and TikTok targeting Gen Z and young professionals",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the platform limitation (YouTube only) and informed the user, then asked for the missing required information (budget) before attempting a search, adhering to all instructions."
+    },
+    {
+      "description": "Find tech review YouTubers for gaming audience",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the missing required information (budget) and asked for it, while acknowledging the provided niche and target audience. It also correctly stated it would explain the budget calculation before searching, following instructions."
+    },
+    {
+      "description": "Find LinkedIn thought leaders for B2B audience",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that the user's request was for LinkedIn, a platform it does not support, and clearly communicated this limitation while offering to search on the supported platform (YouTube) with the relevant keywords."
+    },
+    {
+      "description": "Tests a simple campaign plan generation for Instagram and Gen Z.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that Instagram is not supported and informed the user about the YouTube-only limitation. It then pivoted to collect the necessary information for a YouTube campaign, following all instructions and exhibiting the expected behaviors."
+    },
+    {
+      "description": "Tests campaign planning for B2B decision makers on LinkedIn and Twitter.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that the user's request was for platforms (LinkedIn and Twitter) not supported by its functionality and clearly communicated this limitation, while also offering to assist with YouTube, as per instructions."
+    },
+    {
+      "description": "Tests campaign planning with multiple platforms and target audiences.",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies the platform limitation (Facebook, Instagram, TikTok) and informs the user that it only supports YouTube, as per instructions. It then asks for the necessary campaign details (category, budget, location) to proceed with a YouTube-specific search, while acknowledging both target audiences (Gen Z and Millennials). The 'should_recommend_ads' expected behavior seems misaligned with the agent's instructions, which define it as a 'Creator Finder Agent' for YouTube, not an ad platform advisor; therefore, not recommending ads is appropriate for this agent's role."
+    },
+    {
+      "description": "Tests error handling when an unsupported platform is provided.",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies MySpace as an unsupported platform and clearly states its limitation to YouTube, fulfilling the 'should_warn_about_unsupported_platform' expectation. It then appropriately pivots to asking for campaign details for a YouTube search, without suggesting alternative platforms, which aligns with 'should_still_suggest_alternatives: false'."
+    },
+    {
+      "description": "Tests campaign planning with a vague target audience.",
+      "score": 1.0,
+      "rationale": "The agent correctly identifies that Instagram is not supported and informs the user about the YouTube-only limitation, offering to proceed with YouTube as per instructions."
+    },
+    {
+      "description": "Tests error handling when no platforms are specified.",
+      "score": 0.85,
+      "rationale": "The agent correctly identified the missing required information (category, budget) and other optional details, asking for them clearly. However, it did not explicitly ask for or confirm the platform, which was an expected behavior (`should_ask_for_platforms: true`) for handling cases where no platform is specified, even though it correctly stated its YouTube-only capability."
+    },
+    {
+      "description": "Tests campaign planning with complex demographic targeting.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that the user's request was for LinkedIn, a platform it does not support, and clearly stated its limitation to YouTube only, as per its instructions. It cannot exhibit the expected behaviors because the request falls outside its defined scope."
+    },
+    {
+      "description": "Tests campaign planning while accounting for budget constraints.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified the platform limitation (Instagram/TikTok not supported) and informed the user it only supports YouTube. It then accurately calculated and explained the subscriber range based on the provided budget and asked for the remaining required information to proceed with a YouTube search, fully adhering to its instructions. The 'expected behaviors' are outside the scope of this specialized agent's instructions."
+    },
+    {
+      "description": "Tests campaign planning with a specified campaign goal.",
+      "score": 1.0,
+      "rationale": "The agent correctly identified that the user's request was for Twitter, which is outside its scope, and clearly stated its limitation to YouTube only, offering to assist within its capabilities."
+    },
+    {
+      "description": "Tests the agent's ability to recover from a correction of platform choice.",
+      "score": 1.0,
+      "rationale": "The agent correctly informs the user about its YouTube-only limitation when TikTok is mentioned, and offers to proceed with YouTube, fulfilling both instructions and expected behaviors."
     }
   ]
 }

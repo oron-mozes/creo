@@ -622,7 +622,7 @@ def load_agent_instructions(agent_dir: Path) -> str | None:
     """Load the agent's instruction.md file if it exists."""
     instruction_path = agent_dir / "instruction.md"
     if instruction_path.exists():
-        with open(instruction_path, "r") as fh:
+        with open(instruction_path, "r", encoding="utf-8") as fh:
             return fh.read()
     return None
 
@@ -736,7 +736,7 @@ def main() -> None:
         }
 
         report_path = args.agent_dir / "evaluation" / "report.json"
-        with open(report_path, "w") as f:
+        with open(report_path, "w", encoding="utf-8") as f:
             json.dump(report_data, f, indent=2, ensure_ascii=False)
         print(f"\n✓ Report saved to: {report_path}")
     else:

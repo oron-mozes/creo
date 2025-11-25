@@ -1,0 +1,23 @@
+[
+  {
+    "name": "mixed_budget_results",
+    "description": "Results should have clear budget status indicators",
+    "user_message": "Find 5 cooking channels with budget $8,000-$12,000",
+    "expected_behavior": {
+      "should_return_creator_list": true,
+      "should_show_budget_status": true,
+      "should_flag_above_budget_with_warning": true,
+      "should_flag_below_threshold": true,
+      "should_clearly_mark_within_budget": true
+    }
+  },
+  {
+    "name": "high_budget_search",
+    "description": "High budget should find larger creators",
+    "user_message": "Find tech creators with $100,000 budget",
+    "expected_behavior": {
+      "should_calculate_large_subscriber_range": true,
+      "should_return_appropriate_creators": true
+    }
+  }
+]

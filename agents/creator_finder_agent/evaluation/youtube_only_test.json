@@ -1,0 +1,30 @@
+[
+  {
+    "name": "tiktok_request",
+    "description": "User asks for TikTok - should inform YouTube only",
+    "user_message": "I want TikTok creators for my fashion campaign, budget $8000",
+    "expected_behavior": {
+      "should_inform_youtube_only": true,
+      "should_offer_youtube_alternative": true,
+      "should_not_return_tiktok_results": true
+    }
+  },
+  {
+    "name": "instagram_request",
+    "description": "User asks for Instagram creators",
+    "user_message": "Find Instagram fitness influencers in LA with 20K budget",
+    "expected_behavior": {
+      "should_explain_platform_limitation": true,
+      "should_search_youtube_instead": true
+    }
+  },
+  {
+    "name": "multi_platform_request",
+    "description": "User asks for multiple platforms",
+    "user_message": "I need lifestyle creators on YouTube or Instagram, budget 10K-25K, audience 25-40",
+    "expected_behavior": {
+      "should_clarify_youtube_only": true,
+      "should_proceed_with_youtube_search": true
+    }
+  }
+]
