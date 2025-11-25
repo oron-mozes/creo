@@ -6,6 +6,10 @@ import { useUser } from '../hooks/useUser'
 import { useAuth } from '../hooks/useAuth'
 import { useSessionStore } from '../stores/useSessionStore'
 import { apiService } from '../services/apiService'
+import { HomepageQuickStartCard } from '../components/layout/HomepageQuickStartCard'
+import { ChatPastChatsCard } from '../components/layout/ChatPastChatsCard'
+import { ChatHelpfulTipsCard } from '../components/layout/ChatHelpfulTipsCard'
+import { MessageList, MessageInput, BusinessCardDisplay } from '../components/chat'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -110,7 +114,12 @@ export function HomePage() {
     textareaRef.current?.focus()
   }
 
-  const startFresh = () => {
+  const startFresh = async () => {
+    try {
+      await fetchSessions(userId)
+    } catch (err) {
+      console.error('Failed to refresh sessions before starting fresh', err)
+    }
     window.location.reload()
   }
 
@@ -356,88 +365,9 @@ export function HomePage() {
 
           {/* Sidebar */}
           <div className="lg:sticky lg:top-24 space-y-6 h-fit">
-            {/* Past Chats */}
-            {sessions.length > 0 && (
-              <div className="bg-white p-6 border border-gray-200 rounded-3xl shadow-sm animate-fade-in">
-                <h3 className="font-semibold mb-5 flex items-center gap-2 text-lg">
-                  <svg className="h-5 w-5" style={{ color: 'rgb(0, 160, 235)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span style={{ color: 'rgb(0, 160, 235)' }}>Past Chats</span>
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">Click to continue:</p>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {sessions.slice(0, 10).map((session) => (
-                    <button
-                      key={session.id}
-                      onClick={() => handleLoadSession(session.id)}
-                      className="block w-full text-left p-4 text-base rounded-2xl border transition-all duration-200"
-                      style={{ backgroundColor: 'rgb(255, 255, 255)', borderColor: 'rgb(229, 231, 235)' }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(0, 160, 235, 0.05)'
-                        e.currentTarget.style.borderColor = 'rgba(0, 160, 235, 0.3)'
-                        e.currentTarget.style.transform = 'scale(1.02)'
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgb(255, 255, 255)'
-                        e.currentTarget.style.borderColor = 'rgb(229, 231, 235)'
-                        e.currentTarget.style.transform = 'scale(1)'
-                      }}
-                    >
-                      <div className="font-medium truncate">💬 {session.title}</div>
-                      <div className="text-xs mt-1" style={{ color: '#9CA3AF' }}>
-                        {new Date(session.timestamp).toLocaleDateString()}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quick Start */}
-            <div className="bg-white p-6 border border-gray-200 rounded-3xl animate-fade-in">
-              <h3 className="font-semibold mb-5 flex items-center gap-2 text-lg">
-                <svg className="h-5 w-5" style={{ color: 'rgb(0, 160, 235)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                Quick Start
-              </h3>
-              <p className="text-sm text-gray-500 mb-4">Click to try:</p>
-              <div className="space-y-3">
-                {suggestions.length > 0 ? suggestions.map((suggestion, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setQuickMessage(suggestion)}
-                    className="w-full text-left p-4 text-base rounded-2xl"
-                    style={{ appearance: 'button', backgroundColor: 'rgb(255, 255, 255)', border: '1px solid rgb(229, 231, 235)', borderRadius: '16px', transition: 'all 0.2s' }}
-                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(0, 160, 235, 0.05)'; e.currentTarget.style.borderColor = 'rgba(0, 160, 235, 0.3)' }}
-                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'rgb(255, 255, 255)'; e.currentTarget.style.borderColor = 'rgb(229, 231, 235)' }}
-                  >
-                    💬 {suggestion}
-                  </button>
-                )) : (
-                  <div className="text-sm text-gray-400">Loading suggestions...</div>
-                )}
-              </div>
-            </div>
-
-            {/* Helpful Tips */}
-            <div className="p-6 rounded-3xl animate-fade-in" style={{ backgroundColor: 'rgba(0, 160, 235, 0.05)', border: '1px solid rgba(0, 160, 235, 0.15)', animationDelay: '0.1s' }}>
-              <h3 className="font-semibold mb-4 flex items-center gap-2 text-lg">
-                <svg className="h-5 w-5" style={{ color: 'rgb(0, 160, 235)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                Helpful Tips
-              </h3>
-              <ul className="space-y-3 text-base text-gray-700">
-                {['Share what you sell', 'Tell me where you\'re located', 'Mention your budget if you know it'].map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="mt-0.5" style={{ color: 'rgb(0, 160, 235)' }}>✓</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ChatPastChatsCard onSelectSession={handleLoadSession} />
+            <HomepageQuickStartCard onSelect={setQuickMessage} fallbackSuggestions={suggestions} />
+            <ChatHelpfulTipsCard />
           </div>
         </div>
       </main>

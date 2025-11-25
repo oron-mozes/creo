@@ -44,4 +44,5 @@ export const STORAGE_KEYS = {
   ANON_USER_ID: 'creo_anon_user_id',
   ANON_REGISTERED: 'creo_anon_user_registered',
   SESSIONS: 'creo_sessions',
+  SUGGESTIONS: 'creo_suggestions',
 } as const

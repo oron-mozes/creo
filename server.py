@@ -545,26 +545,57 @@ def get_suggestions(current_user: Optional[UserInfo] = Depends(get_optional_user
         
         context = "\n".join(context_parts)
         
-        # Create a temporary session for the suggestions agent
+        # Run suggestions agent in an isolated temp session (sessionless personalization via prompt)
         temp_session_id = f"temp_suggestions_{uuid.uuid4().hex}"
-        temp_user_id = user_id
-        
-        # Run suggestions agent
-        runner = InMemoryRunner(agent=suggestions_agent)
+        runner = InMemoryRunner(agent=suggestions_agent, app_name="agents")
+
+        def _ensure_temp_session():
+            """Create the temp session if it doesn't exist (avoid session-not-found)."""
+            session_service = runner.session_service
+            if hasattr(session_service, "get_session_sync") and hasattr(session_service, "create_session_sync"):
+                existing = session_service.get_session_sync(
+                    app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+                )
+                if not existing:
+                    session_service.create_session_sync(
+                        app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+                    )
+            elif hasattr(session_service, "create_session_sync"):
+                session_service.create_session_sync(
+                    app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+                )
+
+        _ensure_temp_session()
+
         new_message = types.Content(
             role="user",
             parts=[types.Part(text=f"Generate welcome message and campaign suggestions based on:\n\n{context}")],
         )
         
-        response_text = ""
-        for event in runner.run(
-            user_id=temp_user_id,
-            session_id=temp_session_id,
-            new_message=new_message,
-        ):
-            candidate = content_to_text(event.content)
-            if candidate:
-                response_text += candidate
+        def _run_suggestions():
+            text = ""
+            for event in runner.run(
+                user_id=user_id,
+                session_id=temp_session_id,
+                new_message=new_message,
+            ):
+                candidate = content_to_text(event.content)
+                if candidate:
+                    text += candidate
+            return text
+
+        try:
+            response_text = _run_suggestions()
+        except ValueError as e:
+            # If the session wasn't found (e.g., mismatch or race), recreate and retry once
+            if "Session not found" in str(e):
+                print(f"[SUGGESTIONS] Session not found, recreating temp session and retrying: {temp_session_id}")
+                _ensure_temp_session()
+                response_text = _run_suggestions()
+            else:
+                raise
+        
+        print(f"[SUGGESTIONS] Agent response: {response_text[:200]}...")
         
         print(f"[SUGGESTIONS] Agent response: {response_text[:200]}...")
         

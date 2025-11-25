@@ -8,6 +8,7 @@ import { Header } from '../components/layout'
 import { Sidebar } from '../components/layout'
 import { MessageList, MessageInput, BusinessCardDisplay } from '../components/chat'
 import { Spinner } from '../components/ui'
+import { apiService } from '../services/apiService'
 
 export function ChatView() {
   const navigate = useNavigate()
@@ -59,10 +60,16 @@ export function ChatView() {
     userId,
   })
 
-  const handleNewChat = () => {
-    const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    setActiveSession(newSessionId)
-    navigate(`/chat?session=${newSessionId}`)
+  const handleNewChat = async () => {
+    try {
+      const res = await apiService.createSession('New chat', userId)
+      setActiveSession(res.session_id)
+      // Refresh past sessions list after creating a new one
+      fetchSessions(userId)
+      navigate(`/chat?session=${res.session_id}`)
+    } catch (err) {
+      console.error('Failed to create new session', err)
+    }
   }
 
   const handleSelectSession = (selectedSessionId: string) => {
