@@ -45,7 +45,7 @@ export function HomePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await apiService.getSuggestions()
+        const data = await apiService.getSuggestions(userId)
         // Type out welcome message
         const fullText = data.welcome_message
         let index = 0

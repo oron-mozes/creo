@@ -73,12 +73,15 @@ class ApiService {
   }
 
   // Suggestions endpoint
-  async getSuggestions(): Promise<{
+  async getSuggestions(userId?: string): Promise<{
     welcome_message: string
     suggestions: Suggestion[]
   }> {
     return this.fetch('/api/suggestions', {
       method: 'POST',
+      body: JSON.stringify({
+        user_id: userId,
+      }),
     })
   }
 

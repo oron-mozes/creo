@@ -480,8 +480,15 @@ def get_messages(session_id: str):
     print(f"[GET_MESSAGES] Found {len(messages)} messages for session {session_id}")
     return GetMessagesResponse(messages=messages, session_id=session_id)
 
+class SuggestionsRequest(BaseModel):
+    user_id: Optional[str] = None
+
+
 @app.post("/api/suggestions", response_model=SuggestionsResponse)
-def get_suggestions(current_user: Optional[UserInfo] = Depends(get_optional_user)):
+def get_suggestions(
+    request: SuggestionsRequest,
+    current_user: Optional[UserInfo] = Depends(get_optional_user)
+):
     """
     Get personalized welcome message and campaign suggestions for a user.
 
@@ -506,8 +513,15 @@ def get_suggestions(current_user: Optional[UserInfo] = Depends(get_optional_user
         )
 
     try:
-        # If user is not logged in, return generic suggestions
-        if not current_user:
+        # Resolve user_id (auth or anon)
+        if current_user:
+            user_id = current_user.user_id
+            user_name = current_user.name
+        else:
+            user_id = request.user_id
+            user_name = None
+
+        if not user_id:
             return SuggestionsResponse(
                 welcome_message="Hey! 👋 I'm here to help you connect with amazing influencers. Just tell me what you're looking for, and I'll find the perfect match for your business!",
                 suggestions=[
@@ -517,8 +531,6 @@ def get_suggestions(current_user: Optional[UserInfo] = Depends(get_optional_user
                     "I own a boutique hotel"
                 ]
             )
-
-        user_id = current_user.user_id
 
         # Get business card
         business_card = get_business_card(user_id)
@@ -548,6 +560,20 @@ def get_suggestions(current_user: Optional[UserInfo] = Depends(get_optional_user
         # Run suggestions agent in an isolated temp session (sessionless personalization via prompt)
         temp_session_id = f"temp_suggestions_{uuid.uuid4().hex}"
         runner = InMemoryRunner(agent=suggestions_agent, app_name="agents")
+        # Ensure the temp session exists before running the agent to avoid session-not-found errors
+        session_service = runner.session_service
+        if hasattr(session_service, "get_session_sync") and hasattr(session_service, "create_session_sync"):
+            existing = session_service.get_session_sync(
+                app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+            )
+            if not existing:
+                session_service.create_session_sync(
+                    app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+                )
+        elif hasattr(session_service, "create_session_sync"):
+            session_service.create_session_sync(
+                app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
+            )
 
         def _ensure_temp_session():
             """Create the temp session if it doesn't exist (avoid session-not-found)."""
