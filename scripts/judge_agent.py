@@ -117,7 +117,7 @@ def _ensure_session(runner: InMemoryRunner, user_id: str, session_id: str) -> No
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     env_judge_backend = os.environ.get("JUDGE_BACKEND", "gemini")
-    env_judge_model = os.environ.get("JUDGE_MODEL")
+    env_judge_model = os.environ.get("JUDGE_MODEL", "llama3.1:8b")
     env_judge_base_url = os.environ.get("JUDGE_BASE_URL")
     env_judge_api_key = os.environ.get("JUDGE_API_KEY")
     env_judge_max_tokens = os.environ.get("JUDGE_MAX_TOKENS")

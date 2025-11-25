@@ -414,7 +414,8 @@ class SessionManager:
             if self._root_agent is None:
                 raise ValueError("Root agent not set. Call set_root_agent() first.")
             print(f"[SessionManager] Creating new runner for user: {user_id}")
-            self._runners[user_id] = InMemoryRunner(agent=self._root_agent)
+            # Align app_name with agent package to avoid session/app mismatch warnings
+            self._runners[user_id] = InMemoryRunner(agent=self._root_agent, app_name="agents")
         return self._runners[user_id]
 
     def ensure_session(self, user_id: str, session_id: str, user_profile: Optional[Dict[str, Any]] = None) -> None:
@@ -506,6 +507,9 @@ class SessionManager:
         if session_memory:
             # Add message to shared memory
             session_memory.add_message('user', message)
+            # Reset frontdesk_called flag for this turn
+            metadata = session_memory.get_shared_context().setdefault('metadata', {})
+            metadata['frontdesk_called'] = False
 
         # Set session context for tools to access
         from agents.onboarding_agent.tools import set_session_context
@@ -554,6 +558,32 @@ class SessionManager:
                 # Re-raise other exceptions
                 raise
 
+        # Fallback guard: if frontdesk was never called, retry with an explicit instruction
+        session_memory = self.get_session_memory(session_id)
+        metadata = session_memory.get_shared_context().get('metadata', {}) if session_memory else {}
+        frontdesk_called = metadata.get('frontdesk_called', False)
+
+        if not frontdesk_called:
+            retry_text = (
+                "SYSTEM: You must call the specialist agent for the current stage, "
+                "then call route_to_frontdesk_agent with its response. "
+                "Use the original user message, do not respond directly."
+            )
+            retry_message = types.Content(
+                role="user",
+                parts=[types.Part(text=retry_text + "\nOriginal user message: " + message)],
+            )
+            try:
+                for event in runner.run(
+                    user_id=user_id,
+                    session_id=session_id,
+                    new_message=retry_message,
+                ):
+                    yield event
+            except Exception:
+                # Suppress secondary failures to avoid double errors
+                pass
+
     def _build_message_with_context(self, session_id: str, user_message: str) -> str:
         """Build a message with session context prepended.
 
@@ -584,6 +614,11 @@ class SessionManager:
             context_parts.append(f"workflow_state.stage: '{workflow_stage.value}'")
         else:
             context_parts.append("workflow_state.stage: None")
+
+        # Add frontdesk_called flag to enforce tool sequencing
+        metadata = session_memory.get_shared_context().get('metadata', {})
+        frontdesk_called = metadata.get('frontdesk_called')
+        context_parts.append(f"frontdesk_called: {frontdesk_called if frontdesk_called is not None else 'Unknown'}")
 
         # Add business card status
         business_card = session_memory.get_business_card()

@@ -395,8 +395,9 @@ def create_session(
 
     print(f"[CREATE_SESSION] session_id={session_id}, user_id={user_id}, message='{request.message[:50]}...'")
 
-    # Note: We don't save the message here because send_message socket handler will save it
-    # This endpoint just creates/initializes the session and returns the IDs
+    # Save the initial message so it's available when client joins via WebSocket
+    save_message_to_firestore(session_id, 'user', request.message, user_id)
+    print(f"[CREATE_SESSION] Initial message saved to storage")
 
     print(f"[CREATE_SESSION] Session created: {session_id}")
 
@@ -857,9 +858,9 @@ async def join_session(sid, data):
         print(f"[JOIN_SESSION] Last message is from user, processing initial message: '{initial_message[:50]}...'")
 
         try:
-            # Emit thinking status
+            # Emit thinking status to the specific client
             print(f"[JOIN_SESSION] Emitting agent_thinking status for session {session_id}")
-            await sio.emit('agent_thinking', {'session_id': session_id}, room=session_id)
+            await sio.emit('agent_thinking', {'session_id': session_id}, room=sid)
             print(f"[JOIN_SESSION] agent_thinking emitted, starting agent run")
 
             # Stream agent responses
