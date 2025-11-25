@@ -10,11 +10,11 @@ class SocketService {
       return this.socket
     }
 
-    // In development, use relative path which will be proxied by Vite
-    // In production, use the backend URL from environment variable
+    // In development, use relative path which will be proxied by Vite.
+    // In production, use configured API URL or fall back to the current origin (works on Cloud Run).
     const socketUrl = import.meta.env.DEV
       ? '/' // Use Vite proxy in dev mode
-      : (import.meta.env.VITE_API_URL || 'http://localhost:8000')
+      : (import.meta.env.VITE_API_URL || window.location.origin)
 
     console.log('[SocketService] Connecting to:', socketUrl)
     this.socket = io(socketUrl, {
