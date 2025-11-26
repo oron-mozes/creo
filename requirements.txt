@@ -86,9 +86,9 @@ opentelemetry-semantic-conventions==0.58b0
 packaging==24.2
 pandas==2.3.3
 passlib==1.7.4
-pinecone==7.3.0
-pinecone-plugin-assistant==1.8.0
-pinecone-plugin-interface==0.0.7
+# pinecone==7.3.0  # Removed - now using YouTube API instead
+# pinecone-plugin-assistant==1.8.0  # Removed - now using YouTube API instead
+# pinecone-plugin-interface==0.0.7  # Removed - now using YouTube API instead
 pluggy==1.6.0
 propcache==0.4.1
 proto-plus==1.26.1

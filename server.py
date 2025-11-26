@@ -101,7 +101,7 @@ except Exception as e:
 from agents.utils import AgentName
 
 # Import SessionManager for runner and memory management
-from session_manager import get_session_manager
+from session_manager import get_session_manager, set_current_session_context, clear_current_session_context
 
 # Import orchestrator agent
 import importlib.util

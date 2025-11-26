@@ -3,7 +3,7 @@
 import os
 import logging
 import json
-import hashlib
+import pycountry
 from typing import Optional
 from datetime import datetime, timedelta
 from collections import OrderedDict
@@ -341,9 +341,10 @@ def find_creators(
             stats = channel.get('statistics', {})
             snippet = channel.get('snippet', {})
             
-            # Filter by country if location is specified
+            # Soft filter by country: only filter out if channel HAS a country set AND it doesn't match
+            # Many channels don't set their country, but regionCode in search already biases toward the region
             channel_country = snippet.get('country', '').upper()
-            if required_country_code and channel_country != required_country_code:
+            if required_country_code and channel_country and channel_country != required_country_code:
                 filtered_by_country += 1
                 continue
             subscriber_count = int(stats.get('subscriberCount', 0))
@@ -441,6 +442,50 @@ def find_creators(
         
         # Store in cache
         _store_cache(cache_key, result)
+        
+        # Save to Firestore if session context is available
+        try:
+            from session_manager import get_current_session_context
+            from db import FoundCreatorsDB
+            
+            session_context = get_current_session_context()
+            if session_context:
+                session_id = session_context['session_id']
+                user_id = session_context['user_id']
+                
+                # Prepare search params
+                search_params = {
+                    'category': category,
+                    'platform': platform,
+                    'location': location,
+                    'budget': budget,
+                    'min_price': min_price,
+                    'max_price': max_price,
+                    'max_results': max_results,
+                    'target_audience': target_audience,
+                    'language': language,
+                }
+                
+                # Prepare metadata
+                metadata = {
+                    'search_query': search_query,
+                    'country_code': required_country_code,
+                    'cache_hit': False,
+                }
+                
+                # Save to Firestore
+                found_creators_db = FoundCreatorsDB()
+                found_creators_db.save_search_results(
+                    session_id=session_id,
+                    user_id=user_id,
+                    search_params=search_params,
+                    results=all_results,
+                    metadata=metadata
+                )
+                logger.info(f"Saved {len(all_results)} creator results to Firestore for session {session_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save creator search results to Firestore: {e}")
+        
         return result
         
     except HttpError as e:
