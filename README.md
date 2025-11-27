@@ -76,7 +76,7 @@ flowchart TB
 
     subgraph Server[FastAPI Server]
         API[HTTP/Socket.IO API]
-        Auth[Authentication Google OAuth + JWT]
+        Auth[Authentication (Google OAuth + JWT) + Auth-Gate Tool]
         Session[Session Manager]
         Ctx[Shared Session Context]
     end
@@ -148,6 +148,7 @@ flowchart TB
     API --> Firestore
     Creator --> Firestore
     Creator --> Pinecone
+    Auth -->|require_auth_for_outreach_tool| Creator
 
     SecretMgr -.->|Env vars| CloudRun
     CloudRun -.->|Hosts| API
