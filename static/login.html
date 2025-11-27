@@ -7,6 +7,7 @@
     <title>Login - Creo</title>
     <link rel="icon" type="image/png" href="/static/creo-logo-BesatB3H.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/auth-utils.js"></script>
     <style>
         @keyframes fade-in {
             from {
@@ -159,45 +160,17 @@
             return urlParams.get('return_url') || '/';
         }
 
-        // Check for token in URL hash (OAuth redirect)
-        window.addEventListener('DOMContentLoaded', function () {
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token=')) {
-                const token = hash.split('access_token=')[1].split('&')[0];
-                if (token) {
-                    // Store token
-                    localStorage.setItem('creo_auth_token', token);
-
-                    // Clear hash
-                    window.location.hash = '';
-
-                    // Redirect to return URL or home
+        window.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const user = await checkAuth({
+                    requireAuth: false
+                });
+                if (user) {
                     const returnUrl = getReturnUrl();
-                    console.log('Redirecting to:', returnUrl);
                     window.location.href = returnUrl;
                 }
-            }
-
-            // If already logged in, redirect to return URL or home
-            const existingToken = localStorage.getItem('creo_auth_token');
-            if (existingToken) {
-                // Verify token is still valid
-                fetch('/api/auth/check', {
-                    headers: {
-                        'Authorization': `Bearer ${existingToken}`
-                    }
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.authenticated) {
-                            const returnUrl = getReturnUrl();
-                            console.log('Already authenticated, redirecting to:', returnUrl);
-                            window.location.href = returnUrl;
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Token check failed:', err);
-                    });
+            } catch (err) {
+                console.log('Auth check failed on login page:', err);
             }
         });
 
@@ -217,6 +190,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         email: 'dev@example.com',
                         name: 'Dev User'
@@ -227,12 +201,9 @@
                     throw new Error('Dev login failed');
                 }
 
-                const data = await response.json();
+                await response.json();
 
-                // Store token
-                localStorage.setItem('creo_auth_token', data.access_token);
-
-                // Redirect to return URL or home
+                // Redirect to return URL or home (cookie set server-side)
                 const returnUrl = getReturnUrl();
                 console.log('Dev login successful, redirecting to:', returnUrl);
                 window.location.href = returnUrl;

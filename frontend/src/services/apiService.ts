@@ -1,19 +1,13 @@
 // API service for backend communication
-import { storageService, STORAGE_KEYS } from './storageService'
 import type { User, Suggestion, Session as SessionType } from '../types'
 
 class ApiService {
-  private getAuthHeaders(): HeadersInit {
-    const token = storageService.get<string>(STORAGE_KEYS.AUTH_TOKEN)
-    return token ? { Authorization: `Bearer ${token}` } : {}
-  }
-
   async fetch<T>(url: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(url, {
       ...options,
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        ...this.getAuthHeaders(),
         ...options.headers,
       },
     })
@@ -33,21 +27,47 @@ class ApiService {
   // Auth endpoints
   async checkAuth(): Promise<User | null> {
     try {
-      return await this.fetch('/api/auth/me')
+      const res = await this.fetch<{ authenticated: boolean; user: User | null }>('/api/auth/check')
+      return res.authenticated ? res.user : null
     } catch {
       return null
     }
   }
 
+  async getAuthToken(): Promise<string | null> {
+    try {
+      const res = await this.fetch<{ token: string }>('/api/auth/token')
+      return res.token
+    } catch {
+      return null
+    }
+  }
+
+  async logout(): Promise<void> {
+    await this.fetch('/api/auth/logout', { method: 'POST' })
+  }
+
+  async devLogin(): Promise<void> {
+    await this.fetch('/api/auth/dev/login', { method: 'POST' })
+  }
+
   // Session endpoints
   async getSessions(userId: string): Promise<SessionType[]> {
-    const response = await this.fetch<{ sessions: Array<{ id: string; title: string; timestamp: string }> }>(`/api/sessions?user_id=${userId}`)
-    // Convert backend response to frontend Session type
-    return response.sessions.map(s => ({
-      id: s.id,
-      title: s.title,
-      timestamp: new Date(s.timestamp).getTime()
-    }))
+    try {
+      const response = await this.fetch<{ sessions: Array<{ id: string; title: string; timestamp: string }> }>(
+        `/api/sessions?user_id=${userId}`
+      )
+      // Convert backend response to frontend Session type
+      return response.sessions.map(s => ({
+        id: s.id,
+        title: s.title,
+        timestamp: new Date(s.timestamp).getTime()
+      }))
+    } catch (err) {
+      // If blocked due to auth (e.g., anon id linked to user), return empty list
+      console.warn('Session fetch blocked or failed', err)
+      return []
+    }
   }
 
   async createSession(

@@ -6,9 +6,10 @@ import { Button } from '../ui'
 interface HeaderProps {
   onNewChat?: () => void
   className?: string
+  onShowAuth?: () => void
 }
 
-export function Header({ onNewChat, className = '' }: HeaderProps) {
+export function Header({ onNewChat, className = '', onShowAuth }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth()
 
   return (
@@ -33,17 +34,33 @@ export function Header({ onNewChat, className = '' }: HeaderProps) {
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user.email}</p>
-                <p className="text-xs text-gray-500">
-                  {user.is_anonymous ? 'Anonymous' : 'Authenticated'}
+                <p className="text-sm font-medium text-gray-900">
+                  {user.name || user.email}
                 </p>
+                <p className="text-xs text-gray-500">{user.email}</p>
               </div>
+              {user.picture ? (
+                <img
+                  src={user.picture}
+                  alt={user.name || user.email}
+                  className="h-10 w-10 rounded-full object-cover border border-gray-200"
+                />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                  {(user.name || user.email || '?')
+                    .split(' ')
+                    .map(part => part[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2)}
+                </div>
+              )}
               <Button variant="ghost" size="sm" onClick={logout}>
                 Logout
               </Button>
             </div>
           ) : (
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={onShowAuth}>
               Sign In
             </Button>
           )}

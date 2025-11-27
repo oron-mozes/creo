@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { HomePage, ChatView } from './pages'
 
 function App() {
@@ -6,14 +6,23 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<HomePage initialShowAuthModal />} />
+        <Route path="/login.html" element={<HomePage initialShowAuthModal />} />
         <Route path="/chat" element={<ChatView />} />
-        <Route path="*" element={<LegacyRedirect />} />
+        <Route path="*" element={<FallbackRouter />} />
       </Routes>
     </Router>
   )
 }
 
-function LegacyRedirect() {
+function FallbackRouter() {
+  const location = useLocation()
+  const pathname = location.pathname.toLowerCase()
+
+  if (pathname.includes('login')) {
+    return <HomePage initialShowAuthModal />
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">

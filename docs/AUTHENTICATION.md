@@ -177,6 +177,26 @@ User logs in again
 
 **Data preserved:** Session ID, chat history in Firestore
 
+### Flow 5: Anonymous → Authenticated User Migration
+
+```
+User visits page (no login)
+  ↓
+Browser generates/stores creo_anon_user_id (localStorage)
+  ↓
+Sessions are created in Firestore keyed to that anon ID (not stored locally)
+  ↓
+User logs in (Google or Dev)
+  ↓
+Server upserts a user record (email/name/picture, generated creo_user_id)
+  ↓
+Server migrates sessions/messages from anon_id → creo_user_id and records the link
+  ↓
+Future session fetches for that anon_id require auth if it has been linked (prevents data leaks)
+```
+
+Session lifetime is a sliding 12-hour JWT stored in an HttpOnly cookie (`creo_auth_token`). Any authenticated request with <4 hours remaining gets a refreshed cookie extending another 12 hours.
+
 ### Implementation: Return URL Handling
 
 **Homepage (index.html):**

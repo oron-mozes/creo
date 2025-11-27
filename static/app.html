@@ -606,32 +606,47 @@
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', () => {
             route();
-            updateHeaderAuth();
+            checkAuth({
+                requireAuth: false,
+                onSuccess: (user) => {
+                    // Cache for synchronous helpers
+                    localStorage.setItem('creo_user_info', JSON.stringify(user));
+                    updateHeaderAuth(user);
+                },
+                onFailure: () => {
+                    updateHeaderAuth(null);
+                }
+            });
         });
 
         // Update header to show Sign In button or User Profile
-        function updateHeaderAuth() {
+        function updateHeaderAuth(user) {
             const token = getAuthToken();
             const signInButton = document.getElementById('signInButton');
             const userProfile = document.getElementById('userProfile');
 
-            if (token) {
+            const cachedUser = user || (() => {
+                const raw = localStorage.getItem('creo_user_info');
+                if (!raw) return null;
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    return null;
+                }
+            })();
+
+            if (cachedUser || token) {
                 // User is logged in - show profile, hide sign in
                 signInButton.classList.add('hidden');
                 userProfile.classList.remove('hidden');
 
-                // Parse JWT to get user info
-                try {
-                    const payload = JSON.parse(atob(token.split('.')[1]));
-                    const userName = document.getElementById('userName');
-                    const userAvatar = document.getElementById('userAvatar');
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
 
-                    if (payload.name) {
-                        userName.textContent = payload.name;
-                        userAvatar.textContent = payload.name.charAt(0).toUpperCase();
-                    }
-                } catch (e) {
-                    console.error('Error parsing JWT:', e);
+                const displayName = (cachedUser && (cachedUser.name || cachedUser.email)) || null;
+                if (displayName && userName && userAvatar) {
+                    userName.textContent = displayName;
+                    userAvatar.textContent = displayName.charAt(0).toUpperCase();
                 }
             } else {
                 // User is not logged in - show sign in, hide profile
@@ -649,6 +664,7 @@
 
         function clearAuthToken() {
             localStorage.removeItem('creo_auth_token');
+            localStorage.removeItem('creo_user_info');
         }
 
         function getAuthHeaders() {
@@ -662,7 +678,12 @@
             menu.classList.toggle('hidden');
         }
 
-        function logout() {
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {
+                console.warn('Logout failed, clearing client state anyway', e);
+            }
             clearAuthToken();
             updateHeaderAuth();
             navigateTo(null, '/');

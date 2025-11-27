@@ -211,7 +211,7 @@ dev-reset:
 	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
 		echo ""; \
 		echo "→ Creating reset script..."; \
-		$(PYTHON) -c "import sys; sys.path.insert(0, '.'); from session_manager import get_session_manager; from server import in_memory_messages, in_memory_business_cards; sm = get_session_manager(); sm._runners.clear(); sm._session_memories.clear(); in_memory_messages.clear(); in_memory_business_cards.clear(); print('✓ In-memory data cleared')"; \
+		$(PYTHON) -c "import sys; sys.path.insert(0, '.'); from session_manager import get_session_manager; from server import message_store; from utils import message_utils; sm = get_session_manager(); sm._runners.clear(); sm._session_memories.clear(); message_store._in_memory_messages.clear(); message_utils.in_memory_business_cards.clear(); message_utils.in_memory_messages.clear(); print('✓ In-memory data cleared')"; \
 		echo ""; \
 		echo "→ To complete the reset:"; \
 		echo "  1. Open browser DevTools (F12)"; \

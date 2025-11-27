@@ -12,13 +12,20 @@ from jose import JWTError, jwt
 from authlib.integrations.starlette_client import OAuth
 from pydantic import BaseModel
 import httpx
+from db import get_db  # For persisting user records
+from services.user_service import UserService
+from fastapi import APIRouter
 
 # Configuration
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "development-secret-key-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+# Sliding-session window: 12 hours from last interaction
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 12
+COOKIE_NAME = "creo_auth_token"
+COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"
+COOKIE_DOMAIN = os.getenv("COOKIE_DOMAIN")
 
 # Determine redirect URI based on environment
 if os.getenv('K_SERVICE'):  # Cloud Run
@@ -28,8 +35,27 @@ else:  # Local development
 
 # OAuth setup
 oauth = OAuth()
+_user_service: Optional[UserService] = None
+try:
+    _user_service = UserService(get_db())
+except Exception as e:  # pragma: no cover - local dev without Firestore
+    print(f"[AUTH] UserService unavailable: {e}")
 
-if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+def google_config_present() -> bool:
+    return bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
+
+
+def log_google_config_state(prefix: str = "[AUTH]") -> None:
+    """Log presence of Google OAuth env vars without leaking secrets."""
+    print(
+        f"{prefix} GOOGLE_CLIENT_ID set: {bool(GOOGLE_CLIENT_ID)}, "
+        f"GOOGLE_CLIENT_SECRET set: {bool(GOOGLE_CLIENT_SECRET)}, "
+        f"REDIRECT_URI: {REDIRECT_URI}",
+        flush=True,
+    )
+
+
+if google_config_present():
     oauth.register(
         name='google',
         client_id=GOOGLE_CLIENT_ID,
@@ -39,6 +65,8 @@ if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
             'scope': 'openid email profile'
         }
     )
+else:
+    log_google_config_state()
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -70,6 +98,31 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
+def set_auth_cookie(response: Response, token: str):
+    """Set the auth token in an HttpOnly cookie."""
+    max_age = ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    response.set_cookie(
+        key=COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="lax",
+        max_age=max_age,
+        expires=max_age,
+        domain=COOKIE_DOMAIN or None,
+        path="/",
+    )
+
+
+def clear_auth_cookie(response: Response):
+    """Clear the auth token cookie."""
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        domain=COOKIE_DOMAIN or None,
+        path="/",
+    )
+
 def verify_token(token: str) -> Optional[dict]:
     """Verify and decode a JWT token."""
     try:
@@ -78,14 +131,41 @@ def verify_token(token: str) -> Optional[dict]:
     except JWTError:
         return None
 
+def _refresh_cookie_if_needed(payload: dict, response: Response) -> None:
+    """Refresh the auth cookie if the token is nearing expiry (sliding window)."""
+    exp = payload.get("exp")
+    if not exp:
+        return
+
+    # If less than 4 hours remaining, issue a fresh 12-hour token
+    time_remaining = datetime.utcfromtimestamp(exp) - datetime.utcnow()
+    if time_remaining.total_seconds() <= 4 * 60 * 60:
+        refreshed_token = create_access_token(
+            {
+                "sub": payload.get("sub"),
+                "email": payload.get("email"),
+                "name": payload.get("name"),
+                "picture": payload.get("picture"),
+            }
+        )
+        set_auth_cookie(response, refreshed_token)
+
+
 async def get_current_user(
+    request: Request,
+    response: Response,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> UserInfo:
-    """Dependency to get current authenticated user from JWT token."""
-    if not credentials:
+    """Dependency to get current authenticated user from JWT token or auth cookie."""
+    token = credentials.credentials if credentials else None
+
+    # Fall back to HttpOnly cookie if no bearer token was provided
+    if not token:
+        token = request.cookies.get(COOKIE_NAME)
+
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    token = credentials.credentials
     payload = verify_token(token)
 
     if not payload:
@@ -99,17 +179,19 @@ async def get_current_user(
     if not user_id or not email:
         raise HTTPException(status_code=401, detail="Invalid token payload")
 
+    # Sliding refresh to extend session on activity
+    _refresh_cookie_if_needed(payload, response)
+
     return UserInfo(user_id=user_id, email=email, name=name, picture=picture)
 
 async def get_optional_user(
+    request: Request,
+    response: Response,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> Optional[UserInfo]:
     """Dependency to get current user if authenticated, None otherwise."""
-    if not credentials:
-        return None
-
     try:
-        return await get_current_user(credentials)
+        return await get_current_user(request, response, credentials)
     except HTTPException:
         return None
 
@@ -117,7 +199,8 @@ async def get_optional_user(
 @router.get("/login/google")
 async def google_login(request: Request):
     """Initiate Google OAuth login flow."""
-    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+    if not google_config_present():
+        log_google_config_state()
         raise HTTPException(
             status_code=500,
             detail="Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables."
@@ -133,7 +216,8 @@ async def google_login(request: Request):
 @router.get("/google/callback")
 async def google_callback(request: Request):
     """Handle Google OAuth callback and create user session."""
-    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+    if not google_config_present():
+        log_google_config_state()
         raise HTTPException(
             status_code=500,
             detail="Google OAuth not configured"
@@ -160,6 +244,15 @@ async def google_callback(request: Request):
         # Create our user_id (prefixed with 'google_')
         user_id = f"google_{google_user_id}"
 
+        # Persist/update user record in DB (if available)
+        if _user_service:
+            _user_service.ensure_user_record(
+                creo_user_id=user_id,
+                email=email,
+                name=name,
+                picture=picture,
+            )
+
         # Create JWT token
         access_token = create_access_token(
             data={
@@ -173,26 +266,36 @@ async def google_callback(request: Request):
         # Get return URL from state
         return_url = request.query_params.get("state", "/")
 
-        # Redirect to frontend with token in URL fragment (for SPA)
-        # Frontend will extract token and store it
-        return RedirectResponse(
-            url=f"{return_url}#access_token={access_token}",
+        # Redirect back to frontend and store token in HttpOnly cookie
+        response = RedirectResponse(
+            url=return_url,
             status_code=303
         )
+        set_auth_cookie(response, access_token)
+        return response
 
     except Exception as e:
         print(f"[AUTH] Error in Google callback: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
 
 @router.post("/logout")
-async def logout(current_user: UserInfo = Depends(get_current_user)):
-    """Logout user (client should delete token)."""
+async def logout(response: Response, current_user: UserInfo = Depends(get_current_user)):
+    """Logout user (clears HttpOnly auth cookie)."""
+    clear_auth_cookie(response)
     return {"status": "success", "message": "Logged out successfully"}
 
 @router.get("/me")
 async def get_me(current_user: UserInfo = Depends(get_current_user)) -> UserInfo:
     """Get current authenticated user info."""
     return current_user
+
+@router.get("/token")
+async def get_token(request: Request):
+    """Return the auth token from the HttpOnly cookie if valid."""
+    token = request.cookies.get(COOKIE_NAME)
+    if not token or not verify_token(token):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {"token": token}
 
 @router.get("/check")
 async def check_auth(user: Optional[UserInfo] = Depends(get_optional_user)):
@@ -203,12 +306,24 @@ async def check_auth(user: Optional[UserInfo] = Depends(get_optional_user)):
 
 # For development/testing: login with mock user
 @router.post("/dev/login")
-async def dev_login(email: str = "dev@example.com", name: str = "Dev User"):
+async def dev_login(
+    response: Response,
+    email: str = "dev@example.com",
+    name: str = "Dev User"
+):
     """Development-only endpoint to create a test user token."""
     if os.getenv('K_SERVICE'):
         raise HTTPException(status_code=404, detail="Not available in production")
 
     user_id = f"dev_{email.split('@')[0]}"
+
+    if _user_service:
+        _user_service.ensure_user_record(
+            creo_user_id=user_id,
+            email=email,
+            name=name,
+            picture=None,
+        )
 
     access_token = create_access_token(
         data={
@@ -219,7 +334,7 @@ async def dev_login(email: str = "dev@example.com", name: str = "Dev User"):
         }
     )
 
-    return TokenResponse(
+    token_response = TokenResponse(
         access_token=access_token,
         user=UserInfo(
             user_id=user_id,
@@ -228,3 +343,7 @@ async def dev_login(email: str = "dev@example.com", name: str = "Dev User"):
             picture=None
         )
     )
+
+    # Set HttpOnly cookie for dev login
+    set_auth_cookie(response, access_token)
+    return token_response

@@ -68,22 +68,22 @@ Visit http://localhost:8000 to see the API running.
 flowchart TB
     User([User])
 
-    subgraph Client[Client Layer]
-        WebUI[Web Interface Socket.IO + OAuth]
+    subgraph Client [Client Layer]
+        WebUI[Web Interface<br/>Socket.IO + OAuth]
     end
 
-    subgraph Server[FastAPI Server]
+    subgraph Server [FastAPI Server]
         API[HTTP/Socket.IO API]
-        Auth[Authentication Google OAuth + JWT]
+        Auth[Authentication<br/>Google OAuth + JWT]
         Session[Session Manager]
     end
 
-    subgraph Orchestration[Agent Orchestration]
-        Orchestrator[Orchestrator Agent Workflow Router]
-        Frontdesk[Frontdesk Agent Response Formatter]
+    subgraph Orchestration [Agent Orchestration]
+        Orchestrator[Orchestrator Agent<br/>Workflow Router]
+        Frontdesk[Frontdesk Agent<br/>Response Formatter]
     end
 
-    subgraph Specialist[Specialist Agents]
+    subgraph Specialist [Specialist Agents]
         Onboarding[Onboarding Agent]
         Brief[Campaign Brief Agent]
         Creator[Creator Finder Agent]
@@ -92,19 +92,19 @@ flowchart TB
         Suggestions[Suggestions Agent]
     end
 
-    subgraph Data[Data Layer]
-        Firestore[(Firestore Sessions and Messages In-memory fallback in dev)]
+    subgraph Data [Data Layer]
+        Firestore[(Firestore<br/>Conversations, Sessions,<br/>Campaigns, Analytics)]
+        Pinecone[(Pinecone<br/>Vector Search<br/>Creator Profiles)]
     end
 
-    subgraph External[External AI and APIs]
-        Gemini[Google Gemini 2.0 LLM + Embeddings]
+    subgraph AI [AI Services]
+        Gemini[Google Gemini 2.0<br/>LLM + Embeddings]
         Search[Google Search API]
-        YouTube[YouTube Data API v3 Creator search]
     end
 
-    subgraph Infrastructure[Google Cloud]
-        CloudRun[Cloud Run Serverless Hosting]
-        SecretMgr[Secret Manager env injection at deploy]
+    subgraph Infrastructure [Google Cloud]
+        CloudRun[Cloud Run<br/>Serverless Hosting]
+        SecretMgr[Secret Manager]
     end
 
     User -->|Browser| WebUI
@@ -132,16 +132,17 @@ flowchart TB
     Onboarding --> Gemini
     Onboarding --> Search
     Brief --> Gemini
+    Creator --> Gemini
+    Creator --> Pinecone
     Outreach --> Gemini
     Campaign --> Gemini
     Suggestions --> Gemini
-    Creator --> YouTube
 
     Session --> Firestore
     API --> Firestore
 
-    SecretMgr -.->|Env vars| CloudRun
-    CloudRun -.->|Hosts| API
+    API --> SecretMgr
+    CloudRun -.->|Hosts| Server
 ```
 
 ### Workflow Stages
@@ -177,7 +178,6 @@ Each stage is enforced by the Orchestrator to ensure proper progression.
 - **Token Management**: JWT (HS256)
 - **Secrets**: Google Secret Manager
 - **Anonymous Support**: Yes (for testing)
-- **Auth Gates**: Outreach requires authentication; login prompts can be triggered by the outreach agent tool (`require_auth_for_outreach`) and are enforced server-side.
 
 ### Infrastructure & DevOps
 - **Hosting**: Google Cloud Run (serverless)

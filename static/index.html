@@ -317,6 +317,7 @@
 
         function clearAuthToken() {
             localStorage.removeItem('creo_auth_token');
+            localStorage.removeItem('creo_user_info');
         }
 
         function getAuthHeaders() {
@@ -328,31 +329,32 @@
         }
 
         async function checkAuth() {
-            const token = getAuthToken();
-            if (!token) {
-                // No token - user is not logged in, but that's OK for homepage
-                displayLoginButton();
-                return null;
-            }
-
             try {
-                const response = await fetch('/api/auth/me', {
-                    headers: getAuthHeaders()
+                const response = await fetch('/api/auth/check', {
+                    headers: getAuthHeaders(),
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {
-                    // Token expired or invalid - clear it but don't redirect
                     clearAuthToken();
                     displayLoginButton();
                     return null;
                 }
 
-                const user = await response.json();
-                displayUserProfile(user);
-                return user;
+                const data = await response.json();
+                if (data.authenticated) {
+                    localStorage.setItem('creo_user_info', JSON.stringify(data.user));
+                    displayUserProfile(data.user);
+                    return data.user;
+                }
+
+                clearAuthToken();
+                displayLoginButton();
+                return null;
             } catch (error) {
                 console.error('Auth check failed:', error);
                 // Don't redirect on error, just show login button
+                clearAuthToken();
                 displayLoginButton();
                 return null;
             }
@@ -394,7 +396,12 @@
             menu.classList.toggle('hidden');
         }
 
-        function logout() {
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {
+                console.warn('Logout failed, clearing client state anyway', e);
+            }
             clearAuthToken();
             window.location.href = '/login.html';
         }

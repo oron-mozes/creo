@@ -3,17 +3,45 @@
  * Include this script before other page scripts
  */
 
-// Token management
+const AUTH_TOKEN_KEY = 'creo_auth_token';
+const AUTH_USER_KEY = 'creo_user_info';
+
+// Token management (kept for backward compatibility with header-based auth)
 function getAuthToken() {
-    return localStorage.getItem('creo_auth_token');
+    return localStorage.getItem(AUTH_TOKEN_KEY);
 }
 
 function setAuthToken(token) {
-    localStorage.setItem('creo_auth_token', token);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
 }
 
 function clearAuthToken() {
-    localStorage.removeItem('creo_auth_token');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+}
+
+// User info cache (non-sensitive, used to keep sync helpers working)
+function getStoredAuthUser() {
+    const raw = localStorage.getItem(AUTH_USER_KEY);
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error('Failed to parse stored auth user', e);
+        return null;
+    }
+}
+
+function setStoredAuthUser(user) {
+    if (!user) {
+        localStorage.removeItem(AUTH_USER_KEY);
+        return;
+    }
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+}
+
+function clearAuthState() {
+    clearAuthToken();
+    setStoredAuthUser(null);
 }
 
 // HTTP headers
@@ -38,25 +66,15 @@ function redirectToLogin(returnUrl = null) {
 async function checkAuth(options = {}) {
     const { requireAuth = false, onSuccess = null, onFailure = null } = options;
 
-    const token = getAuthToken();
-
-    if (!token) {
-        if (requireAuth) {
-            redirectToLogin();
-            return null;
-        }
-        if (onFailure) onFailure();
-        return null;
-    }
-
     try {
-        const response = await fetch('/api/auth/me', {
-            headers: getAuthHeaders()
+        const response = await fetch('/api/auth/check', {
+            method: 'GET',
+            headers: getAuthHeaders(),
+            credentials: 'include'
         });
 
         if (!response.ok) {
-            // Token expired or invalid
-            clearAuthToken();
+            clearAuthState();
             if (requireAuth) {
                 redirectToLogin();
                 return null;
@@ -65,12 +83,24 @@ async function checkAuth(options = {}) {
             return null;
         }
 
-        const user = await response.json();
-        if (onSuccess) onSuccess(user);
-        return user;
+        const data = await response.json();
+
+        if (data.authenticated) {
+            setStoredAuthUser(data.user);
+            if (onSuccess) onSuccess(data.user);
+            return data.user;
+        }
+
+        clearAuthState();
+        if (requireAuth) {
+            redirectToLogin();
+            return null;
+        }
+        if (onFailure) onFailure();
+        return null;
     } catch (error) {
         console.error('Auth check failed:', error);
-        clearAuthToken();
+        clearAuthState();
         if (requireAuth) {
             redirectToLogin();
             return null;
@@ -81,8 +111,16 @@ async function checkAuth(options = {}) {
 }
 
 // Logout function
-function logout() {
-    clearAuthToken();
+async function logout() {
+    try {
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch (e) {
+        console.warn('Logout request failed, clearing client state anyway', e);
+    }
+    clearAuthState();
     window.location.href = '/login.html';
 }
 
@@ -150,7 +188,7 @@ async function authenticatedFetch(url, options = {}) {
         ...getAuthHeaders()
     };
 
-    const response = await fetch(url, { ...options, headers });
+    const response = await fetch(url, { ...options, headers, credentials: 'include' });
 
     // Handle 401 Unauthorized
     if (response.status === 401) {

@@ -12,6 +12,7 @@ from session_manager import SessionManager
 from utils.gmail_utils import GmailService, gmail_service
 from utils.message_utils import save_business_card, get_business_card
 from agents.outreach_message_agent.models import OutreachEmail
+from agents.outreach_message_agent.tools_auth_handler import handle_require_auth_for_outreach
 from config.database import get_db
 
 
@@ -64,6 +65,19 @@ def handle_send_outreach_email_tool(
         Dictionary with success status and email_id
     """
     print(f"[TOOL_HANDLER] Processing send_outreach_email: {creator_name} ({creator_email})")
+
+    # Require authenticated user (anon users lack contact details)
+    # Allow only verified auth IDs (JWT-backed) for outreach: google_* or dev_*
+    def _is_authenticated_uid(uid: str) -> bool:
+        return uid.startswith("google_") or uid.startswith("dev_")
+
+    if not user_id or not _is_authenticated_uid(user_id):
+        print(f"[TOOL_HANDLER] BLOCKED: Outreach requires login (user_id={user_id})")
+        return {
+            'success': False,
+            'error': 'Authentication required to send outreach emails. Please sign in first.',
+            'auth_required': True,
+        }
 
     # Get session memory
     session_memory = session_manager.get_session_memory(session_id)
@@ -206,18 +220,21 @@ def handle_tool_calls(
         Dictionary with tool execution results or None if no tool call
     """
     # Check for send_outreach_email tool call
-    # Pattern: looking for the tool being mentioned in response
-    # This is a simplified version - in production, you'd parse ADK's tool call format
-
     if 'send_outreach_email' in response_text.lower():
         print(f"[TOOL_HANDLER] Detected potential send_outreach_email tool call")
-        # In a real implementation, you'd extract parameters from the tool call
-        # For now, this is a placeholder
-        # The actual implementation would need to parse the ADK tool call format
         return {
             'tool_detected': True,
             'tool_name': 'send_outreach_email',
             'note': 'Tool call detected but parameter extraction not implemented yet'
+        }
+
+    # Check for require_auth_for_outreach tool call
+    if 'require_auth_for_outreach' in response_text.lower():
+        print(f"[TOOL_HANDLER] Detected require_auth_for_outreach tool call")
+        return {
+            'tool_detected': True,
+            'tool_name': 'require_auth_for_outreach',
+            **handle_require_auth_for_outreach()
         }
 
     return {

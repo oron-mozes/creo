@@ -221,6 +221,7 @@
 
         function clearAuthToken() {
             localStorage.removeItem('creo_auth_token');
+            localStorage.removeItem('creo_user_info');
         }
 
         function getAuthHeaders() {
@@ -279,7 +280,12 @@
             menu.classList.toggle('hidden');
         }
 
-        function logout() {
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {
+                console.warn('Logout failed, clearing client state anyway', e);
+            }
             clearAuthToken();
             window.location.href = '/login.html';
         }
