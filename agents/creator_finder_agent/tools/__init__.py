@@ -3,10 +3,11 @@ Creator Finder Agent Tools.
 
 Provides influencer discovery, ranking, and search capabilities.
 """
-from .embedding_generator import EmbeddingGenerator
-from .pinecone_client import PineconeClient
-from .ranker import InfluencerRanker
-from .influencer_search import InfluencerSearch, search_influencers
+# Legacy Pinecone-based components (deprecated - now using YouTube API)
+# from .embedding_generator import EmbeddingGenerator
+# from .pinecone_client import PineconeClient
+# from .ranker import InfluencerRanker
+# from .influencer_search import InfluencerSearch, search_influencers
 
 # Import find_creators from parent tools.py module
 import sys
@@ -26,10 +27,11 @@ else:
     find_creators = None
 
 __all__ = [
-    "EmbeddingGenerator",
-    "PineconeClient",
-    "InfluencerRanker",
-    "InfluencerSearch",
-    "search_influencers",
+    # Legacy exports (deprecated - now using YouTube API)
+    # "EmbeddingGenerator",
+    # "PineconeClient",
+    # "InfluencerRanker",
+    # "InfluencerSearch",
+    # "search_influencers",
     "find_creators",
 ]

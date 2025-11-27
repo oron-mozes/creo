@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
 from google.cloud import firestore
@@ -31,6 +31,7 @@ SESSIONS = "sessions"
 CAMPAIGNS = "campaigns"
 ANALYTICS = "analytics"
 CREATORS = "creators"
+FOUND_CREATORS = "found_creators"
 
 
 # Pydantic Models for type safety and validation
@@ -337,3 +338,102 @@ class AnalyticsDB:
             }
             for doc in docs
         ]
+
+
+class FoundCreatorsDB:
+    """Manage found creator search results in Firestore.
+    
+    Each document represents one session's search results, with:
+    - session_id as document ID
+    - latest_search: most recent search with results
+    - search_history: array of previous searches (auto-expires after 12 hours)
+    """
+
+    def __init__(self):
+        self.db = get_db()
+        self.collection = self.db.collection(FOUND_CREATORS)
+
+    def save_search_results(
+        self,
+        session_id: str,
+        user_id: str,
+        search_params: Dict[str, Any],
+        results: List[Dict[str, Any]],
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """Save creator search results for a session.
+        
+        Args:
+            session_id: Session ID (used as document ID)
+            user_id: User ID
+            search_params: Search parameters used
+            results: List of creator result dictionaries
+            metadata: Optional additional metadata (search_query, country_code, etc.)
+        """
+        search_record = {
+            'search_params': search_params,
+            'results': results,
+            'results_count': len(results),
+            'metadata': metadata or {},
+            'timestamp': datetime.utcnow().isoformat(),
+        }
+
+        # Get existing document if it exists
+        doc_ref = self.collection.document(session_id)
+        existing_doc = doc_ref.get()
+
+        if existing_doc.exists:
+            # Update existing document
+            existing_data = existing_doc.to_dict()
+            search_history = existing_data.get('search_history', [])
+            
+            # Filter out searches older than 12 hours
+            cutoff_time = datetime.utcnow() - timedelta(hours=12)
+            search_history = [
+                search for search in search_history
+                if datetime.fromisoformat(search['timestamp']) > cutoff_time
+            ]
+            
+            # Add previous latest_search to history if it exists
+            if 'latest_search' in existing_data:
+                search_history.append(existing_data['latest_search'])
+            
+            # Update document
+            doc_ref.update({
+                'latest_search': search_record,
+                'search_history': search_history,
+                'updated_at': firestore.SERVER_TIMESTAMP,
+            })
+        else:
+            # Create new document
+            doc_data = {
+                'session_id': session_id,
+                'user_id': user_id,
+                'latest_search': search_record,
+                'search_history': [],
+                'created_at': firestore.SERVER_TIMESTAMP,
+                'updated_at': firestore.SERVER_TIMESTAMP,
+            }
+            doc_ref.set(doc_data)
+
+    def get_session_searches(
+        self,
+        session_id: str,
+        include_history: bool = True
+    ) -> Optional[Dict[str, Any]]:
+        """Get search results for a session.
+        
+        Args:
+            session_id: Session ID
+            include_history: Whether to include search history (default: True)
+        
+        Returns:
+            Dictionary with latest_search and optionally search_history, or None if not found
+        """
+        doc = self.collection.document(session_id).get()
+        if doc.exists:
+            data = doc.to_dict()
+            if not include_history and 'search_history' in data:
+                del data['search_history']
+            return data
+        return None

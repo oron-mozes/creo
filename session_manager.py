@@ -12,12 +12,16 @@ Key Architecture:
 """
 from __future__ import annotations
 
+import threading
 from typing import Optional, Dict, Any, Union, List
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 from datetime import datetime
 
 from workflow_enums import WorkflowStage, OnboardingStatus, ExtractedField
+
+# Thread-local storage for session context (used by tools)
+_thread_local = threading.local()
 
 
 class SessionMemory:
@@ -514,6 +518,9 @@ class SessionManager:
         # Set session context for tools to access
         from agents.onboarding_agent.tools import set_session_context
         set_session_context(self, session_id)
+        
+        # Set thread-local session context for tools (e.g., creator_finder_agent)
+        set_current_session_context(session_id, user_id)
 
         # Get runner and execute
         runner = self.get_or_create_runner(user_id)
@@ -557,6 +564,9 @@ class SessionManager:
             else:
                 # Re-raise other exceptions
                 raise
+        finally:
+            # Always clear session context after execution
+            clear_current_session_context()
 
         # Fallback guard: if frontdesk was never called, retry with an explicit instruction
         session_memory = self.get_session_memory(session_id)
@@ -789,3 +799,42 @@ def get_session_manager() -> SessionManager:
     if _session_manager is None:
         _session_manager = SessionManager()
     return _session_manager
+
+
+def set_current_session_context(session_id: str, user_id: str) -> None:
+    """Set the current session context in thread-local storage.
+    
+    This allows tools to access session information without explicit parameter passing.
+    Should be called before executing agent tools.
+    
+    Args:
+        session_id: The session ID
+        user_id: The user ID
+    """
+    _thread_local.session_id = session_id
+    _thread_local.user_id = user_id
+
+
+def get_current_session_context() -> Optional[Dict[str, str]]:
+    """Get the current session context from thread-local storage.
+    
+    Returns:
+        Dictionary with 'session_id' and 'user_id' keys, or None if not set
+    """
+    session_id = getattr(_thread_local, 'session_id', None)
+    user_id = getattr(_thread_local, 'user_id', None)
+    
+    if session_id and user_id:
+        return {'session_id': session_id, 'user_id': user_id}
+    return None
+
+
+def clear_current_session_context() -> None:
+    """Clear the current session context from thread-local storage.
+    
+    Should be called after agent tool execution completes.
+    """
+    if hasattr(_thread_local, 'session_id'):
+        delattr(_thread_local, 'session_id')
+    if hasattr(_thread_local, 'user_id'):
+        delattr(_thread_local, 'user_id')

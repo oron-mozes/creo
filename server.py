@@ -79,6 +79,12 @@ except Exception as e:
     print("Using in-memory storage for development.")
     db = None
 
+# Import AgentName enum for agent identification
+from agents.utils import AgentName
+
+# Import SessionManager for runner and memory management
+from session_manager import get_session_manager, set_current_session_context, clear_current_session_context
+
 # Import orchestrator agent
 agent_path = PROJECT_ROOT / "agents" / "orchestrator_agent" / "agent.py"
 spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
