@@ -65,6 +65,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     storageService.remove(STORAGE_KEYS.ANON_REGISTERED)
     apiService.logout().catch(err => console.error('Logout failed:', err))
     set({ user: null, isAuthenticated: false })
+    // Hard reload to clear any in-memory state and start fresh
+    window.location.reload()
   },
 
   setUser: (user: User | null) => {
