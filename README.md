@@ -71,7 +71,7 @@ flowchart TB
     User([User])
 
     subgraph Client[Client Layer]
-        WebUI[React Web UI (chat, /creators) Socket.IO + OAuth]
+        WebUI[React Web UI (chat + creators) Socket.IO + OAuth]
     end
 
     subgraph Server[FastAPI Server]
