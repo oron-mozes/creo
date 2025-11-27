@@ -145,3 +145,4 @@ zipp==3.23.0
 PyJWT
 google-auth-oauthlib
 email-validator
+itsdangerous>=2.2.0

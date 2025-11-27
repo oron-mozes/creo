@@ -93,18 +93,18 @@ flowchart TB
     end
 
     subgraph Data [Data Layer]
-        Firestore[(Firestore<br/>Conversations, Sessions,<br/>Campaigns, Analytics)]
-        Pinecone[(Pinecone<br/>Vector Search<br/>Creator Profiles)]
+        Firestore[(Firestore<br/>Sessions & Messages<br/>In-memory fallback in dev)]
     end
 
-    subgraph AI [AI Services]
+    subgraph External [External AI & APIs]
         Gemini[Google Gemini 2.0<br/>LLM + Embeddings]
         Search[Google Search API]
+        YouTube[YouTube Data API v3<br/>(Creator search)]
     end
 
     subgraph Infrastructure [Google Cloud]
         CloudRun[Cloud Run<br/>Serverless Hosting]
-        SecretMgr[Secret Manager]
+        SecretMgr[Secret Manager<br/>(env injection at deploy)]
     end
 
     User -->|Browser| WebUI
@@ -132,17 +132,16 @@ flowchart TB
     Onboarding --> Gemini
     Onboarding --> Search
     Brief --> Gemini
-    Creator --> Gemini
-    Creator --> Pinecone
     Outreach --> Gemini
     Campaign --> Gemini
     Suggestions --> Gemini
+    Creator --> YouTube
 
     Session --> Firestore
     API --> Firestore
 
-    API --> SecretMgr
-    CloudRun -.->|Hosts| Server
+    SecretMgr -.->|Env vars| CloudRun
+    CloudRun -.->|Hosts| API
 ```
 
 ### Workflow Stages

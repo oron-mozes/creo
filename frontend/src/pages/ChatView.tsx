@@ -1,5 +1,5 @@
 // ChatView page - main chat interface
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useChat } from '../hooks/useChat'
 import { useUser } from '../hooks/useUser'
@@ -9,11 +9,13 @@ import { Sidebar } from '../components/layout'
 import { MessageList, MessageInput, BusinessCardDisplay } from '../components/chat'
 import { Spinner } from '../components/ui'
 import { apiService } from '../services/apiService'
+import { AuthModal } from '../components/auth'
 
 export function ChatView() {
   const navigate = useNavigate()
   const { userId } = useUser()
   const { activeSessionId, setActiveSession, fetchSessions } = useSessionStore()
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   // Initialize: Get session from URL or use active session
   useEffect(() => {
@@ -101,7 +103,8 @@ export function ChatView() {
 
   return (
     <div className="h-screen flex flex-col">
-      <Header onNewChat={handleNewChat} />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <Header onNewChat={handleNewChat} onShowAuth={() => setShowAuthModal(true)} />
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar currentSessionId={sessionId} onSelectSession={handleSelectSession} />

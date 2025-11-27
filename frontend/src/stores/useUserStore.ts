@@ -39,37 +39,27 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   saveSession: (sessionId: string, title: string) => {
-    const sessions = storageService.get<Session[]>(STORAGE_KEYS.SESSIONS, [])
-    const existingIndex = sessions.findIndex(s => s.id === sessionId)
-
+    const currentSessions = get().sessions
+    const existingIndex = currentSessions.findIndex(s => s.id === sessionId)
     const session: Session = {
       id: sessionId,
       title: title || 'New Chat',
       timestamp: Date.now(),
     }
-
     if (existingIndex >= 0) {
-      sessions[existingIndex] = session
+      const updated = [...currentSessions]
+      updated[existingIndex] = session
+      set({ sessions: updated })
     } else {
-      sessions.unshift(session)
+      set({ sessions: [session, ...currentSessions] })
     }
-
-    // Keep only last 50 sessions
-    if (sessions.length > 50) {
-      sessions.length = 50
-    }
-
-    storageService.set(STORAGE_KEYS.SESSIONS, sessions)
-    set({ sessions })
   },
 
   loadSessions: () => {
-    const sessions = storageService.get<Session[]>(STORAGE_KEYS.SESSIONS, [])
-    set({ sessions })
+    set({ sessions: [] })
   },
 
   clearSessions: () => {
-    storageService.remove(STORAGE_KEYS.SESSIONS)
     set({ sessions: [] })
   },
 }))

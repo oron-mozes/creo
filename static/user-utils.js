@@ -14,8 +14,29 @@ function getAnonymousUserId() {
     return anonId;
 }
 
+function getStoredAuthUser() {
+    const raw = localStorage.getItem('creo_user_info');
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error('[USER] Failed to parse stored auth user:', e);
+        return null;
+    }
+}
+
+function clearStoredAuthUser() {
+    localStorage.removeItem('creo_user_info');
+}
+
 // Get current user ID (authenticated or anonymous)
 function getCurrentUserId() {
+    const storedUser = getStoredAuthUser();
+    if (storedUser?.user_id) {
+        console.log('[USER] Using authenticated user ID from cache:', storedUser.user_id);
+        return storedUser.user_id;
+    }
+
     // First check if user is authenticated
     const token = getAuthToken();
     if (token) {
@@ -38,6 +59,8 @@ function getCurrentUserId() {
 
 // Check if user is authenticated (vs anonymous)
 function isAuthenticated() {
+    const storedUser = getStoredAuthUser();
+    if (storedUser?.user_id) return true;
     const token = getAuthToken();
     return !!token;
 }
@@ -123,7 +146,7 @@ async function migrateAnonymousUser() {
     const anonId = localStorage.getItem('creo_anon_user_id');
     const authToken = getAuthToken();
 
-    if (!anonId || !authToken) {
+    if (!anonId) {
         console.log('[USER] No migration needed');
         return;
     }
@@ -134,8 +157,9 @@ async function migrateAnonymousUser() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
             },
+            credentials: 'include',
             body: JSON.stringify({
                 anonymous_user_id: anonId
             })
@@ -157,6 +181,17 @@ async function migrateAnonymousUser() {
 
 // User info for display
 function getUserDisplayInfo() {
+    const storedUser = getStoredAuthUser();
+    if (storedUser?.user_id) {
+        return {
+            authenticated: true,
+            userId: storedUser.user_id,
+            email: storedUser.email,
+            name: storedUser.name,
+            picture: storedUser.picture
+        };
+    }
+
     if (isAuthenticated()) {
         const token = getAuthToken();
         try {

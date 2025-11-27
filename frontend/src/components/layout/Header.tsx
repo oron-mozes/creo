@@ -6,9 +6,10 @@ import { Button } from '../ui'
 interface HeaderProps {
   onNewChat?: () => void
   className?: string
+  onShowAuth?: () => void
 }
 
-export function Header({ onNewChat, className = '' }: HeaderProps) {
+export function Header({ onNewChat, className = '', onShowAuth }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth()
 
   return (
@@ -43,7 +44,7 @@ export function Header({ onNewChat, className = '' }: HeaderProps) {
               </Button>
             </div>
           ) : (
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={onShowAuth}>
               Sign In
             </Button>
           )}

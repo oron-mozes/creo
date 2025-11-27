@@ -10,8 +10,14 @@ import { HomepageQuickStartCard } from '../components/layout/HomepageQuickStartC
 import { ChatPastChatsCard } from '../components/layout/ChatPastChatsCard'
 import { ChatHelpfulTipsCard } from '../components/layout/ChatHelpfulTipsCard'
 import { MessageList, MessageInput, BusinessCardDisplay } from '../components/chat'
+import { AuthModal } from '../components/auth'
+import { storageService, STORAGE_KEYS } from '../services/storageService'
 
-export function HomePage() {
+interface HomePageProps {
+  initialShowAuthModal?: boolean
+}
+
+export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
   const navigate = useNavigate()
   const { user, isAuthenticated, logout } = useAuth()
   const { userId, saveSession } = useUser()
@@ -20,6 +26,7 @@ export function HomePage() {
   const [welcomeText, setWelcomeText] = useState('')
   const [message, setMessage] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showAuthModal, setShowAuthModal] = useState(initialShowAuthModal)
   const chatRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const sendButtonRef = useRef<HTMLButtonElement>(null)
@@ -140,6 +147,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {/* Header */}
       <header className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
@@ -169,8 +177,8 @@ export function HomePage() {
               )}
 
               {!isAuthenticated ? (
-                <a
-                  href="/login.html"
+                <button
+                  onClick={() => setShowAuthModal(true)}
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   style={{ color: 'rgb(0, 0, 0)', border: '1px solid rgba(0, 160, 235, 0.3)' }}
                   onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgb(0, 160, 235)'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'rgb(0, 160, 235)' }}
@@ -180,7 +188,7 @@ export function HomePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                   </svg>
                   Sign In
-                </a>
+                </button>
               ) : (
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-gray-700">{user?.email}</span>
