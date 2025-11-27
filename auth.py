@@ -14,6 +14,7 @@ from pydantic import BaseModel
 import httpx
 from db import get_db  # For persisting user records
 from services.user_service import UserService
+from fastapi import APIRouter
 
 # Configuration
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -287,6 +288,14 @@ async def logout(response: Response, current_user: UserInfo = Depends(get_curren
 async def get_me(current_user: UserInfo = Depends(get_current_user)) -> UserInfo:
     """Get current authenticated user info."""
     return current_user
+
+@router.get("/token")
+async def get_token(request: Request):
+    """Return the auth token from the HttpOnly cookie if valid."""
+    token = request.cookies.get(COOKIE_NAME)
+    if not token or not verify_token(token):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {"token": token}
 
 @router.get("/check")
 async def check_auth(user: Optional[UserInfo] = Depends(get_optional_user)):

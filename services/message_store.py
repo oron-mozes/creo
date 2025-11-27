@@ -32,6 +32,33 @@ class MessageStore:
             merge=True,
         )
 
+    def ensure_session(
+        self,
+        session_id: str,
+        owner_id: Optional[str],
+        first_message: Optional[str] = None,
+    ) -> None:
+        """Create or update a session document without saving chat messages.
+
+        Used when a client wants to register a session up front (e.g., before
+        sending the first message over websockets) to avoid double-saving the
+        initial message.
+        """
+        if not self.db:
+            # In-memory: nothing to do until messages arrive
+            return
+
+        data = {
+            "user_id": owner_id,
+            "owner_id": owner_id,
+            "last_activity": firestore.SERVER_TIMESTAMP if firestore else datetime.now(),
+            "created_at": firestore.SERVER_TIMESTAMP if firestore else datetime.now(),
+        }
+        if first_message:
+            data["first_message"] = first_message
+
+        self.db.collection("sessions").document(session_id).set(data, merge=True)
+
     def save_message(
         self,
         session_id: str,

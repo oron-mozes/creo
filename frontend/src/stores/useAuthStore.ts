@@ -27,9 +27,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (userData) {
         set({ user: userData, isAuthenticated: true })
         storageService.set(STORAGE_KEYS.ANON_REGISTERED, true)
+        const token = await apiService.getAuthToken()
+        if (token) {
+          storageService.set(STORAGE_KEYS.AUTH_TOKEN, token)
+        }
       } else {
         set({ user: null, isAuthenticated: false })
         storageService.remove(STORAGE_KEYS.ANON_REGISTERED)
+        storageService.remove(STORAGE_KEYS.AUTH_TOKEN)
       }
     } catch (error) {
       console.error('Auth check failed:', error)

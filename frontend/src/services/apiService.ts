@@ -34,6 +34,15 @@ class ApiService {
     }
   }
 
+  async getAuthToken(): Promise<string | null> {
+    try {
+      const res = await this.fetch<{ token: string }>('/api/auth/token')
+      return res.token
+    } catch {
+      return null
+    }
+  }
+
   async logout(): Promise<void> {
     await this.fetch('/api/auth/logout', { method: 'POST' })
   }

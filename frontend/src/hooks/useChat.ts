@@ -11,9 +11,10 @@ interface UseChatOptions {
   sessionId: string
   userId: string
   onNewMessage?: (message: Message) => void
+  onAuthRequired?: (payload: { sessionId: string; prompt: string }) => void
 }
 
-export function useChat({ sessionId, userId, onNewMessage }: UseChatOptions) {
+export function useChat({ sessionId, userId, onNewMessage, onAuthRequired }: UseChatOptions) {
   const { isConnected, on, off, emit } = useSocket()
   const {
     setCurrentSession,
@@ -79,6 +80,7 @@ export function useChat({ sessionId, userId, onNewMessage }: UseChatOptions) {
       message: string
       business_card?: BusinessCard
       is_error?: boolean
+      auth_required?: boolean
     }) => {
       setLoading(sessionId, false)
 
@@ -98,6 +100,15 @@ export function useChat({ sessionId, userId, onNewMessage }: UseChatOptions) {
       if (data.is_error) {
         setError(sessionId, data.message)
       }
+
+       if (data.auth_required) {
+         onNewMessageRef.current?.(newMessage)
+         // Bubble up auth requirement
+         if (typeof onAuthRequired === 'function') {
+           onAuthRequired({ sessionId: data.session_id || sessionId, prompt: data.message })
+         }
+         return
+       }
 
       onNewMessageRef.current?.(newMessage)
     }

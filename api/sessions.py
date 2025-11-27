@@ -63,10 +63,9 @@ def build_sessions_router(message_store: MessageStore, user_service: UserService
 
         print(f"[CREATE_SESSION] session_id={session_id}, user_id={user_id}, message='{request.message[:50]}...'")
 
-        # Persist session owner and initial message
-        message_store.save_message(session_id, 'user', request.message, user_id)
-        print(f"[CREATE_SESSION] Initial message saved to storage")
-        print(f"[CREATE_SESSION] Session created: {session_id}")
+        # Persist session owner (but avoid double-saving the first message; sockets will save it)
+        message_store.ensure_session(session_id, user_id, first_message=request.message)
+        print(f"[CREATE_SESSION] Session registered (owner + metadata only)")
 
         return CreateSessionResponse(session_id=session_id, user_id=user_id)
 

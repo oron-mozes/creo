@@ -177,6 +177,7 @@ Each stage is enforced by the Orchestrator to ensure proper progression.
 - **Token Management**: JWT (HS256)
 - **Secrets**: Google Secret Manager
 - **Anonymous Support**: Yes (for testing)
+- **Auth Gates**: Outreach requires authentication; login prompts can be triggered by the outreach agent tool (`require_auth_for_outreach`) and are enforced server-side.
 
 ### Infrastructure & DevOps
 - **Hosting**: Google Cloud Run (serverless)

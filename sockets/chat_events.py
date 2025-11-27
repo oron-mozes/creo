@@ -5,6 +5,7 @@ from typing import Any, Callable
 
 from agents.utils import AgentName
 from services.content import content_to_text
+from workflow_enums import WorkflowStage
 
 
 def register_chat_socket_handlers(
@@ -132,10 +133,28 @@ def register_chat_socket_handlers(
                         got_final_response = True
                         final_text = content_to_text(event.content)
                         if final_text:
+                            # Check post-agent stage for auth gating (creator search/outreach)
+                            session_memory_local = session_manager.get_session_memory(session_id)
+                            stage = session_memory_local.get_workflow_stage() if session_memory_local else None
+                            if stage in {WorkflowStage.CREATOR_FINDER, WorkflowStage.OUTREACH_MESSAGE} and not token:
+                                login_prompt = (
+                                    "Please sign in to continue. We need your email to contact creators and share replies. "
+                                    "Click \"Sign In\" to proceed."
+                                )
+                                message_id_login = str(uuid.uuid4())
+                                message_store.save_message(session_id, "assistant", login_prompt, user_id)
+                                session_manager.save_assistant_message(session_id, login_prompt, message_id_login)
+                                await sio.emit('message_complete', {
+                                    'message': login_prompt,
+                                    'session_id': session_id,
+                                    'message_id': message_id_login,
+                                    'auth_required': True
+                                }, room=session_id)
+                                break
+
                             print(f"[JOIN_SESSION] Got final response from root_agent ('{root_agent.name}'), saving to storage")
                             print(f"[JOIN_SESSION] Final text preview: {final_text[:200]}...")
 
-                            session_memory_local = session_manager.get_session_memory(session_id)
                             business_card_data = None
                             if session_memory_local:
                                 bc = session_memory_local.get_business_card()
@@ -236,6 +255,33 @@ def register_chat_socket_handlers(
                 await sio.emit('error', {'error': 'Missing message or session_id'}, room=sid)
                 return
 
+            session_memory = session_manager.get_session_memory(session_id)
+            # Ensure session and memory exist before gating logic
+            try:
+                session_manager.ensure_session(user_id, session_id, user_profile)
+                session_memory = session_manager.get_session_memory(session_id)
+            except Exception as e:
+                print(f"[SEND_MESSAGE] WARNING: ensure_session failed ({e}), continuing without blocking")
+
+            # Hard gate: if workflow stage is creator_finder or outreach_message and user not authenticated, prompt login
+            if session_memory:
+                stage = session_memory.get_workflow_stage()
+                if stage in {WorkflowStage.CREATOR_FINDER, WorkflowStage.OUTREACH_MESSAGE} and not token:
+                    login_prompt = (
+                        "Please sign in to continue. We need your email to contact creators and share replies. "
+                        "Click \"Sign In\" to proceed."
+                    )
+                    message_id_login = str(uuid.uuid4())
+                    message_store.save_message(session_id, "assistant", login_prompt, user_id)
+                    session_manager.save_assistant_message(session_id, login_prompt, message_id_login)
+                    await sio.emit('message_complete', {
+                        'message': login_prompt,
+                        'session_id': session_id,
+                        'message_id': message_id_login,
+                        'auth_required': True
+                    }, room=session_id)
+                    return
+
             print(f"[SEND_MESSAGE] Storing user message in storage")
             message_store.save_message(session_id, "user", message, user_id)
 
@@ -258,6 +304,20 @@ def register_chat_socket_handlers(
                 message=message,
                 user_profile=user_profile
             ):
+                # Track stage transitions based on agent events
+                if event.author == AgentName.CAMPAIGN_BRIEF_AGENT.value:
+                    session_memory = session_manager.get_session_memory(session_id)
+                    if session_memory:
+                        session_memory.set_workflow_stage(WorkflowStage.CAMPAIGN_BRIEF)
+                elif event.author == AgentName.CREATOR_FINDER_AGENT.value:
+                    session_memory = session_manager.get_session_memory(session_id)
+                    if session_memory:
+                        session_memory.set_workflow_stage(WorkflowStage.CREATOR_FINDER)
+                elif event.author == AgentName.OUTREACH_MESSAGE_AGENT.value:
+                    session_memory = session_manager.get_session_memory(session_id)
+                    if session_memory:
+                        session_memory.set_workflow_stage(WorkflowStage.OUTREACH_MESSAGE)
+
                 if event.author:
                     agent_name = event.author
                     is_final = event.is_final_response()
@@ -289,10 +349,33 @@ def register_chat_socket_handlers(
                     print(f"[SEND_MESSAGE] DEBUG: Final response from root_agent")
                     print(f"[SEND_MESSAGE] DEBUG: final_text = '{final_text}'")
                     if final_text:
+                        # Post-agent auth gate: if stage advanced to creator_finder or outreach_message and user is not authenticated, prompt login
+                        session_memory_local = session_manager.get_session_memory(session_id)
+                        stage = session_memory_local.get_workflow_stage() if session_memory_local else None
+                        has_brief = False
+                        if session_memory_local:
+                            brief_ctx = session_memory_local.get_agent_context("campaign_brief_agent")
+                            has_brief = bool(brief_ctx and brief_ctx.get("brief"))
+
+                        if (stage in {WorkflowStage.CREATOR_FINDER, WorkflowStage.OUTREACH_MESSAGE} or has_brief) and not token:
+                            login_prompt = (
+                                "Please sign in to continue. We need your email to contact creators and share replies. "
+                                "Click \"Sign In\" to proceed."
+                            )
+                            message_id_login = str(uuid.uuid4())
+                            message_store.save_message(session_id, "assistant", login_prompt, user_id)
+                            session_manager.save_assistant_message(session_id, login_prompt, message_id_login)
+                            await sio.emit('message_complete', {
+                                'message': login_prompt,
+                                'session_id': session_id,
+                                'message_id': message_id_login,
+                                'auth_required': True
+                            }, room=session_id)
+                            break
+
                         print(f"[SEND_MESSAGE] Got final response from root_agent, saving to storage")
                         print(f"[SEND_MESSAGE] Final text preview: {final_text[:200]}...")
 
-                        session_memory_local = session_manager.get_session_memory(session_id)
                         business_card_data = None
                         if session_memory_local:
                             bc = session_memory_local.get_business_card()

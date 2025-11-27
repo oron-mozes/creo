@@ -20,6 +20,7 @@ Use the `send_outreach_email` tool to send emails to influencers. This tool:
   - ✔ Yes, interested
   - ✖ Not interested
   - ❓ Need more info
+- Call `require_auth_for_outreach` before sending to ensure the user is signed in. If auth is required, wait for the user to sign in before continuing.
 
 ## Workflow
 
