@@ -129,7 +129,7 @@ class SessionMemory:
 
         self.shared_context['workflow_state']['stage'] = stage
         stage_value = stage.value if stage else None
-        print(f"[SessionMemory] Workflow stage set to: {stage_value}")
+        print(f"[SessionMemory] Workflow stage set to: {stage_value} for session={self.session_id}")
 
     # Onboarding Agent-Specific Methods
 

@@ -20,11 +20,11 @@ def register_chat_socket_handlers(
 
     @sio.event
     async def connect(sid, environ):
-        print(f"Client connected: {sid}")
+        print(f"[SOCKET] Connected: {sid}")
 
     @sio.event
     async def disconnect(sid):
-        print(f"Client disconnected: {sid}")
+        print(f"[SOCKET] Disconnected: {sid}")
 
     @sio.event
     async def join_session(sid, data):
@@ -51,7 +51,7 @@ def register_chat_socket_handlers(
             user_id = anon_user_id or f"anon_{sid[:12]}"
             print(f"[JOIN_SESSION] Anonymous user: {user_id}")
 
-        print(f"[JOIN_SESSION] Client {sid} requesting to join session {session_id} (user: {user_id})")
+        print(f"[JOIN_SESSION] sid={sid} session={session_id} user={user_id} token={'yes' if token else 'no'}")
 
         if not session_id:
             print(f"[JOIN_SESSION] ERROR: Missing session_id")
@@ -78,9 +78,17 @@ def register_chat_socket_handlers(
             'session_id': session_id
         }, room=sid)
 
+        # If a business card exists and no stage is set, default to campaign_brief
+        session_memory = session_manager.get_session_memory(session_id)
+        if session_memory:
+            current_stage = session_memory.get_workflow_stage()
+            if current_stage is None and session_memory.has_business_card():
+                session_memory.set_workflow_stage(WorkflowStage.CAMPAIGN_BRIEF)
+                print(f"[SESSION_STATE] Auto-set stage to campaign_brief on join (session={session_id})")
+
         if messages and messages[-1]['role'] == 'user':
             initial_message = messages[-1]['content']
-            print(f"[JOIN_SESSION] Last message is from user, processing initial message: '{initial_message[:50]}...'")
+            print(f"[JOIN_SESSION] Last message is from user, processing initial message: '{initial_message[:80]}...'")
 
             try:
                 await sio.emit('agent_thinking', {'session_id': session_id}, room=sid)
@@ -248,7 +256,7 @@ def register_chat_socket_handlers(
                 user_id = anon_user_id or f"anon_{sid[:12]}"
                 print(f"[SEND_MESSAGE] Anonymous user: {user_id}")
 
-            print(f"[SEND_MESSAGE] Received message from {sid}: session={session_id}, user={user_id}, message='{(message or '')[:50]}...'")
+            print(f"[SEND_MESSAGE] sid={sid} session={session_id} user={user_id} token={'yes' if token else 'no'} message='{(message or '')[:80]}...'")
 
             if not message or not session_id:
                 print(f"[SEND_MESSAGE] ERROR: Missing message or session_id")
@@ -262,6 +270,20 @@ def register_chat_socket_handlers(
                 session_memory = session_manager.get_session_memory(session_id)
             except Exception as e:
                 print(f"[SEND_MESSAGE] WARNING: ensure_session failed ({e}), continuing without blocking")
+
+            # If a business card exists and no stage is set, default to campaign_brief
+            if session_memory:
+                current_stage = session_memory.get_workflow_stage()
+                if current_stage is None and session_memory.has_business_card():
+                    session_memory.set_workflow_stage(WorkflowStage.CAMPAIGN_BRIEF)
+                    print(f"[SESSION_STATE] Auto-set stage to campaign_brief (session={session_id})")
+
+                # If a campaign brief has been saved, advance stage to creator_finder
+                brief_ctx = session_memory.get_agent_context("campaign_brief_agent")
+                has_brief = bool(brief_ctx and brief_ctx.get("brief"))
+                if has_brief and session_memory.get_workflow_stage() != WorkflowStage.CREATOR_FINDER:
+                    session_memory.set_workflow_stage(WorkflowStage.CREATOR_FINDER)
+                    print(f"[SESSION_STATE] Auto-set stage to creator_finder (session={session_id})")
 
             # Hard gate: if workflow stage is creator_finder or outreach_message and user not authenticated, prompt login
             if session_memory:
@@ -321,7 +343,7 @@ def register_chat_socket_handlers(
                 if event.author:
                     agent_name = event.author
                     is_final = event.is_final_response()
-                    print(f"[AGENT_TRANSITION] → {agent_name} | Session: {session_id} | is_final: {is_final}")
+                    print(f"[AGENT_TRANSITION] → {agent_name} | session={session_id} | final={is_final}")
 
                     if session_memory and is_final:
                         new_stage = session_memory.get_workflow_stage()
@@ -349,9 +371,20 @@ def register_chat_socket_handlers(
                     print(f"[SEND_MESSAGE] DEBUG: Final response from root_agent")
                     print(f"[SEND_MESSAGE] DEBUG: final_text = '{final_text}'")
                     if final_text:
-                        # Post-agent auth gate: if stage advanced to creator_finder or outreach_message and user is not authenticated, prompt login
+                        # Detect campaign brief confirmation to advance stage
                         session_memory_local = session_manager.get_session_memory(session_id)
                         stage = session_memory_local.get_workflow_stage() if session_memory_local else None
+                        if "CAMPAIGN_BRIEF_CONFIRMATION" in final_text:
+                            if session_memory_local:
+                                session_memory_local.set_workflow_stage(WorkflowStage.CREATOR_FINDER)
+                            stage = WorkflowStage.CREATOR_FINDER
+                        # Log current stage after agent run
+                        if session_memory_local:
+                            current_stage = session_memory_local.get_workflow_stage()
+                            print(f"[SESSION_STATE] Post-agent stage: {current_stage.value if current_stage else 'None'} (session={session_id})")
+
+                        # Post-agent auth gate: if stage advanced to creator_finder or outreach_message and user is not authenticated, prompt login
+                        session_memory_local = session_manager.get_session_memory(session_id)
                         has_brief = False
                         if session_memory_local:
                             brief_ctx = session_memory_local.get_agent_context("campaign_brief_agent")
