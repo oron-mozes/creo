@@ -34,6 +34,7 @@ class SessionMemory:
             'user_id': user_id,
             'user_profile': user_profile or {},  # User profile (name from OAuth)
             'messages': [],  # Full conversation history
+            'agent_events': [],  # Raw agent events/chunks for auditing/debugging
             'metadata': {},  # Session-level metadata
             'business_card': None,  # Business information from onboarding
             'workflow_state': {
@@ -77,6 +78,18 @@ class SessionMemory:
             'message_id': message_id,
         }
         self.shared_context['messages'].append(message)
+
+    def add_agent_event(self, agent: str, content: str, is_final: bool = False) -> None:
+        """Record a raw agent event/chunk for debugging and replay."""
+        if not content:
+            return
+        self.shared_context['agent_events'].append(
+            {
+                'agent': agent,
+                'content': content,
+                'is_final': is_final,
+            }
+        )
 
     def set_business_card(self, business_card_data: Dict[str, Any]) -> None:
         """Set business card data in shared context."""
@@ -514,6 +527,16 @@ class SessionManager:
         # Set session context for tools to access
         from agents.onboarding_agent.tools import set_session_context
         set_session_context(self, session_id)
+        try:
+            from agents.creator_finder_agent.tools import set_session_context as set_cf_context
+            set_cf_context(self, session_id, user_id)
+        except Exception as e:
+            print(f"[SessionManager] WARNING: Failed to set creator_finder session context: {e}")
+        try:
+            from agents.session_context import set_context as set_shared_ctx
+            set_shared_ctx("shared", self, session_id, user_id)
+        except Exception as e:
+            print(f"[SessionManager] WARNING: Failed to set shared session context: {e}")
 
         # Get runner and execute
         runner = self.get_or_create_runner(user_id)

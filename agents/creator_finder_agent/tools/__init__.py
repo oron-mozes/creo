@@ -22,8 +22,14 @@ if spec and spec.loader:
     creator_finder_tools_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(creator_finder_tools_module)
     find_creators = creator_finder_tools_module.find_creators
+    set_session_context = getattr(creator_finder_tools_module, "set_session_context", None)
+    _check_cache = getattr(creator_finder_tools_module, "_check_cache", None)
+    _store_cache = getattr(creator_finder_tools_module, "_store_cache", None)
 else:
     find_creators = None
+    set_session_context = None
+    _check_cache = None
+    _store_cache = None
 
 __all__ = [
     "EmbeddingGenerator",
@@ -32,4 +38,8 @@ __all__ = [
     "InfluencerSearch",
     "search_influencers",
     "find_creators",
+    "set_session_context",
+    "_check_cache",
+    "_store_cache",
+    "creator_finder_tools_module",
 ]

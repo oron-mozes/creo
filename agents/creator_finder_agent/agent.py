@@ -6,6 +6,7 @@ import logging
 from google.adk.agents.llm_agent import Agent  # type: ignore[import-untyped]
 from agents.utils import load_agent_instruction, load_agent_env, AgentName
 from agents.creator_finder_agent.tools import find_creators
+from agents.outreach_message_agent.tools_auth import require_auth_for_outreach
 
 # Set up logging
 logging.basicConfig(
@@ -39,7 +40,7 @@ creator_finder_agent = Agent(
         'and budget status (clearly mark ⚠️ "Above your budget" or 💡 "Below budget threshold").'
     ),
     instruction=_full_instruction,
-    tools=[find_creators],
+    tools=[find_creators, require_auth_for_outreach],
 )
 
 # ADK web expects a root_agent variable in each agent module

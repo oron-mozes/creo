@@ -112,6 +112,20 @@ class ApiService {
       body: JSON.stringify({ anonymous_user_id: anonymousUserId }),
     })
   }
+
+  async getCreators(sessionId: string): Promise<Array<{
+    id: string
+    name: string
+    platform?: string
+    category?: string
+    email?: string
+    status?: string
+    response?: string | null
+    profile_url?: string
+  }>> {
+    const res = await this.fetch<{ creators: any[] }>(`/api/creators?session_id=${encodeURIComponent(sessionId)}`)
+    return res.creators || []
+  }
 }
 
 export const apiService = new ApiService()

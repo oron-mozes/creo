@@ -83,3 +83,18 @@ class OutreachStatus(str, Enum):
     AWAITING_RESPONSE = "awaiting_response"  # Waiting for influencer response
     RESPONSE_RECEIVED = "response_received"  # Influencer responded
     COMPLETE = "complete"  # Outreach process finished
+
+
+class MessageRole(str, Enum):
+    """Roles for chat messages."""
+    USER = "user"
+    ASSISTANT = "assistant"
+
+
+class SocketEvent(str, Enum):
+    """Socket event names."""
+    CHAT_HISTORY = "chat_history"
+    AGENT_THINKING = "agent_thinking"
+    MESSAGE_CHUNK = "message_chunk"
+    MESSAGE_COMPLETE = "message_complete"
+    ERROR = "error"

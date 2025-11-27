@@ -14,6 +14,7 @@ export function useAuth() {
     user,
     isAuthenticated,
     isLoading,
+    checkAuth,
     login,
     logout,
   }

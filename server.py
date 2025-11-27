@@ -45,6 +45,8 @@ from api.pages import build_pages_router
 from api.sessions import build_sessions_router
 from api.suggestions import build_suggestions_router
 from api.users import build_users_router
+from api.creators import build_creators_router
+from db import CreatorDB
 from services.message_store import MessageStore
 from services.user_service import UserService
 from session_manager import get_session_manager
@@ -171,6 +173,7 @@ app.include_router(build_sessions_router(message_store, user_service))
 app.include_router(build_suggestions_router(suggestions_agent, message_store, user_service))
 app.include_router(build_chat_router(session_manager, root_agent))
 app.include_router(build_users_router(db, message_store, user_service))
+app.include_router(build_creators_router(CreatorDB()))
 
 # Combine FastAPI and Socket.IO
 socket_app = socketio.ASGIApp(sio, app)

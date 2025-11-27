@@ -54,6 +54,16 @@ export function ChatPastChatsCard({ onSelectSession }: Props) {
             <div className="text-xs mt-1" style={{ color: '#9CA3AF' }}>
               {new Date(session.timestamp).toLocaleDateString()}
             </div>
+            <div className="mt-2 flex items-center gap-2 text-xs text-blue-600">
+              <a
+                href={`/creators?session_id=${session.id}`}
+                className="inline-flex items-center gap-1 hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span role="img" aria-label="creators">👥</span>
+                View creators
+              </a>
+            </div>
           </button>
         ))}
       </div>

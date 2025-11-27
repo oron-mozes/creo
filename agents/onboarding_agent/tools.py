@@ -1,30 +1,12 @@
 """Tools for the onboarding agent to collect and save business information."""
 from typing import Optional, Dict, Any
 from google.adk.tools import FunctionTool
-import threading
 from agents.onboarding_agent.models import BusinessCard
-
-# Global session context storage with thread safety
-# Note: ADK executes tools in different threads, so we use a global dict with a lock
-# The key is the session_id, allowing multiple concurrent sessions
-_session_contexts: Dict[str, Dict[str, Any]] = {}
-_context_lock = threading.Lock()
-_current_session_id: str = None
-
+from agents.session_context import set_context as set_shared_context, get_context as get_shared_context
 
 def set_session_context(session_manager, session_id: str):
-    """Set the session context for tools to access user_id.
-
-    This is called by the server before running the agent.
-    Stores context globally so tools executing in different threads can access it.
-    """
-    global _current_session_id
-    with _context_lock:
-        _session_contexts[session_id] = {
-            'session_manager': session_manager,
-            'session_id': session_id
-        }
-        _current_session_id = session_id
+    """Set the session context for tools to access user_id."""
+    set_shared_context("onboarding_agent", session_manager, session_id)
 
 
 def save_business_card_tool(
@@ -51,21 +33,15 @@ def save_business_card_tool(
     """
     import json
 
-    # Get session context from global storage (thread-safe)
-    # Use the most recent session_id
-    global _current_session_id
-    with _context_lock:
-        if not _current_session_id or _current_session_id not in _session_contexts:
-            print("[TOOL ERROR] Session context not set - cannot save business card")
-            print(f"[TOOL ERROR] Current session: {_current_session_id}, Available sessions: {list(_session_contexts.keys())}")
-            return json.dumps({
-                "success": False,
-                "error": "Session context not available"
-            })
-
-        context = _session_contexts[_current_session_id]
-        session_manager = context['session_manager']
-        session_id = context['session_id']
+    context = get_shared_context("onboarding_agent")
+    if not context:
+        print("[TOOL ERROR] Session context not set - cannot save business card")
+        return json.dumps({
+            "success": False,
+            "error": "Session context not available"
+        })
+    session_manager = context.get('session_manager')
+    session_id = context.get('session_id')
 
     # Get user_id from session context
     if not session_manager or not session_id:

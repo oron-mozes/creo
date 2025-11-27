@@ -29,6 +29,11 @@ def build_pages_router(project_root: Path) -> APIRouter:
             return FileResponse(build_index)
         return FileResponse(static_app)
 
+    @router.get("/creators")
+    def creators_page():
+        """Serve SPA for creators viewer."""
+        return _spa_response()
+
     @router.get("/login")
     @router.get("/login.html")
     def login_page():

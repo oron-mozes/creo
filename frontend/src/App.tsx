@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { HomePage, ChatView } from './pages'
+import { HomePage, ChatView, CreatorsPage } from './pages'
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
         <Route path="/login" element={<HomePage initialShowAuthModal />} />
         <Route path="/login.html" element={<HomePage initialShowAuthModal />} />
         <Route path="/chat" element={<ChatView />} />
+        <Route path="/creators" element={<CreatorsPage />} />
         <Route path="*" element={<FallbackRouter />} />
       </Routes>
     </Router>

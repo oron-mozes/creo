@@ -4,11 +4,18 @@ import os
 import logging
 import json
 import hashlib
-from typing import Optional
+from typing import Optional, List, Dict, Any
+import threading
 from datetime import datetime, timedelta
 from collections import OrderedDict
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+try:
+    import pycountry  # type: ignore
+except Exception:
+    pycountry = None  # graceful fallback if dependency is missing
+
+from agents.session_context import set_context as set_shared_context, get_context as get_shared_context
 
 logger = logging.getLogger(__name__)
 
@@ -185,6 +192,8 @@ def find_creators(
     max_results: int = 10,
     target_audience: Optional[str] = None,
     language: Optional[str] = None,
+    session_id: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> dict:
     """
     Search for YouTube creators/channels based on campaign criteria.
@@ -204,6 +213,13 @@ def find_creators(
         dict: Search results with budget status flags and content language
     """
     # Always cache all results for the query, not just the first page
+    if not session_id or not user_id:
+        # Try to pull from shared session context
+        ctx = get_shared_context("creator_finder_agent")
+        if ctx:
+            session_id = session_id or ctx.get("session_id")
+            user_id = user_id or ctx.get("user_id")
+
     cache_params = {
         'category': category,
         'platform': platform,
@@ -226,6 +242,7 @@ def find_creators(
         if response['more_results_available']:
             response['message'] = (response.get('message', '') +
                 f" Showing {show_count} of {len(results)} results. Would you like to see more?")
+        _persist_creators_for_session(response.get("results", []), session_id, user_id)
         return response
     # Get YouTube API key from environment
     api_key = os.getenv('YOUTUBE_DATA_API_KEY')
@@ -441,6 +458,7 @@ def find_creators(
         
         # Store in cache
         _store_cache(cache_key, result)
+        _persist_creators_for_session(result.get("results", []), session_id, user_id)
         return result
         
     except HttpError as e:
@@ -464,9 +482,45 @@ def find_creators(
         _store_cache(cache_key, result)
         return result
 
+
+def _persist_creators_for_session(results: List[Dict[str, Any]], session_id: Optional[str], user_id: Optional[str]) -> None:
+    """Persist a subset of creator results for a session."""
+    if not session_id or not user_id or not results:
+        return
+    try:
+        from db import CreatorDB  # lazy import to avoid circular deps during tool load
+        creator_db = CreatorDB()
+        mapped = []
+        seen = set()
+        for item in results:
+            if not isinstance(item, dict):
+                continue
+            channel_id = item.get("channel_id") or item.get("id")
+            profile_url = item.get("profile_url") or (f"https://www.youtube.com/channel/{channel_id}" if channel_id else None)
+            dedup = profile_url or channel_id or item.get("title") or item.get("channel_title")
+            if dedup and dedup in seen:
+                continue
+            if dedup:
+                seen.add(dedup)
+            mapped.append(
+                {
+                    "name": item.get("title") or item.get("channel_title") or "Unknown creator",
+                    "platform": "YouTube",
+                    "category": item.get("category") or item.get("topic") or "YouTube",
+                    "email": item.get("contact_email") or item.get("email"),
+                    "profile_url": profile_url,
+                    "metadata": item,
+                }
+            )
+        if mapped:
+            logger.info(f"Persisting {len(mapped)} creators for session={session_id}")
+            creator_db.save_creators(mapped, session_id=session_id, user_id=user_id)
+    except Exception as exc:
+        logger.warning(f"Failed to persist creators for session {session_id}: {exc}")
+
 def _get_region_code(location: str) -> Optional[str]:
     """Convert location string to ISO 3166-1 alpha-2 country code using pycountry."""
-    if not location:
+    if not location or not pycountry:
         return None
     
     location_clean = location.strip()
@@ -515,3 +569,6 @@ def _calculate_price_range_values(subscribers: int) -> tuple:
     max_price = int((subscribers / 1000) * 50)
     
     return min_price, max_price
+def set_session_context(session_manager, session_id: str, user_id: str):
+    """Set session context so find_creators can persist without explicit args."""
+    set_shared_context("creator_finder_agent", session_manager, session_id, user_id)

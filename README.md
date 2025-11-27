@@ -34,6 +34,8 @@ Visit http://localhost:8000 to see the API running.
 - 🔐 **Authentication** - Google OAuth 2.0 + anonymous users with JWT tokens
 - 💾 **Dual Database** - Firestore (NoSQL) + Pinecone (vector search)
 - 🔄 **Real-time Communication** - Socket.IO for live chat
+- 🧠 **Shared Session Context** - Per-session/user context injected into every agent/tool
+- 📂 **Creator Persistence** - Creator search results saved per session and exposed via `/api/creators` and the React `/creators?session_id=...` page
 - 📊 **Agent Evaluation** - Hybrid testing with LLM judge (Gemini 2.0)
 - 🔒 **Secure Secrets** - Google Secret Manager integration
 - 🚀 **CI/CD Pipeline** - Automated testing and deployment to Cloud Run
@@ -69,13 +71,14 @@ flowchart TB
     User([User])
 
     subgraph Client[Client Layer]
-        WebUI[Web Interface Socket.IO + OAuth]
+        WebUI[React Web UI (chat, /creators) Socket.IO + OAuth]
     end
 
     subgraph Server[FastAPI Server]
         API[HTTP/Socket.IO API]
         Auth[Authentication Google OAuth + JWT]
         Session[Session Manager]
+        Ctx[Shared Session Context]
     end
 
     subgraph Orchestration[Agent Orchestration]
@@ -93,7 +96,8 @@ flowchart TB
     end
 
     subgraph Data[Data Layer]
-        Firestore[(Firestore Sessions and Messages In-memory fallback in dev)]
+        Firestore[(Firestore Sessions/Messages/Creators In-memory fallback in dev)]
+        Pinecone[(Pinecone Vectors)]
     end
 
     subgraph External[External AI and APIs]
@@ -109,9 +113,12 @@ flowchart TB
 
     User -->|Browser| WebUI
     WebUI <-->|Real-time| API
+    WebUI -->|View creators| API
     API --> Auth
     API --> Session
+    API --> Ctx
     Session --> Orchestrator
+    Ctx --> Orchestrator
 
     Orchestrator -->|Routes| Onboarding
     Orchestrator -->|Routes| Brief
@@ -139,6 +146,8 @@ flowchart TB
 
     Session --> Firestore
     API --> Firestore
+    Creator --> Firestore
+    Creator --> Pinecone
 
     SecretMgr -.->|Env vars| CloudRun
     CloudRun -.->|Hosts| API
@@ -189,9 +198,10 @@ Each stage is enforced by the Orchestrator to ensure proper progression.
 - **Containerization**: Docker
 
 ### Frontend
-- **UI**: HTML/CSS/JavaScript
+- **UI**: React + Tailwind (served from `frontend` build)
 - **Real-time**: Socket.IO client
 - **Authentication**: OAuth flow with auth-gate
+- **Creator Review**: `/creators?session_id=...` shows saved creator matches per session
 
 ## Development
 
@@ -217,6 +227,10 @@ make format
 # Verify environment setup
 make verify-env
 ```
+
+### Test Notes
+- To run unit tests without autoloading agent modules, set `CREO_SKIP_AGENT_AUTOLOAD=1` (see `tests/`).
+- Creator search requires a valid YouTube API key without IP restrictions; otherwise the creator finder will surface an API error and no creators will be persisted.
 
 ### Agent Development
 

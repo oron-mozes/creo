@@ -13,6 +13,8 @@ from pydantic import BaseModel, Field
 # In Cloud Run, this will automatically use the service account
 # Locally, it will use GOOGLE_APPLICATION_CREDENTIALS env var or gcloud auth
 _db: Optional[firestore.Client] = None
+# Shared in-memory fallback for creator records when Firestore is unavailable
+_in_memory_creators: List[Dict[str, Any]] = []
 
 
 def get_db() -> firestore.Client:
@@ -31,6 +33,9 @@ SESSIONS = "sessions"
 CAMPAIGNS = "campaigns"
 ANALYTICS = "analytics"
 CREATORS = "creators"
+CREATOR_STATUS_PENDING = "pending"
+CREATOR_STATUS_RESPONDED = "responded"
+CREATOR_STATUS_BOUNCED = "bounced"
 
 
 # Pydantic Models for type safety and validation
@@ -99,6 +104,89 @@ class Creator(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)  # additional data
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    session_id: Optional[str] = None
+    user_id: Optional[str] = None
+    status: str = CREATOR_STATUS_PENDING
+    response: Optional[str] = None
+    email: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class CreatorDB:
+    """Manage creator records in Firestore."""
+
+    def __init__(self, db: Optional[firestore.Client] = None):
+        if db is None:
+            try:
+                db = get_db()
+            except Exception as e:
+                print(f"[CreatorDB] Firestore unavailable: {e}")
+                db = None
+
+        self.db = db
+        self.collection = self.db.collection(CREATORS) if self.db else None
+
+    def save_creators(self, creators: List[Dict[str, Any]], session_id: str, user_id: str) -> None:
+        """Save a list of creators for a session with pending status."""
+        if not creators:
+            return
+
+        payloads = []
+        for creator in creators:
+            payloads.append(
+                {
+                    **creator,
+                    "session_id": session_id,
+                    "user_id": user_id,
+                    "status": CREATOR_STATUS_PENDING,
+                    "response": None,
+                    "created_at": firestore.SERVER_TIMESTAMP if self.collection else datetime.utcnow(),
+                    "updated_at": firestore.SERVER_TIMESTAMP if self.collection else datetime.utcnow(),
+                }
+            )
+
+        if self.collection:
+            batch = self.db.batch()
+            for payload in payloads:
+                doc_ref = self.collection.document()
+                batch.set(doc_ref, payload)
+            batch.commit()
+        else:
+            # In-memory fallback shared across CreatorDB instances
+            _in_memory_creators.extend(payloads)
+
+    def get_creators_by_session(self, session_id: str) -> List[Dict[str, Any]]:
+        """Fetch creators linked to a session."""
+        if not self.collection:
+            # Return a shallow copy so callers can't mutate the shared store
+            return [
+                {**creator, "id": str(idx)}
+                for idx, creator in enumerate(_in_memory_creators)
+                if creator.get("session_id") == session_id
+            ]
+        docs = (
+            self.collection.where(filter=FieldFilter("session_id", "==", session_id))
+            .order_by("created_at")
+            .stream()
+        )
+        return [{**doc.to_dict(), "id": doc.id} for doc in docs]
+
+    def update_creator_status(self, creator_id: str, status: str, response: Optional[str] = None) -> None:
+        if not self.collection:
+            # Update in-memory fallback
+            for idx, creator in enumerate(_in_memory_creators):
+                if str(idx) == creator_id:
+                    creator["status"] = status
+                    creator["response"] = response
+                    creator["updated_at"] = datetime.utcnow()
+            return
+        self.collection.document(creator_id).update(
+            {
+                "status": status,
+                "response": response,
+                "updated_at": firestore.SERVER_TIMESTAMP,
+            }
+        )
 
 
 class ConversationDB:
