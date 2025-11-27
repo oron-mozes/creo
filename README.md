@@ -76,7 +76,7 @@ flowchart TB
 
     subgraph Server[FastAPI Server]
         API[HTTP/Socket.IO API]
-        Auth[Authentication (Google OAuth + JWT) + Auth-Gate Tool]
+        Auth[Auth OAuth+JWT + Auth-Gate]
         Session[Session Manager]
         Ctx[Shared Session Context]
     end
