@@ -68,22 +68,22 @@ Visit http://localhost:8000 to see the API running.
 flowchart TB
     User([User])
 
-    subgraph Client [Client Layer]
-        WebUI[Web Interface<br/>Socket.IO + OAuth]
+    subgraph Client[Client Layer]
+        WebUI[Web Interface Socket.IO + OAuth]
     end
 
-    subgraph Server [FastAPI Server]
+    subgraph Server[FastAPI Server]
         API[HTTP/Socket.IO API]
-        Auth[Authentication<br/>Google OAuth + JWT]
+        Auth[Authentication Google OAuth + JWT]
         Session[Session Manager]
     end
 
-    subgraph Orchestration [Agent Orchestration]
-        Orchestrator[Orchestrator Agent<br/>Workflow Router]
-        Frontdesk[Frontdesk Agent<br/>Response Formatter]
+    subgraph Orchestration[Agent Orchestration]
+        Orchestrator[Orchestrator Agent Workflow Router]
+        Frontdesk[Frontdesk Agent Response Formatter]
     end
 
-    subgraph Specialist [Specialist Agents]
+    subgraph Specialist[Specialist Agents]
         Onboarding[Onboarding Agent]
         Brief[Campaign Brief Agent]
         Creator[Creator Finder Agent]
@@ -92,19 +92,19 @@ flowchart TB
         Suggestions[Suggestions Agent]
     end
 
-    subgraph Data [Data Layer]
-        Firestore[(Firestore<br/>Sessions & Messages<br/>In-memory fallback in dev)]
+    subgraph Data[Data Layer]
+        Firestore[(Firestore Sessions and Messages In-memory fallback in dev)]
     end
 
-    subgraph External [External AI & APIs]
-        Gemini[Google Gemini 2.0<br/>LLM + Embeddings]
+    subgraph External[External AI and APIs]
+        Gemini[Google Gemini 2.0 LLM + Embeddings]
         Search[Google Search API]
-        YouTube[YouTube Data API v3<br/>(Creator search)]
+        YouTube[YouTube Data API v3 Creator search]
     end
 
-    subgraph Infrastructure [Google Cloud]
-        CloudRun[Cloud Run<br/>Serverless Hosting]
-        SecretMgr[Secret Manager<br/>(env injection at deploy)]
+    subgraph Infrastructure[Google Cloud]
+        CloudRun[Cloud Run Serverless Hosting]
+        SecretMgr[Secret Manager env injection at deploy]
     end
 
     User -->|Browser| WebUI
