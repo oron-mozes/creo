@@ -24,7 +24,7 @@ def build_creators_router(creator_db: CreatorDB) -> APIRouter:
     router = APIRouter()
 
     @router.post("/api/creators")
-    def save_creators(payload: SaveCreatorsRequest, current_user: UserInfo = Depends(get_current_user)):
+    def save_creators(payload: SaveCreatorsRequest, current_user: UserInfo = Depends(get_current_user)) -> dict:
         if not creator_db:
             raise HTTPException(status_code=503, detail="Creator storage unavailable")
         creator_db.save_creators(
@@ -35,7 +35,7 @@ def build_creators_router(creator_db: CreatorDB) -> APIRouter:
         return {"status": "success", "count": len(payload.creators)}
 
     @router.get("/api/creators")
-    def get_creators(session_id: str):
+    def get_creators(session_id: str) -> dict:
         if not creator_db:
             raise HTTPException(status_code=503, detail="Creator storage unavailable")
         creators = creator_db.get_creators_by_session(session_id)

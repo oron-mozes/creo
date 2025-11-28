@@ -260,7 +260,7 @@ def update_orchestrator_instruction(agent_name_snake: str, agent_title: str) -> 
         print(f"⚠ Could not find insertion point in {ORCHESTRATOR_INSTRUCTION.name}")
 
 
-def main():
+def main() -> None:
     """Main function to scaffold a new agent."""
     if len(sys.argv) < 2:
         print("Usage: python scripts/scaffold_agent.py <agent-name> [description]")
@@ -307,4 +307,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

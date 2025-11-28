@@ -72,14 +72,14 @@ root_agent = _agent_module.root_agent  # Each agent should have root_agent
 __all__ = ['root_agent', '{agent_var}']
 '''
 
-def restore_original_init():
+def restore_original_init() -> None:
     """Restore the original __init__.py file."""
     if AGENTS_INIT_BACKUP.exists():
         shutil.copy(AGENTS_INIT_BACKUP, AGENTS_INIT)
         AGENTS_INIT_BACKUP.unlink()
         print("✓ Restored original agents/__init__.py")
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python scripts/web_agent.py <agent-name>")
         print("\nAvailable agents:")
@@ -137,4 +137,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

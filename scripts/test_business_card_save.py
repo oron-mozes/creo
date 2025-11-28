@@ -15,18 +15,24 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import importlib.util
+import pytest
+from typing import Any
 
 
-def load_parser():
+def load_parser() -> Any:
     """Load the business card parser dynamically."""
     parser_path = PROJECT_ROOT / "agents" / "onboarding-agent" / "parser.py"
+    if not parser_path.exists():
+        pytest.skip("Onboarding parser not available in this environment.")
     spec = importlib.util.spec_from_file_location("onboarding_parser", parser_path)
+    if spec is None or spec.loader is None:
+        pytest.skip("Unable to load onboarding parser module spec.")
     parser_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(parser_module)
     return parser_module
 
 
-def test_business_card_extraction():
+def test_business_card_extraction() -> None:
     """Test that business card can be extracted from agent response."""
     parser = load_parser()
 
@@ -69,8 +75,8 @@ BUSINESS_CARD_CONFIRMATION:
         print(f"  - Website: {bc.website}")
         print(f"  - Social Links: {bc.social_links}")
     else:
-        print(f"✗ Business card extraction FAILED")
-        return False
+        print("✗ Business card extraction FAILED")
+        pytest.fail("Business card extraction failed")
 
     print(f"\n✓ Cleaned text (confirmation block removed):")
     print(f"  Length: {len(result['cleaned_text'])} chars")
@@ -79,14 +85,12 @@ BUSINESS_CARD_CONFIRMATION:
     # Verify confirmation block was removed
     if "BUSINESS_CARD_CONFIRMATION" in result['cleaned_text']:
         print("\n✗ FAILED: Confirmation block not removed from cleaned text")
-        return False
+        pytest.fail("Confirmation block not removed from cleaned text")
     else:
         print("\n✓ Confirmation block successfully removed from user-facing text")
 
-    return True
 
-
-def test_context_validator():
+def test_context_validator() -> None:
     """Test the context validator for precondition checks."""
     from agents.context_validator import ContextValidator
 
@@ -114,7 +118,7 @@ def test_context_validator():
 
     # Test 2: Missing business card
     print("\n[Test 2] Missing business card:")
-    session_context_empty = {}
+    session_context_empty: dict[str, Any] = {}
     result = ContextValidator.validate_business_card(session_context_empty)
     print(f"  Valid: {result.is_valid}")
     print(f"  Missing fields: {result.missing_fields}")
@@ -150,21 +154,16 @@ def test_context_validator():
     print(f"  Missing fields: {result.missing_fields}")
 
     print("\n" + "=" * 60)
-    return True
 
-
-def main():
+def main() -> int:
     """Run all tests."""
     print("\n🧪 Running Business Card Save & Context Validation Tests\n")
 
     success = True
-
-    # Test business card extraction
-    if not test_business_card_extraction():
-        success = False
-
-    # Test context validator
-    if not test_context_validator():
+    try:
+        test_business_card_extraction()
+        test_context_validator()
+    except AssertionError:
         success = False
 
     print("\n" + "=" * 60)

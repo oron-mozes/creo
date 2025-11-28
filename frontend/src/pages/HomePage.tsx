@@ -98,8 +98,16 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
   }, [message])
 
   const scrollToChat = () => {
-    chatRef.current?.scrollIntoView({ behavior: 'smooth' })
-    textareaRef.current?.focus()
+    if (chatRef.current) {
+      chatRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    if (textareaRef.current) {
+      try {
+        textareaRef.current.focus({ preventScroll: true })
+      } catch {
+        textareaRef.current.focus()
+      }
+    }
   }
 
   // Auto-scroll to chat when messages exist
@@ -241,6 +249,7 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
 
               <button
                 onClick={scrollToChat}
+                data-testid="tell-us-button"
                 className="inline-flex items-center justify-center gap-2 text-white text-lg px-8 py-4 rounded-full font-medium transition-colors animate-scale-in"
                 style={{ backgroundColor: 'rgb(0, 160, 235)' }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgb(0, 144, 211)'}

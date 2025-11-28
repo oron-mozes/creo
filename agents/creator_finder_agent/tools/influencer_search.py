@@ -13,7 +13,7 @@ from .ranker import InfluencerRanker
 class InfluencerSearch:
     """High-level interface for influencer discovery."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize search components."""
         self.embedding_gen = EmbeddingGenerator()
         self.pinecone_client = PineconeClient()
@@ -138,10 +138,10 @@ class InfluencerSearch:
 
 
 # Lazy initialization of singleton instance for agent use
-_search = None
+_search: Optional[InfluencerSearch] = None
 
 
-def _get_search():
+def _get_search() -> InfluencerSearch:
     """Get or create the singleton InfluencerSearch instance."""
     global _search
     if _search is None:
@@ -234,7 +234,7 @@ def search_influencers(
         },
     ][:top_k]
 
-    return _search.format_results(mock_results, include_scores=False)
+    return search.format_results(mock_results, include_scores=False)
 
 
 # Example usage

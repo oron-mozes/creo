@@ -1,20 +1,15 @@
 from __future__ import annotations
 
 import uuid
-from typing import Any
+from typing import Any, Dict, List, Tuple
 
-from enum import Enum
-try:
-    from agents.utils import AgentName  # type: ignore
-except Exception:
-    class AgentName(str, Enum):
-        FRONTDESK_AGENT = "frontdesk_agent"
+from agents.utils import AgentName
 from services.content import content_to_text
 from workflow_enums import WorkflowStage, MessageRole, SocketEvent
 from sockets.utils.gates import should_prompt_login
 
 
-def _log_session_state(session_id: str, session_memory) -> None:
+def _log_session_state(session_id: str, session_memory: Any) -> None:
     if not session_memory:
         return
     stage = session_memory.get_workflow_stage()
@@ -22,7 +17,7 @@ def _log_session_state(session_id: str, session_memory) -> None:
     print(f"[SESSION_STATE] Session: {session_id} | Stage: {stage.value if stage else 'None'} | Business Card: {'Yes' if has_business_card else 'No'}")
 
 
-def _stream_frontdesk_chunk(sio, session_id: str, message_id: str, chunk: str):
+def _stream_frontdesk_chunk(sio: Any, session_id: str, message_id: str, chunk: str) -> None:
     """Stream a frontdesk chunk to the client."""
     sio.start_background_task(
         sio.emit,
@@ -32,13 +27,13 @@ def _stream_frontdesk_chunk(sio, session_id: str, message_id: str, chunk: str):
     )
 
 
-def _record_agent_event(session_memory, agent_name: str, content: str, is_final: bool):
+def _record_agent_event(session_memory: Any, agent_name: str, content: str, is_final: bool) -> None:
     """Persist raw agent chunk into session memory for auditing."""
     if session_memory:
         session_memory.add_agent_event(agent_name, content, is_final=is_final)
 
 
-def _handle_frontdesk_chunk(chunk: str, author: str, sio, session_id: str, message_id: str, response_chunks: list[str]):
+def _handle_frontdesk_chunk(chunk: str, author: str, sio: Any, session_id: str, message_id: str, response_chunks: List[str]) -> None:
     """Stream and record frontdesk chunks; ignore others."""
     if author != AgentName.FRONTDESK_AGENT.value or not chunk:
         return
@@ -50,15 +45,15 @@ def _handle_root_final(
     author: str,
     is_final_event: bool,
     final_text: str,
-    session_manager,
+    session_manager: Any,
     session_id: str,
     user_id: str,
     is_authenticated: bool,
-    message_store,
+    message_store: Any,
     message_id: str,
-    sio,
-    root_agent,
-):
+    sio: Any,
+    root_agent: Any,
+) -> bool:
     if author != root_agent.name or not is_final_event or not final_text:
         return False
 
@@ -114,10 +109,10 @@ def _handle_root_final(
 
 
 async def run_agent_and_stream(
-    sio,
-    session_manager,
-    message_store,
-    root_agent,
+    sio: Any,
+    session_manager: Any,
+    message_store: Any,
+    root_agent: Any,
     session_id: str,
     user_id: str,
     token: str | None,
@@ -125,7 +120,7 @@ async def run_agent_and_stream(
     message: str,
     is_authenticated: bool,
     context_tag: str,
-):
+) -> None:
     """
     Run the orchestrator for a message and stream back chunks and the final reply.
 
@@ -136,8 +131,8 @@ async def run_agent_and_stream(
     - Persist assistant messages to storage.
     - Fallback gracefully when no final response is emitted.
     """
-    response_chunks = []
-    all_chunks = []
+    response_chunks: List[str] = []
+    all_chunks: List[Tuple[str, str]] = []
     message_id = str(uuid.uuid4())
     got_final_response = False
 
@@ -152,7 +147,7 @@ async def run_agent_and_stream(
     ):
         # Process streaming content
         chunk = content_to_text(event.content)
-        author = getattr(event, "author", None)
+        author = str(getattr(event, "author", "") or "")
         is_final_event = bool(getattr(event, "is_final_response", lambda: False)())
 
         if chunk:
@@ -190,15 +185,15 @@ async def run_agent_and_stream(
 
 
 async def _emit_fallback_response(
-    sio,
+    sio: Any,
     session_id: str,
     message_id: str,
-    message_store,
-    session_manager,
+    message_store: Any,
+    session_manager: Any,
     user_id: str,
     response_chunks: list[str],
     all_chunks: list[tuple[str, str]],
-):
+) -> None:
     """
     Emit a best-effort response when no final/root response was produced.
     Prefers stitched frontdesk chunks; otherwise stitched all-agent chunks.

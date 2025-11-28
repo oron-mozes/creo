@@ -31,6 +31,8 @@ def send_notification_email(
         # Ensure Gmail service is authenticated
         if not gmail_service.service:
             gmail_service.authenticate()
+        if gmail_service.service is None:
+            return False
 
         # Create email
         message = MIMEMultipart('alternative')
@@ -169,16 +171,19 @@ def handle_influencer_response(
     response_type = payload.get('response_type')
     user_id = payload.get('user_id')
 
+    if not all(isinstance(v, str) and v for v in [creator_email, creator_name, response_type, user_id, session_id]):
+        return {'success': False, 'error': 'Response token missing required creator/user data'}
+
     print(f"[RESPONSE_HANDLER] Response from {creator_name} ({creator_email}): {response_type}")
 
     # Create InfluencerResponse model
     try:
         influencer_response = InfluencerResponse(
-            response_type=ResponseType(response_type),
-            creator_email=creator_email,
-            creator_name=creator_name,
-            session_id=session_id,
-            user_id=user_id
+            response_type=ResponseType(str(response_type)),
+            creator_email=str(creator_email),
+            creator_name=str(creator_name),
+            session_id=str(session_id),
+            user_id=str(user_id)
         )
     except Exception as e:
         print(f"[RESPONSE_HANDLER] ERROR: Failed to create InfluencerResponse: {e}")
@@ -188,6 +193,13 @@ def handle_influencer_response(
         }
 
     # Update session memory
+    # session_id is required for downstream calls
+    if not isinstance(session_id, str) or not session_id:
+        return {
+            'success': False,
+            'error': 'Missing session identifier in response token'
+        }
+
     session_memory = session_manager.get_session_memory(session_id)
     if session_memory:
         session_memory.record_influencer_response(influencer_response.to_dict())

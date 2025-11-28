@@ -10,25 +10,25 @@ from workflow_enums import MessageRole, SocketEvent
 
 
 def register_chat_socket_handlers(
-    sio,
-    session_manager,
-    message_store,
+    sio: Any,
+    session_manager: Any,
+    message_store: Any,
     verify_token: Callable[[str], Any],
     get_business_card: Callable[[str], Any],
-    root_agent,
-):
+    root_agent: Any,
+) -> None:
     """Register Socket.IO chat event handlers."""
 
     @sio.event
-    async def connect(sid, environ):
+    async def connect(sid: str, environ: dict[str, Any]) -> None:
         print(f"[SOCKET] Connected: {sid}")
 
     @sio.event
-    async def disconnect(sid):
+    async def disconnect(sid: str) -> None:
         print(f"[SOCKET] Disconnected: {sid}")
 
     @sio.event
-    async def join_session(sid, data):
+    async def join_session(sid: str, data: dict[str, Any]) -> None:
         await handle_join_session(
             sio=sio,
             session_manager=session_manager,
@@ -42,7 +42,7 @@ def register_chat_socket_handlers(
         )
 
     @sio.event
-    async def send_message(sid, data):
+    async def send_message(sid: str, data: dict[str, Any]) -> None:
         """
         Handle a new user message and stream agent response.
         """

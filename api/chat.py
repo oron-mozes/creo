@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from auth import UserInfo, get_optional_user
 from services.content import content_to_text
 from session_manager import SessionManager
+from google.adk.agents.llm_agent import Agent
 
 
 class ChatRequest(BaseModel):
@@ -24,7 +25,7 @@ class ChatResponse(BaseModel):
 
 def build_chat_router(
     session_manager: SessionManager,
-    root_agent
+    root_agent: Agent,
 ) -> APIRouter:
     router = APIRouter()
 
@@ -32,7 +33,7 @@ def build_chat_router(
     def chat(
         request: ChatRequest,
         current_user: Optional[UserInfo] = Depends(get_optional_user)
-    ):
+    ) -> ChatResponse:
         """
         Send a message to the orchestrator agent.
         Works for both authenticated and anonymous users.
@@ -92,7 +93,7 @@ def build_chat_router(
             raise HTTPException(status_code=500, detail=str(e))
 
     @router.delete("/api/session/{user_id}")
-    def clear_session(user_id: str):
+    def clear_session(user_id: str) -> dict:
         """Clear all sessions for a specific user."""
         session_manager.clear_user_sessions(user_id)
         return {"status": "success", "message": f"Sessions cleared for user: {user_id}"}

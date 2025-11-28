@@ -104,7 +104,7 @@ def seed_pinecone(
     data_file: Path,
     batch_size: int = 100,
     create_index: bool = True
-):
+) -> None:
     """
     Seed Pinecone with influencer data.
 

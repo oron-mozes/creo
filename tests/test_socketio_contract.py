@@ -28,10 +28,10 @@ os.environ.setdefault("PINECONE_API_KEY", "test-key")
 class SocketIOEventCollector:
     """Helper class to collect Socket.IO events during tests."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.events: List[Dict[str, Any]] = []
 
-    def record(self, event_name: str, data: Any = None):
+    def record(self, event_name: str, data: Any = None) -> None:
         """Record an emitted event."""
         self.events.append({
             'event': event_name,
@@ -42,7 +42,7 @@ class SocketIOEventCollector:
         """Get all events with a specific name."""
         return [e for e in self.events if e['event'] == event_name]
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear all recorded events."""
         self.events = []
 

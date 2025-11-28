@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 try:
     from google.cloud import firestore
@@ -14,7 +14,7 @@ except Exception:  # pragma: no cover - firestore optional in local dev
 class MessageStore:
     """Persist messages either to Firestore or in-memory for development."""
 
-    def __init__(self, db):
+    def __init__(self, db: Any):
         self.db = db
         self._in_memory_messages: Dict[str, List[Dict[str, Any]]] = {}
 
@@ -81,7 +81,7 @@ class MessageStore:
             message_ref = self.db.collection('sessions').document(session_id).collection('messages').document()
             message_ref.set(message_data)
             self.db.collection('messages').document(message_ref.id).set(message_data)
-            return message_ref.id
+            return cast(str, message_ref.id)
 
         # In-memory fallback for local development
         if session_id not in self._in_memory_messages:
@@ -96,9 +96,9 @@ class MessageStore:
             'session_id': session_id,
         }
         self._in_memory_messages[session_id].append(message_data)
-        return message_data['id']
+        return cast(str, message_data['id'])
 
-    def get_session_messages(self, session_id: str) -> list:
+    def get_session_messages(self, session_id: str) -> List[Dict[str, Any]]:
         """Return all messages for a session."""
         if self.db is not None:
             messages_ref = self.db.collection('sessions').document(session_id).collection('messages')
@@ -125,9 +125,9 @@ class MessageStore:
         messages = self.get_session_messages(session_id)
         return messages[-limit:] if len(messages) > limit else messages
 
-    def get_user_sessions(self, user_id: str) -> list:
+    def get_user_sessions(self, user_id: str) -> List[Dict[str, Any]]:
         """Return session summaries for a user/owner."""
-        sessions = []
+        sessions: List[Dict[str, Any]] = []
 
         if self.db is not None:
             session_query = self.db.collection('sessions').where('owner_id', '==', user_id)
@@ -225,8 +225,9 @@ class MessageStore:
         messages_query = self.db.collection('messages').where('owner_id', '==', old_owner_id).stream()
         batch = self.db.batch()
         for doc in messages_query:
+            doc_ref = cast(Any, doc).reference
             batch.update(
-                doc.reference,
+                doc_ref,
                 {
                     'owner_id': new_owner_id,
                     'user_id': new_owner_id,
@@ -241,8 +242,9 @@ class MessageStore:
             nested_msgs = messages_ref.where('owner_id', '==', old_owner_id).stream()
             batch = self.db.batch()
             for msg in nested_msgs:
+                msg_ref = cast(Any, msg).reference
                 batch.update(
-                    msg.reference,
+                    msg_ref,
                     {
                         'owner_id': new_owner_id,
                         'user_id': new_owner_id,
@@ -250,7 +252,7 @@ class MessageStore:
                 )
             batch.commit()
 
-    def get_user_past_sessions(self, user_id: str, limit: int = 5) -> list:
+    def get_user_past_sessions(self, user_id: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Get recent sessions for personalization."""
         sessions = self.get_user_sessions(user_id)
         return sessions[:limit]

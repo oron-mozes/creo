@@ -1,33 +1,35 @@
+
 """User and identity linking helpers for Firestore."""
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any, Dict, cast
+import importlib
 
 try:
-    from google.cloud import firestore  # type: ignore
+    firestore_mod: Optional[Any] = importlib.import_module("google.cloud.firestore")
 except Exception:  # pragma: no cover - firestore optional in local dev
-    firestore = None
+    firestore_mod = None
 
 
 class UserService:
     """Manage user records and anon→auth linking."""
 
-    def __init__(self, db):
+    def __init__(self, db: Any):
         self.db = db
         self.users_collection = db.collection("users") if db else None
         self.links_collection = db.collection("user_links") if db else None
 
     # User records -----------------------------------------------------
-    def get_user_by_creo_id(self, creo_user_id: str) -> Optional[dict]:
+    def get_user_by_creo_id(self, creo_user_id: str) -> Optional[Dict[str, Any]]:
         if not self.users_collection:
             return None
         docs = (
             self.users_collection.where("creo_user_id", "==", creo_user_id).limit(1).stream()
         )
         for doc in docs:
-            data = doc.to_dict()
-            data["id"] = doc.id
+            data = cast(Dict[str, Any], doc.to_dict() or {})
+            data["id"] = cast(str, doc.id)
             return data
         return None
 
@@ -45,28 +47,42 @@ class UserService:
         existing = self.get_user_by_creo_id(creo_user_id)
         if existing:
             doc_ref = self.users_collection.document(existing["id"])
-            doc_ref.set(
-                {
-                    "last_login_at": firestore.SERVER_TIMESTAMP if firestore else datetime.utcnow(),
-                    "picture": picture,
-                    "name": name,
-                },
-                merge=True,
-            )
-            return existing["id"]
+            if firestore_mod:
+                doc_ref.set(
+                    {
+                        "last_login_at": firestore_mod.SERVER_TIMESTAMP,
+                        "picture": picture,
+                        "name": name,
+                    },
+                    merge=True,
+                )
+            else:
+                doc_ref.set(
+                    {
+                        "last_login_at": datetime.utcnow(),
+                        "picture": picture,
+                        "name": name,
+                    },
+                    merge=True,
+                )
+            return cast(str, existing["id"])
 
         doc_ref = self.users_collection.document()
-        doc_ref.set(
-            {
-                "creo_user_id": creo_user_id,
-                "email": email,
-                "name": name,
-                "picture": picture,
-                "created_at": firestore.SERVER_TIMESTAMP if firestore else datetime.utcnow(),
-                "last_login_at": firestore.SERVER_TIMESTAMP if firestore else datetime.utcnow(),
-            }
-        )
-        return doc_ref.id
+        payload: Dict[str, Any] = {
+            "creo_user_id": creo_user_id,
+            "email": email,
+            "name": name,
+            "picture": picture,
+        }
+        if firestore_mod:
+            payload["created_at"] = firestore_mod.SERVER_TIMESTAMP
+            payload["last_login_at"] = firestore_mod.SERVER_TIMESTAMP
+        else:
+            now = datetime.utcnow()
+            payload["created_at"] = now
+            payload["last_login_at"] = now
+        doc_ref.set(payload)
+        return cast(str, doc_ref.id)
 
     # Anon link management ---------------------------------------------
     def get_linked_user_id(self, anon_user_id: str) -> Optional[str]:
@@ -78,7 +94,7 @@ class UserService:
         )
         for doc in docs:
             data = doc.to_dict()
-            return data.get("user_id")
+            return cast(Optional[str], data.get("user_id"))
         return None
 
     def link_anon_to_user(self, anon_user_id: str, user_id: str) -> None:
@@ -97,6 +113,8 @@ class UserService:
             {
                 "anon_user_id": anon_user_id,
                 "user_id": user_id,
-                "migrated_at": firestore.SERVER_TIMESTAMP if firestore else datetime.utcnow(),
+                "migrated_at": firestore_mod.SERVER_TIMESTAMP
+                if firestore_mod
+                else datetime.utcnow(),
             }
         )

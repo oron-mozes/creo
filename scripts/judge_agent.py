@@ -13,6 +13,7 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
+from typing import cast
 
 import requests
 
@@ -41,10 +42,13 @@ try:
     parser_path = PROJECT_ROOT / "agents" / "onboarding_agent" / "parser.py"
     if parser_path.exists():
         spec = importlib.util.spec_from_file_location("onboarding_parser", parser_path)
-        parser_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(parser_module)
-        extract_business_card_from_response = parser_module.extract_business_card_from_response
-        HAS_BUSINESS_CARD_PARSER = True
+        if spec and spec.loader:
+            parser_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(parser_module)
+            extract_business_card_from_response = parser_module.extract_business_card_from_response
+            HAS_BUSINESS_CARD_PARSER = True
+        else:
+            HAS_BUSINESS_CARD_PARSER = False
     else:
         HAS_BUSINESS_CARD_PARSER = False
 except Exception as e:
@@ -87,8 +91,9 @@ def _content_to_text(content: types.Content | None) -> str:
         return ""
     texts: List[str] = []
     for part in content.parts:
-        if getattr(part, "text", None):
-            texts.append(part.text)
+        text = getattr(part, "text", None)
+        if isinstance(text, str):
+            texts.append(text)
     return "\n".join(texts).strip()
 
 
@@ -183,8 +188,10 @@ def parse_args() -> argparse.Namespace:
 def load_agent(agent_dir: Path) -> AdkAgent:
     """Dynamically import agent.py and return the first exported Agent instance."""
     spec = importlib.util.spec_from_file_location("target_agent", agent_dir / "agent.py")
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Cannot load spec for {agent_dir}/agent.py")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
+    spec.loader.exec_module(module)
     for value in vars(module).values():
         if isinstance(value, AdkAgent):
             return value
@@ -221,10 +228,10 @@ def run_agent_case(agent: AdkAgent, case_input: Dict[str, Any], session_context:
 
             # Create a minimal mock session manager that just holds our session memory
             class MockSessionManager:
-                def __init__(self, session_memory):
+                def __init__(self, session_memory: SessionMemory) -> None:
                     self._session_memories = {session_id: session_memory}
 
-                def get_session_memory(self, sid):
+                def get_session_memory(self, sid: str) -> SessionMemory | None:
                     return self._session_memories.get(sid)
 
             mock_session_manager = MockSessionManager(session_memory)
@@ -615,7 +622,8 @@ class Judge:
 
 def load_cases(test_path: Path) -> List[Dict[str, Any]]:
     with open(test_path, "r") as fh:
-        return json.load(fh)
+        data = json.load(fh)
+        return cast(List[Dict[str, Any]], data)
 
 
 def load_agent_instructions(agent_dir: Path) -> str | None:
@@ -745,3 +753,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+from typing import Any

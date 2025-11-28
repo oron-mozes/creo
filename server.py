@@ -6,6 +6,7 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
+from typing import Any, Optional
 
 # Ensure project root is on sys.path before local imports
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -66,24 +67,30 @@ if missing_vars:
 
 # Initialize Firestore (use emulator or mock for local dev)
 try:
-    from google.cloud import firestore
+    firestore_mod: Optional[Any] = importlib.import_module("google.cloud.firestore")
+except Exception:
+    firestore_mod = None
 
-    if os.environ.get('K_SERVICE'):
-        db = firestore.Client()
-    elif os.environ.get('FIRESTORE_EMULATOR_HOST'):
-        db = firestore.Client()
-    else:
-        print("WARNING: Firestore not configured. Using in-memory storage for development.")
-        print("To use Firestore locally, set FIRESTORE_EMULATOR_HOST or run with Cloud credentials.")
+if firestore_mod:
+    try:
+        if os.environ.get('K_SERVICE') or os.environ.get('FIRESTORE_EMULATOR_HOST'):
+            db = firestore_mod.Client()
+        else:
+            print("WARNING: Firestore not configured. Using in-memory storage for development.")
+            print("To use Firestore locally, set FIRESTORE_EMULATOR_HOST or run with Cloud credentials.")
+            db = None
+    except Exception as e:
+        print(f"WARNING: Firestore initialization failed: {e}")
+        print("Using in-memory storage for development.")
         db = None
-except Exception as e:
-    print(f"WARNING: Firestore initialization failed: {e}")
-    print("Using in-memory storage for development.")
+else:
     db = None
 
 # Import orchestrator agent
 agent_path = PROJECT_ROOT / "agents" / "orchestrator_agent" / "agent.py"
 spec = importlib.util.spec_from_file_location("orchestrator_agent", agent_path)
+if spec is None or spec.loader is None:
+    raise ImportError(f"Could not load orchestrator agent from {agent_path}")
 orchestrator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(orchestrator_module)
 root_agent = orchestrator_module.root_agent
@@ -93,6 +100,8 @@ try:
     suggestions_path = PROJECT_ROOT / "agents" / "suggestions_agent" / "agent.py"
     if suggestions_path.exists():
         suggestions_spec = importlib.util.spec_from_file_location("suggestions_agent", suggestions_path)
+        if suggestions_spec is None or suggestions_spec.loader is None:
+            raise ImportError(f"Could not load suggestions agent from {suggestions_path}")
         suggestions_module = importlib.util.module_from_spec(suggestions_spec)
         suggestions_spec.loader.exec_module(suggestions_module)
         suggestions_agent = suggestions_module.suggestions_agent

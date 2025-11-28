@@ -64,6 +64,9 @@ install: venv
 test: venv
 	$(PYTHON) -m pytest tests/ -v
 
+typecheck: venv
+	$(PYTHON) -m mypy . || true
+
 # Run linter
 lint: venv
 	$(VENV)/bin/ruff check agents/

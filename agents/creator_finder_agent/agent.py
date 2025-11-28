@@ -3,7 +3,7 @@
 from pathlib import Path
 import logging
 
-from google.adk.agents.llm_agent import Agent  # type: ignore[import-untyped]
+from google.adk.agents.llm_agent import Agent
 from agents.utils import load_agent_instruction, load_agent_env, AgentName
 from agents.creator_finder_agent.tools import find_creators
 from agents.outreach_message_agent.tools_auth import require_auth_for_outreach

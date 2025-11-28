@@ -1,14 +1,21 @@
 """Database configuration and initialization."""
 import os
-from typing import Optional
-from google.cloud import firestore
+import importlib
+from typing import Optional, Any
+
+# Import firestore dynamically to avoid missing type stubs during typing
+firestore: Any
+try:
+    firestore = importlib.import_module("google.cloud.firestore")
+except Exception:
+    firestore = None
 
 
 # Global database instance
 _db: Optional[firestore.Client] = None
 
 
-def initialize_db() -> Optional[firestore.Client]:
+def initialize_db() -> Optional[Any]:
     """Initialize Firestore database client.
 
     Returns:
@@ -26,13 +33,13 @@ def initialize_db() -> Optional[firestore.Client]:
 
     try:
         # Check if running in Cloud Run (production)
-        if os.environ.get('K_SERVICE'):
+        if firestore and os.environ.get('K_SERVICE'):
             _db = firestore.Client()
             print("[Database] Connected to Firestore (Cloud Run)")
             return _db
 
         # Check for Firestore emulator
-        if os.environ.get('FIRESTORE_EMULATOR_HOST'):
+        if firestore and os.environ.get('FIRESTORE_EMULATOR_HOST'):
             _db = firestore.Client()
             print(f"[Database] Connected to Firestore emulator: {os.environ.get('FIRESTORE_EMULATOR_HOST')}")
             return _db
@@ -50,7 +57,7 @@ def initialize_db() -> Optional[firestore.Client]:
         return None
 
 
-def get_db() -> Optional[firestore.Client]:
+def get_db() -> Optional[Any]:
     """Get the initialized database client.
 
     Returns:

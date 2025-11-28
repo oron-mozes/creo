@@ -12,6 +12,7 @@ import sys
 import secrets
 import webbrowser
 from pathlib import Path
+from typing import Optional, Tuple
 
 # ANSI color codes for pretty output
 class Colors:
@@ -25,40 +26,40 @@ class Colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def print_header(text):
+def print_header(text: str) -> None:
     print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}")
     print(f"{Colors.HEADER}{Colors.BOLD}{text.center(60)}{Colors.ENDC}")
     print(f"{Colors.HEADER}{Colors.BOLD}{'='*60}{Colors.ENDC}\n")
 
-def print_success(text):
+def print_success(text: str) -> None:
     print(f"{Colors.OKGREEN}✓ {text}{Colors.ENDC}")
 
-def print_info(text):
+def print_info(text: str) -> None:
     print(f"{Colors.OKBLUE}ℹ {text}{Colors.ENDC}")
 
-def print_warning(text):
+def print_warning(text: str) -> None:
     print(f"{Colors.WARNING}⚠ {text}{Colors.ENDC}")
 
-def print_error(text):
+def print_error(text: str) -> None:
     print(f"{Colors.FAIL}✗ {text}{Colors.ENDC}")
 
-def print_step(step_num, text):
+def print_step(step_num: int, text: str) -> None:
     print(f"\n{Colors.OKCYAN}{Colors.BOLD}Step {step_num}: {text}{Colors.ENDC}")
 
-def get_input(prompt, default=None):
+def get_input(prompt: str, default: Optional[str] = None) -> str:
     if default:
         user_input = input(f"{prompt} [{default}]: ").strip()
         return user_input if user_input else default
     return input(f"{prompt}: ").strip()
 
-def yes_no(prompt, default=True):
+def yes_no(prompt: str, default: bool = True) -> bool:
     default_str = "Y/n" if default else "y/N"
     response = input(f"{prompt} [{default_str}]: ").strip().lower()
     if not response:
         return default
     return response in ['y', 'yes']
 
-def check_env_file():
+def check_env_file() -> bool:
     """Check if .env file exists and backup if needed."""
     env_path = Path('.env')
     env_example_path = Path('.env.example')
@@ -82,7 +83,7 @@ def check_env_file():
             print_error(".env.example not found!")
             return False
 
-def open_google_console():
+def open_google_console() -> bool:
     """Open Google Cloud Console in browser."""
     print_step(1, "Open Google Cloud Console")
     print("\nWe'll now open Google Cloud Console in your browser.")
@@ -94,7 +95,7 @@ def open_google_console():
         return True
     return False
 
-def guide_oauth_creation():
+def guide_oauth_creation() -> None:
     """Guide user through OAuth credential creation."""
     print_step(2, "Create OAuth 2.0 Credentials")
 
@@ -124,7 +125,7 @@ def guide_oauth_creation():
 
     input(f"\n{Colors.BOLD}Press Enter when you've created the credentials...{Colors.ENDC}")
 
-def collect_credentials():
+def collect_credentials() -> Tuple[str, str]:
     """Collect OAuth credentials from user."""
     print_step(3, "Enter Your Credentials")
 
@@ -142,7 +143,7 @@ def collect_credentials():
 
     return client_id, client_secret
 
-def get_redirect_uri():
+def get_redirect_uri() -> str:
     """Get redirect URI configuration."""
     print_step(4, "Configure Redirect URI")
 
@@ -161,7 +162,7 @@ def get_redirect_uri():
     else:
         return get_input("Enter your custom redirect URI")
 
-def generate_secret_key():
+def generate_secret_key() -> str:
     """Generate a secure secret key for JWT."""
     print_step(5, "Generate Session Secret Key")
 
@@ -170,7 +171,7 @@ def generate_secret_key():
 
     return secret_key
 
-def update_env_file(client_id, client_secret, redirect_uri, secret_key):
+def update_env_file(client_id: str, client_secret: str, redirect_uri: str, secret_key: str) -> None:
     """Update or create .env file with OAuth credentials."""
     print_step(6, "Update .env File")
 
@@ -228,7 +229,7 @@ def update_env_file(client_id, client_secret, redirect_uri, secret_key):
     print(f"  GOOGLE_REDIRECT_URI={redirect_uri}")
     print(f"  SESSION_SECRET_KEY={secret_key[:20]}...")
 
-def verify_setup():
+def verify_setup() -> bool:
     """Verify the setup by checking environment variables."""
     print_step(7, "Verify Setup")
 
@@ -263,7 +264,7 @@ def verify_setup():
     print_success("All required variables are set!")
     return True
 
-def test_server():
+def test_server() -> None:
     """Guide user to test the server."""
     print_step(8, "Test Your Setup")
 
@@ -299,7 +300,7 @@ def test_server():
         print_info("Starting server...")
         os.system("python server.py")
 
-def main():
+def main() -> None:
     """Main setup flow."""
     print_header("Creo Google OAuth Setup")
 

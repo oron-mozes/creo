@@ -31,7 +31,7 @@ def merge_agent_docs(agent_dir: Path) -> None:
 
     print(f"✓ Merged {agent_dir.name}/instruction.md (examples.md → examples.md.bak)")
 
-def main():
+def main() -> None:
     """Merge all agent instruction and example files."""
     project_root = Path(__file__).parent.parent
     agents_dir = project_root / "agents"

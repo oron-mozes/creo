@@ -1,17 +1,9 @@
 """Parser for extracting campaign brief information from agent responses."""
 import json
 import re
-import sys
-from pathlib import Path
 from typing import Optional, Dict, Any
-import importlib.util
 
-# Load CampaignBrief model from models.py in same directory
-_models_path = Path(__file__).parent / "models.py"
-_spec = importlib.util.spec_from_file_location("campaign_brief_models", _models_path)
-_models_module = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_models_module)
-CampaignBrief = _models_module.CampaignBrief
+from agents.campaign_brief_agent.models import CampaignBrief
 
 
 def parse_campaign_brief_confirmation(text: str) -> Optional[CampaignBrief]:

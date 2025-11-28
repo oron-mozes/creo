@@ -1,17 +1,9 @@
 """Parser for extracting business card information from agent responses."""
 import json
 import re
-import sys
-from pathlib import Path
 from typing import Optional, Dict, Any
-import importlib.util
 
-# Load BusinessCard model from models.py in same directory
-_models_path = Path(__file__).parent / "models.py"
-_spec = importlib.util.spec_from_file_location("onboarding_models", _models_path)
-_models_module = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_models_module)
-BusinessCard = _models_module.BusinessCard
+from agents.onboarding_agent.models import BusinessCard
 
 
 def parse_business_card_confirmation(text: str) -> Optional[BusinessCard]:
@@ -100,4 +92,3 @@ def extract_business_card_from_response(text: str) -> Dict[str, Any]:
         "cleaned_text": text,
         "has_confirmation": False
     }
-

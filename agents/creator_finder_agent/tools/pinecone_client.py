@@ -44,7 +44,7 @@ class PineconeClient:
         self.metric = metric
         self.cloud = cloud
         self.region = region
-        self.index = None
+        self.index: Optional[Any] = None
 
     def create_index(self) -> None:
         """
@@ -76,7 +76,7 @@ class PineconeClient:
         print(f"✓ Index '{self.index_name}' created successfully")
         self.index = self.pc.Index(self.index_name)
 
-    def get_index(self):
+    def get_index(self) -> Any:
         """
         Get reference to Pinecone index.
 

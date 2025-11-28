@@ -7,7 +7,7 @@ from agents.onboarding_agent.models import BusinessCard
 class TestBusinessCardParser:
     """Test cases for business card parser."""
 
-    def test_extract_business_card_with_valid_confirmation(self):
+    def test_extract_business_card_with_valid_confirmation(self) -> None:
         """Test extracting business card from valid BUSINESS_CARD_CONFIRMATION block."""
         response = """
 Great! I've confirmed your business details.
@@ -33,7 +33,7 @@ Let's proceed with your campaign!
         assert result["business_card"].service_type == "Coffee shop"
         assert "Let's proceed with your campaign!" in result["cleaned_text"]
 
-    def test_extract_business_card_no_confirmation(self):
+    def test_extract_business_card_no_confirmation(self) -> None:
         """Test parsing response without BUSINESS_CARD_CONFIRMATION block."""
         response = "What's your business name?"
 
@@ -43,7 +43,7 @@ Let's proceed with your campaign!
         assert result["business_card"] is None
         assert result["cleaned_text"] == "What's your business name?"
 
-    def test_extract_business_card_removes_confirmation_block(self):
+    def test_extract_business_card_removes_confirmation_block(self) -> None:
         """Test that BUSINESS_CARD_CONFIRMATION block is removed from cleaned text."""
         response = """
 Perfect! Here are your details:
@@ -66,7 +66,7 @@ Next steps...
         assert "Perfect! Here are your details:" in result["cleaned_text"]
         assert "Next steps..." in result["cleaned_text"]
 
-    def test_extract_business_card_with_none_values(self):
+    def test_extract_business_card_with_none_values(self) -> None:
         """Test parsing business card with None/null values."""
         response = """
 BUSINESS_CARD_CONFIRMATION:
@@ -84,7 +84,7 @@ BUSINESS_CARD_CONFIRMATION:
         assert result["business_card"].website is None
         assert result["business_card"].social_links == "https://instagram.com/test"
 
-    def test_extract_business_card_invalid_json(self):
+    def test_extract_business_card_invalid_json(self) -> None:
         """Test parsing response with invalid JSON in confirmation block."""
         response = """
 BUSINESS_CARD_CONFIRMATION:
@@ -98,7 +98,7 @@ BUSINESS_CARD_CONFIRMATION:
         # Should handle gracefully - either no confirmation or partial data
         assert result["has_confirmation"] is False or result["business_card"] is None
 
-    def test_extract_business_card_multiple_blocks(self):
+    def test_extract_business_card_multiple_blocks(self) -> None:
         """Test that only the first BUSINESS_CARD_CONFIRMATION block is extracted."""
         response = """
 BUSINESS_CARD_CONFIRMATION:
@@ -127,7 +127,7 @@ BUSINESS_CARD_CONFIRMATION:
         # Should extract the first one
         assert result["business_card"].name == "First Co"
 
-    def test_extract_business_card_empty_response(self):
+    def test_extract_business_card_empty_response(self) -> None:
         """Test parsing empty response."""
         result = extract_business_card_from_response("")
 
@@ -135,7 +135,7 @@ BUSINESS_CARD_CONFIRMATION:
         assert result["business_card"] is None
         assert result["cleaned_text"] == ""
 
-    def test_extract_business_card_with_markdown_code_block(self):
+    def test_extract_business_card_with_markdown_code_block(self) -> None:
         """Test parsing confirmation block inside markdown code block."""
         response = """
 Here's your business card:

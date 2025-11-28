@@ -8,7 +8,7 @@ from agents.onboarding_agent.tools import save_business_card_tool, set_session_c
 class TestSaveBusinessCardTool:
     """Test cases for save_business_card_tool."""
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Set up test fixtures before each test."""
         # Create mock session manager and session memory
         self.mock_session_memory = Mock()
@@ -20,14 +20,14 @@ class TestSaveBusinessCardTool:
         # Set session context for tests
         set_session_context(self.mock_session_manager, "test_session_456")
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         """Clean up after each test."""
         # Clear session context
         from agents.onboarding_agent.tools import _session_contexts, _context_lock
         with _context_lock:
             _session_contexts.clear()
 
-    def test_save_business_card_success(self):
+    def test_save_business_card_success(self) -> None:
         """Test successful business card save."""
         result = save_business_card_tool(
             name="Test Company",
@@ -46,7 +46,7 @@ class TestSaveBusinessCardTool:
         assert result_data["business_card"]["service_type"] == "Software Development"
         assert result_data["is_complete"] is True
 
-    def test_save_business_card_with_optional_fields_none(self):
+    def test_save_business_card_with_optional_fields_none(self) -> None:
         """Test saving business card with optional fields as None."""
         result = save_business_card_tool(
             name="Test Company",
@@ -62,7 +62,7 @@ class TestSaveBusinessCardTool:
         assert result_data["business_card"]["website"] == "Not provided"
         assert result_data["business_card"]["social_links"] == "https://instagram.com/test"
 
-    def test_save_business_card_converts_none_strings(self):
+    def test_save_business_card_converts_none_strings(self) -> None:
         """Test that 'none' and 'not provided' strings are converted to None."""
         result = save_business_card_tool(
             name="Test Company",
@@ -78,7 +78,7 @@ class TestSaveBusinessCardTool:
         assert result_data["business_card"]["website"] == "Not provided"
         assert result_data["business_card"]["social_links"] == "Not provided"
 
-    def test_save_business_card_website_url_validation(self):
+    def test_save_business_card_website_url_validation(self) -> None:
         """Test that website URLs are validated and prefixed."""
         result = save_business_card_tool(
             name="Test Company",
@@ -93,7 +93,7 @@ class TestSaveBusinessCardTool:
         assert result_data["success"] is True
         assert result_data["business_card"]["website"] == "https://example.com"
 
-    def test_save_business_card_no_session_context(self):
+    def test_save_business_card_no_session_context(self) -> None:
         """Test error when session context is not set."""
         # Clear session context
         from agents.onboarding_agent.tools import _session_contexts, _context_lock
@@ -111,7 +111,7 @@ class TestSaveBusinessCardTool:
         assert result_data["success"] is False
         assert "Session context not available" in result_data["error"]
 
-    def test_save_business_card_calls_util_function(self, monkeypatch):
+    def test_save_business_card_calls_util_function(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that the tool calls the utility save function."""
         mock_save = Mock()
         # The import happens inside the tool function, so we need to patch utils.message_utils
@@ -133,7 +133,7 @@ class TestSaveBusinessCardTool:
         assert call_args[0][0] == "test_user_123"  # user_id
         assert call_args[0][1]["name"] == "Test Company"
 
-    def test_save_business_card_saves_to_session_memory(self):
+    def test_save_business_card_saves_to_session_memory(self) -> None:
         """Test that business card is saved to session memory."""
         result = save_business_card_tool(
             name="Test Company",
@@ -150,7 +150,7 @@ class TestSaveBusinessCardTool:
         call_args = self.mock_session_memory.set_business_card.call_args[0][0]
         assert call_args["name"] == "Test Company"
 
-    def test_save_business_card_handles_validation_error(self):
+    def test_save_business_card_handles_validation_error(self) -> None:
         """Test that validation errors are handled gracefully."""
         # Note: Currently BusinessCard model is lenient, but if we add stricter validation
         # this test ensures errors are caught and returned properly
@@ -165,7 +165,7 @@ class TestSaveBusinessCardTool:
         result_data = json.loads(result)
         assert "success" in result_data
 
-    def test_save_business_card_is_complete_check(self):
+    def test_save_business_card_is_complete_check(self) -> None:
         """Test that is_complete is correctly set in response."""
         # Complete card (has name, location, service_type, and website)
         result = save_business_card_tool(
@@ -192,13 +192,13 @@ class TestSaveBusinessCardTool:
 class TestSetSessionContext:
     """Test cases for set_session_context function."""
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         """Clean up after each test."""
         from agents.onboarding_agent.tools import _session_contexts, _context_lock
         with _context_lock:
             _session_contexts.clear()
 
-    def test_set_session_context_stores_correctly(self):
+    def test_set_session_context_stores_correctly(self) -> None:
         """Test that set_session_context stores session data correctly."""
         from agents.onboarding_agent.tools import _session_contexts, _context_lock
 
@@ -212,7 +212,7 @@ class TestSetSessionContext:
             assert _session_contexts[session_id]["session_manager"] == mock_manager
             assert _session_contexts[session_id]["session_id"] == session_id
 
-    def test_set_session_context_thread_safe(self):
+    def test_set_session_context_thread_safe(self) -> None:
         """Test that set_session_context is thread-safe."""
         import threading
         from agents.onboarding_agent.tools import _session_contexts
@@ -220,7 +220,7 @@ class TestSetSessionContext:
         mock_manager = Mock()
         results = []
 
-        def set_context(session_num):
+        def set_context(session_num: int) -> None:
             session_id = f"session_{session_num}"
             set_session_context(mock_manager, session_id)
             results.append(session_id)

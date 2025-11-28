@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Any, Optional, cast
 
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from fastapi.responses import RedirectResponse, JSONResponse
@@ -87,7 +87,7 @@ class TokenResponse(BaseModel):
     user: UserInfo
 
 # Helper functions
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Create a JWT access token."""
     to_encode = data.copy()
     if expires_delta:
@@ -96,10 +96,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return cast(str, encoded_jwt)
 
 
-def set_auth_cookie(response: Response, token: str):
+def set_auth_cookie(response: Response, token: str) -> None:
     """Set the auth token in an HttpOnly cookie."""
     max_age = ACCESS_TOKEN_EXPIRE_MINUTES * 60
     response.set_cookie(
@@ -115,7 +115,7 @@ def set_auth_cookie(response: Response, token: str):
     )
 
 
-def clear_auth_cookie(response: Response):
+def clear_auth_cookie(response: Response) -> None:
     """Clear the auth token cookie."""
     response.delete_cookie(
         key=COOKIE_NAME,
@@ -123,11 +123,11 @@ def clear_auth_cookie(response: Response):
         path="/",
     )
 
-def verify_token(token: str) -> Optional[dict]:
+def verify_token(token: str) -> Optional[dict[str, Any]]:
     """Verify and decode a JWT token."""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
+        return cast(dict[str, Any], payload)
     except JWTError:
         return None
 
@@ -173,7 +173,7 @@ async def get_current_user(
 
     user_id = payload.get("sub")
     email = payload.get("email")
-    name = payload.get("name")
+    name = payload.get("name") or ""
     picture = payload.get("picture")
 
     if not user_id or not email:
@@ -197,7 +197,7 @@ async def get_optional_user(
 
 # Routes
 @router.get("/login/google")
-async def google_login(request: Request):
+async def google_login(request: Request) -> Any:
     """Initiate Google OAuth login flow."""
     if not google_config_present():
         log_google_config_state()
@@ -214,7 +214,7 @@ async def google_login(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri, state=return_url)
 
 @router.get("/google/callback")
-async def google_callback(request: Request):
+async def google_callback(request: Request) -> Response:
     """Handle Google OAuth callback and create user session."""
     if not google_config_present():
         log_google_config_state()
@@ -279,7 +279,7 @@ async def google_callback(request: Request):
         raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
 
 @router.post("/logout")
-async def logout(response: Response, current_user: UserInfo = Depends(get_current_user)):
+async def logout(response: Response, current_user: UserInfo = Depends(get_current_user)) -> dict[str, str]:
     """Logout user (clears HttpOnly auth cookie)."""
     clear_auth_cookie(response)
     return {"status": "success", "message": "Logged out successfully"}
@@ -290,7 +290,7 @@ async def get_me(current_user: UserInfo = Depends(get_current_user)) -> UserInfo
     return current_user
 
 @router.get("/token")
-async def get_token(request: Request):
+async def get_token(request: Request) -> dict[str, str]:
     """Return the auth token from the HttpOnly cookie if valid."""
     token = request.cookies.get(COOKIE_NAME)
     if not token or not verify_token(token):
@@ -298,7 +298,7 @@ async def get_token(request: Request):
     return {"token": token}
 
 @router.get("/check")
-async def check_auth(user: Optional[UserInfo] = Depends(get_optional_user)):
+async def check_auth(user: Optional[UserInfo] = Depends(get_optional_user)) -> dict[str, Any | None]:
     """Check if user is authenticated."""
     if user:
         return {"authenticated": True, "user": user}
@@ -310,7 +310,7 @@ async def dev_login(
     response: Response,
     email: str = "dev@example.com",
     name: str = "Dev User"
-):
+) -> TokenResponse:
     """Development-only endpoint to create a test user token."""
     if os.getenv('K_SERVICE'):
         raise HTTPException(status_code=404, detail="Not available in production")

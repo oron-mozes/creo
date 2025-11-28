@@ -44,7 +44,7 @@ def build_sessions_router(message_store: MessageStore, user_service: UserService
     def create_session(
         request: CreateSessionRequest,
         current_user: Optional[UserInfo] = Depends(get_optional_user)
-    ):
+    ) -> CreateSessionResponse:
         """
         Create a new chat session with an initial message.
         Returns session_id to redirect user to chat page.
@@ -70,7 +70,7 @@ def build_sessions_router(message_store: MessageStore, user_service: UserService
         return CreateSessionResponse(session_id=session_id, user_id=user_id)
 
     @router.get("/api/sessions", response_model=GetSessionsResponse)
-    def get_user_sessions(user_id: str, current_user: Optional[UserInfo] = Depends(get_optional_user)):
+    def get_user_sessions(user_id: str, current_user: Optional[UserInfo] = Depends(get_optional_user)) -> GetSessionsResponse:
         """Get all chat sessions for a user with summaries."""
         print(f"[GET_SESSIONS] Fetching sessions for user {user_id}")
 
@@ -85,9 +85,10 @@ def build_sessions_router(message_store: MessageStore, user_service: UserService
             raise HTTPException(status_code=401, detail="Authentication required")
 
         try:
-            sessions = message_store.get_user_sessions(user_id)
-            print(f"[GET_SESSIONS] Found {len(sessions)} sessions for user {user_id}")
-            return GetSessionsResponse(sessions=sessions)
+            session_dicts = message_store.get_user_sessions(user_id)
+            print(f"[GET_SESSIONS] Found {len(session_dicts)} sessions for user {user_id}")
+            session_models = [SessionInfo(**session) for session in session_dicts]
+            return GetSessionsResponse(sessions=session_models)
         except Exception as e:
             print(f"[GET_SESSIONS] Error: {e}")
             import traceback
@@ -95,7 +96,7 @@ def build_sessions_router(message_store: MessageStore, user_service: UserService
             return GetSessionsResponse(sessions=[])
 
     @router.get("/api/sessions/{session_id}/messages", response_model=GetMessagesResponse)
-    def get_messages(session_id: str):
+    def get_messages(session_id: str) -> GetMessagesResponse:
         """Get all messages for a session."""
         print(f"[GET_MESSAGES] Fetching messages for session {session_id}")
         messages = message_store.get_session_messages(session_id)

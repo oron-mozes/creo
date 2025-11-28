@@ -12,6 +12,7 @@ import json
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any, Dict, List
 
 # Configuration
 TOTAL_INFLUENCERS = 100
@@ -168,7 +169,7 @@ AUDIENCE_PROFILES = {
 }
 
 
-def generate_username(name, subcategory, platform):
+def generate_username(name: str, subcategory: str, platform: str) -> str:
     """Generate a realistic username."""
     name_lower = name.lower()
     category_short = subcategory.replace("_", "")[:6]
@@ -183,7 +184,7 @@ def generate_username(name, subcategory, platform):
     return random.choice(patterns)
 
 
-def generate_bio(subcategory, location_city, location_country):
+def generate_bio(subcategory: str, location_city: str, location_country: str) -> str:
     """Generate a realistic bio."""
     template = BIO_TEMPLATES.get(subcategory, "✨ Content creator | {specialty} | {location} | {cta}")
     specialty = random.choice(SPECIALTIES.get(subcategory, ["Passionate creator"]))
@@ -202,7 +203,7 @@ def generate_bio(subcategory, location_city, location_country):
     return bio
 
 
-def generate_content_themes(subcategory):
+def generate_content_themes(subcategory: str) -> List[str]:
     """Generate content themes based on subcategory."""
     theme_map = {
         "coffee": ["coffee culture", "cafe reviews", "barista tips", "coffee brewing"],
@@ -220,7 +221,7 @@ def generate_content_themes(subcategory):
     return theme_map.get(subcategory, ["lifestyle content", "daily vlogs", "tips and tricks", "inspiration"])
 
 
-def generate_audience_demographics(subcategory, location_country):
+def generate_audience_demographics(subcategory: str, location_country: str) -> Dict[str, Any]:
     """Generate realistic audience demographics based on influencer niche."""
     profile = AUDIENCE_PROFILES.get(subcategory, {
         "interests": ["lifestyle", "entertainment", "social media"],
@@ -260,7 +261,7 @@ def generate_audience_demographics(subcategory, location_country):
     }
 
 
-def generate_performance_tier(engagement_rate, authenticity_score, campaign_roi):
+def generate_performance_tier(engagement_rate: float, authenticity_score: float, campaign_roi: float) -> str:
     """Calculate performance tier based on metrics."""
     score = (engagement_rate / 10) * 0.4 + authenticity_score * 0.3 + (campaign_roi / 5) * 0.3
 
@@ -274,7 +275,7 @@ def generate_performance_tier(engagement_rate, authenticity_score, campaign_roi)
         return "bronze"
 
 
-def generate_influencer(idx):
+def generate_influencer(idx: int) -> Dict[str, Any]:
     """Generate a single influencer profile."""
     # Basic info
     platform = random.choice(PLATFORMS)
@@ -384,7 +385,7 @@ def generate_influencer(idx):
     }
 
 
-def main():
+def main() -> None:
     """Generate 100 influencers and save to JSON."""
     print(f"Generating {TOTAL_INFLUENCERS} mock influencers...")
 
@@ -417,9 +418,9 @@ def main():
 
     # Print statistics
     print("\n=== Statistics ===")
-    platforms = {}
-    categories = {}
-    tiers = {}
+    platforms: Dict[str, int] = {}
+    categories: Dict[str, int] = {}
+    tiers: Dict[str, int] = {}
 
     for inf in influencers:
         platforms[inf['platform']] = platforms.get(inf['platform'], 0) + 1

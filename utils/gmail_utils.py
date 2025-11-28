@@ -1,3 +1,4 @@
+
 """Gmail API service for sending outreach emails.
 
 This service handles:
@@ -11,7 +12,7 @@ import jwt
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, cast
 from pathlib import Path
 
 from google.auth.transport.requests import Request
@@ -273,6 +274,9 @@ class GmailService:
         """
         if not self.service:
             self.authenticate()
+        if not self.service:
+            print("[GmailService] Service not initialized; cannot send email")
+            return None
 
         try:
             # Create email message
@@ -318,7 +322,7 @@ class GmailService:
             Decoded token payload if valid, None otherwise
         """
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
+            payload = cast(Dict[str, Any], jwt.decode(token, JWT_SECRET, algorithms=['HS256']))
             return payload
         except jwt.ExpiredSignatureError:
             print("[GmailService] Token has expired")

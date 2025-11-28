@@ -10,14 +10,14 @@ class MigrateUserRequest(BaseModel):
     anonymous_user_id: str
 
 
-def build_users_router(db, message_store: MessageStore, user_service: UserService) -> APIRouter:
+def build_users_router(db: object, message_store: MessageStore, user_service: UserService) -> APIRouter:
     router = APIRouter()
 
     @router.post("/api/users/migrate")
     def migrate_anonymous_user(
         request: MigrateUserRequest,
         current_user: UserInfo = Depends(get_current_user)
-    ):
+    ) -> dict:
         """
         Migrate anonymous user data to authenticated user.
         Requires authentication.

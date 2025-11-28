@@ -5,7 +5,7 @@ Generates semantic embeddings from influencer data using Google's text-embedding
 These embeddings enable semantic search in Pinecone.
 """
 import os
-from typing import Dict, List, Any
+from typing import Dict, List, Any, cast
 import google.generativeai as genai
 
 
@@ -135,7 +135,7 @@ class EmbeddingGenerator:
             task_type="retrieval_document"  # Optimized for retrieval tasks
         )
 
-        return result['embedding']
+        return cast(List[float], result['embedding'])
 
     def generate_influencer_embedding(self, influencer: Dict[str, Any]) -> List[float]:
         """
@@ -201,7 +201,7 @@ class EmbeddingGenerator:
             task_type="retrieval_query"  # Optimized for query embedding
         )
 
-        return result['embedding']
+        return cast(List[float], result['embedding'])
 
 
 # Example usage

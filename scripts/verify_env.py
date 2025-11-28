@@ -73,7 +73,7 @@ def print_error(text: str) -> None:
 def load_env_file() -> Dict[str, str]:
     """Load variables from .env file."""
     env_file = PROJECT_ROOT / ".env"
-    env_vars = {}
+    env_vars: Dict[str, str] = {}
 
     if not env_file.exists():
         return env_vars

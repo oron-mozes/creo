@@ -13,7 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from agents.creator_finder_agent.tools.influencer_search import InfluencerSearch
 
 
-def main():
+def main() -> None:
     print("=" * 80)
     print(" TESTING INFLUENCER SEARCH SYSTEM")
     print("=" * 80)

@@ -11,7 +11,7 @@ from collections import OrderedDict
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 try:
-    import pycountry  # type: ignore
+    import pycountry
 except Exception:
     pycountry = None  # graceful fallback if dependency is missing
 
@@ -215,10 +215,19 @@ def find_creators(
     # Always cache all results for the query, not just the first page
     if not session_id or not user_id:
         # Try to pull from shared session context
-        ctx = get_shared_context("creator_finder_agent")
+        ctx = get_shared_context("shared") or get_shared_context("creator_finder_agent")
         if ctx:
-            session_id = session_id or ctx.get("session_id")
-            user_id = user_id or ctx.get("user_id")
+            from types import SimpleNamespace
+            from agents.utils.session_helpers import normalize_session
+            raw_session = SimpleNamespace(id=ctx.get("session_id"), user_id=ctx.get("user_id"), app_name=ctx.get("app_name"))
+            try:
+                norm = normalize_session(raw_session)
+                session_id = session_id or norm["session_id"]
+                user_id = user_id or norm["user_id"]
+            except Exception as e:
+                logger.warning(f"Session context invalid - cannot run find_creators: {e}")
+                session_id = None
+                user_id = None
 
     cache_params = {
         'category': category,
@@ -488,8 +497,7 @@ def _persist_creators_for_session(results: List[Dict[str, Any]], session_id: Opt
     if not session_id or not user_id or not results:
         return
     try:
-        from db import CreatorDB  # lazy import to avoid circular deps during tool load
-        creator_db = CreatorDB()
+        from utils.message_utils import save_creators_for_session  # lazy import to avoid circular deps during tool load
         mapped = []
         seen = set()
         for item in results:
@@ -514,7 +522,7 @@ def _persist_creators_for_session(results: List[Dict[str, Any]], session_id: Opt
             )
         if mapped:
             logger.info(f"Persisting {len(mapped)} creators for session={session_id}")
-            creator_db.save_creators(mapped, session_id=session_id, user_id=user_id)
+            save_creators_for_session(mapped, session_id=session_id, user_id=user_id)
     except Exception as exc:
         logger.warning(f"Failed to persist creators for session {session_id}: {exc}")
 

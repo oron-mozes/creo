@@ -12,7 +12,8 @@ Key Architecture:
 """
 from __future__ import annotations
 
-from typing import Optional, Dict, Any, Union, List
+from typing import Optional, Dict, Any, Union, List, Iterable, cast
+from types import SimpleNamespace
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 from datetime import datetime
@@ -70,7 +71,7 @@ class SessionMemory:
             self.agent_contexts[agent_name] = {}
         self.agent_contexts[agent_name][key] = value
 
-    def add_message(self, role: str, content: str, message_id: str = None) -> None:
+    def add_message(self, role: str, content: str, message_id: Optional[str] = None) -> None:
         """Add a message to the shared conversation history."""
         message = {
             'role': role,
@@ -111,13 +112,13 @@ class SessionMemory:
         """
         self.shared_context['user_profile'] = user_profile
 
-    def get_user_profile(self) -> Optional[Dict[str, Any]]:
+    def get_user_profile(self) -> Dict[str, Any]:
         """Get user profile data from shared context.
 
         Returns:
             User profile dictionary with name or empty dict
         """
-        return self.shared_context.get('user_profile', {})
+        return dict(self.shared_context.get('user_profile', {}) or {})
 
     def get_workflow_stage(self) -> Optional[WorkflowStage]:
         """Get the current workflow stage.
@@ -125,7 +126,8 @@ class SessionMemory:
         Returns:
             WorkflowStage enum value or None if no stage is set
         """
-        return self.shared_context['workflow_state'].get('stage')
+        stage = self.shared_context['workflow_state'].get('stage')
+        return cast(Optional[WorkflowStage], stage)
 
     def set_workflow_stage(self, stage: Optional[Union[WorkflowStage, str]]) -> None:
         """Set the current workflow stage.
@@ -208,7 +210,8 @@ class SessionMemory:
         """
         if 'onboarding_agent' not in self.agent_contexts:
             return []
-        return self.agent_contexts['onboarding_agent'].get('extractions', [])
+        extra = self.agent_contexts['onboarding_agent'].get('extractions', [])
+        return cast(List[Dict[str, Any]], extra)
 
     def get_extracted_field(self, field: Union[ExtractedField, str]) -> Optional[Any]:
         """Get the current value of an extracted field.
@@ -343,7 +346,7 @@ class SessionMemory:
         """
         if 'outreach_message_agent' not in self.agent_contexts:
             return None
-        return self.agent_contexts['outreach_message_agent'].get('status')
+        return cast(Optional[str], self.agent_contexts['outreach_message_agent'].get('status'))
 
     def get_sent_emails(self) -> List[Dict[str, Any]]:
         """Get all sent outreach emails for this session.
@@ -353,7 +356,7 @@ class SessionMemory:
         """
         if 'outreach_message_agent' not in self.agent_contexts:
             return []
-        return self.agent_contexts['outreach_message_agent'].get('sent_emails', [])
+        return cast(List[Dict[str, Any]], self.agent_contexts['outreach_message_agent'].get('sent_emails', []))
 
     def get_influencer_responses(self) -> List[Dict[str, Any]]:
         """Get all influencer responses for this session.
@@ -363,7 +366,7 @@ class SessionMemory:
         """
         if 'outreach_message_agent' not in self.agent_contexts:
             return []
-        return self.agent_contexts['outreach_message_agent'].get('responses', [])
+        return cast(List[Dict[str, Any]], self.agent_contexts['outreach_message_agent'].get('responses', []))
 
     def set_current_creator(self, creator_data: Dict[str, Any]) -> None:
         """Set the currently targeted creator for outreach.
@@ -396,7 +399,7 @@ class SessionManager:
     - Session lifecycle
     """
 
-    def __init__(self, root_agent=None):
+    def __init__(self, root_agent: Any | None = None) -> None:
         # One runner per user
         self._runners: Dict[str, InMemoryRunner] = {}
 
@@ -406,7 +409,7 @@ class SessionManager:
         # Root agent (will be set from server.py)
         self._root_agent = root_agent
 
-    def set_root_agent(self, root_agent):
+    def set_root_agent(self, root_agent: Any) -> None:
         """Set the root agent for creating runners.
 
         Args:
@@ -500,7 +503,7 @@ class SessionManager:
         session_id: str,
         message: str,
         user_profile: Optional[Dict[str, Any]] = None
-    ):
+    ) -> Iterable[Any]:
         """Run the agent with proper session and memory context.
 
         Args:
@@ -529,9 +532,16 @@ class SessionManager:
         set_session_context(self, session_id)
         try:
             from agents.creator_finder_agent.tools import set_session_context as set_cf_context
-            set_cf_context(self, session_id, user_id)
+            if callable(set_cf_context):
+                set_cf_context(self, session_id, user_id)
         except Exception as e:
             print(f"[SessionManager] WARNING: Failed to set creator_finder session context: {e}")
+        try:
+            from agents.campaign_brief_agent.tools import set_session_context as set_brief_context
+            if callable(set_brief_context):
+                set_brief_context(self, session_id, user_id)
+        except Exception as e:
+            print(f"[SessionManager] WARNING: Failed to set campaign_brief session context: {e}")
         try:
             from agents.session_context import set_context as set_shared_ctx
             set_shared_ctx("shared", self, session_id, user_id)
@@ -564,7 +574,7 @@ class SessionManager:
             if '503' in error_message and 'overloaded' in error_message.lower():
                 # Yield a fake error event that looks like a normal agent response
                 print(f"[SessionManager] ✓ Caught 503 error, yielding friendly error event")
-                error_event = types.Event(
+                error_event = SimpleNamespace(
                     author="system",
                     content=types.Content(
                         role="model",
@@ -574,7 +584,8 @@ class SessionManager:
                             "Please try again in a few minutes, or contact support if this persists.\n\n"
                             "We apologize for the inconvenience!"
                         ))]
-                    )
+                    ),
+                    is_final_response=lambda: True,
                 )
                 yield error_event
             else:
@@ -690,29 +701,29 @@ class SessionManager:
         # Summarize older messages but keep last N intact
         MAX_CONTEXT_MESSAGES = 20
         messages = session_memory.get_shared_context().get('messages', [])
-        summary_text = ""
+        summary_lines: List[str] = []
         if len(messages) > MAX_CONTEXT_MESSAGES:
             older = messages[:-MAX_CONTEXT_MESSAGES]
             # Simple heuristic summary: count roles and include first/last snippets
             user_msgs = [m['content'] for m in older if m.get('role') == 'user']
             assistant_msgs = [m['content'] for m in older if m.get('role') == 'assistant']
-            summary_text = [
+            summary_lines = [
                 "--- Conversation summary of earlier turns ---",
                 f"Older user turns: {len(user_msgs)}",
                 f"Older assistant turns: {len(assistant_msgs)}",
             ]
             if user_msgs:
-                summary_text.append(f"First user msg: {user_msgs[0][:200]}")
+                summary_lines.append(f"First user msg: {user_msgs[0][:200]}")
             if assistant_msgs:
-                summary_text.append(f"First assistant msg: {assistant_msgs[0][:200]}")
+                summary_lines.append(f"First assistant msg: {assistant_msgs[0][:200]}")
             if user_msgs:
-                summary_text.append(f"Last user msg in summary: {user_msgs[-1][:200]}")
+                summary_lines.append(f"Last user msg in summary: {user_msgs[-1][:200]}")
             if assistant_msgs:
-                summary_text.append(f"Last assistant msg in summary: {assistant_msgs[-1][:200]}")
-            summary_text.append("--- Recent turns follow ---")
-            summary_text = "\n".join(summary_text)
+                summary_lines.append(f"Last assistant msg in summary: {assistant_msgs[-1][:200]}")
+            summary_lines.append("--- Recent turns follow ---")
 
-        if summary_text:
+        summary_text = "\n".join(summary_lines) if summary_lines else ""
+        if summary_lines:
             context_parts.append(summary_text)
 
         enhanced = "\n".join(context_parts)
@@ -728,7 +739,7 @@ class SessionManager:
         self,
         session_id: str,
         content: str,
-        message_id: str = None
+        message_id: Optional[str] = None
     ) -> None:
         """Save assistant's response to session memory.
 

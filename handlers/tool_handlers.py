@@ -140,7 +140,8 @@ def handle_send_outreach_email_tool(
         if not gmail_service.service:
             gmail_service.authenticate()
 
-        email_id = gmail_service.send_email(outreach_email)
+        email_payload = outreach_email.to_dict()
+        email_id = gmail_service.send_email(email_payload)
 
         if not email_id:
             print(f"[TOOL_HANDLER] ERROR: Failed to send email")

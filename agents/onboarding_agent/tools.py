@@ -1,12 +1,29 @@
 """Tools for the onboarding agent to collect and save business information."""
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, MutableMapping
 from google.adk.tools import FunctionTool
 from agents.onboarding_agent.models import BusinessCard
 from agents.session_context import set_context as set_shared_context, get_context as get_shared_context
 
-def set_session_context(session_manager, session_id: str):
+# Backwards-compatibility for tests that import these globals directly
+import agents.session_context as _session_ctx
+
+_context_lock = _session_ctx._lock
+# allow both tuple and legacy string keys
+_session_contexts: MutableMapping[Any, Dict[str, Any]] = _session_ctx._contexts
+_current_session = _session_ctx._current_session
+
+def set_session_context(session_manager: Any, session_id: str) -> None:
     """Set the session context for tools to access user_id."""
     set_shared_context("onboarding_agent", session_manager, session_id)
+    # Maintain legacy structures for older tests/utilities
+    with _context_lock:
+        context = {
+            "session_manager": session_manager,
+            "session_id": session_id,
+            "user_id": None,
+        }
+        _session_contexts[("onboarding_agent", session_id)] = context
+        _session_contexts[session_id] = context
 
 
 def save_business_card_tool(
@@ -122,19 +139,16 @@ def load_business_card_tool() -> str:
     """
     import json
 
-    # Get session context from global storage (thread-safe)
-    global _current_session_id
-    with _context_lock:
-        if not _current_session_id or _current_session_id not in _session_contexts:
-            print("[TOOL ERROR] Session context not set - cannot load business card")
-            return json.dumps({
-                "success": False,
-                "error": "Session context not available"
-            })
+    context = get_shared_context("onboarding_agent")
+    if not context:
+        print("[TOOL ERROR] Session context not set - cannot load business card")
+        return json.dumps({
+            "success": False,
+            "error": "Session context not available"
+        })
 
-        context = _session_contexts[_current_session_id]
-        session_manager = context['session_manager']
-        session_id = context['session_id']
+    session_manager = context.get('session_manager')
+    session_id = context.get('session_id')
 
     # Get user_id from session context
     if not session_manager or not session_id:

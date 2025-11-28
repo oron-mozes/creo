@@ -2,14 +2,14 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Sequence, cast
 
 import google.generativeai as genai
 from pinecone import Pinecone, ServerlessSpec
 
 # Initialize Pinecone client
 _pc: Optional[Pinecone] = None
-_index = None
+_index: Optional[Any] = None
 
 
 def get_pinecone_client() -> Pinecone:
@@ -27,7 +27,7 @@ def get_or_create_index(
     index_name: str = "creo-embeddings",
     dimension: int = 768,  # Gemini embedding dimension
     metric: str = "cosine"
-):
+) -> Any:
     """Get or create a Pinecone index."""
     global _index
     if _index is not None:
@@ -58,7 +58,7 @@ def get_or_create_index(
 class EmbeddingGenerator:
     """Generate embeddings using Google Gemini."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         api_key = os.environ.get("GOOGLE_API_KEY")
         if not api_key:
             raise RuntimeError("GOOGLE_API_KEY environment variable is required")
@@ -81,7 +81,7 @@ class EmbeddingGenerator:
             content=text,
             task_type=task_type,
         )
-        return result['embedding']
+        return cast(List[float], result['embedding'])
 
     def generate_embeddings_batch(
         self,
@@ -134,7 +134,7 @@ class VectorDB:
 
     def upsert_texts_batch(
         self,
-        items: List[Tuple[str, str, Optional[Dict[str, Any]]]],  # (id, text, metadata)
+        items: Sequence[Tuple[str, str, Optional[Dict[str, Any]]]],  # (id, text, metadata)
         namespace: str = "",
         batch_size: int = 100
     ) -> None:
@@ -215,7 +215,7 @@ class VectorDB:
 
     def get_stats(self) -> Dict[str, Any]:
         """Get index statistics."""
-        return self.index.describe_index_stats()
+        return cast(Dict[str, Any], self.index.describe_index_stats())
 
 
 # Convenience functions for common use cases

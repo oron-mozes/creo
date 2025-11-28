@@ -1,12 +1,20 @@
 """Firestore database utilities for storing conversations and sessions."""
+
 from __future__ import annotations
 
 import os
+import importlib
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
-from google.cloud import firestore
-from google.cloud.firestore_v1 import FieldFilter
+firestore: Any
+FieldFilter: Any
+try:
+    firestore = importlib.import_module("google.cloud.firestore")
+    FieldFilter = importlib.import_module("google.cloud.firestore_v1").FieldFilter
+except Exception:
+    firestore = None
+    FieldFilter = None
 from pydantic import BaseModel, Field
 
 # Initialize Firestore client
@@ -146,6 +154,7 @@ class CreatorDB:
             )
 
         if self.collection:
+            assert self.db is not None
             batch = self.db.batch()
             for payload in payloads:
                 doc_ref = self.collection.document()
@@ -192,9 +201,9 @@ class CreatorDB:
 class ConversationDB:
     """Manage conversation storage in Firestore."""
 
-    def __init__(self):
-        self.db = get_db()
-        self.collection = self.db.collection(CONVERSATIONS)
+    def __init__(self) -> None:
+        self.db: Any = get_db()
+        self.collection: Any = self.db.collection(CONVERSATIONS) if self.db else None
 
     def save_message(
         self,
@@ -216,7 +225,7 @@ class ConversationDB:
         }
 
         doc_ref = self.collection.add(doc_data)
-        return doc_ref[1].id
+        return cast(str, doc_ref[1].id)
 
     def get_conversation_history(
         self,
@@ -242,6 +251,10 @@ class ConversationDB:
 
     def delete_session(self, session_id: str) -> int:
         """Delete all messages for a session."""
+        if not self.db:
+            return 0
+        assert self.db is not None
+        assert self.collection is not None
         query = self.collection.where(filter=FieldFilter("session_id", "==", session_id))
         docs = query.stream()
 
@@ -260,9 +273,9 @@ class ConversationDB:
 class SessionDB:
     """Manage user sessions in Firestore."""
 
-    def __init__(self):
-        self.db = get_db()
-        self.collection = self.db.collection(SESSIONS)
+    def __init__(self) -> None:
+        self.db: Any = get_db()
+        self.collection: Any = self.db.collection(SESSIONS) if self.db else None
 
     def create_session(
         self,
@@ -293,7 +306,7 @@ class SessionDB:
         """Get session information."""
         doc = self.collection.document(session_id).get()
         if doc.exists:
-            return doc.to_dict()
+            return cast(Dict[str, Any], doc.to_dict())
         return None
 
     def get_user_sessions(self, user_id: str, limit: int = 10) -> List[Dict[str, Any]]:
@@ -322,9 +335,9 @@ class SessionDB:
 class CampaignDB:
     """Manage campaign data in Firestore."""
 
-    def __init__(self):
-        self.db = get_db()
-        self.collection = self.db.collection(CAMPAIGNS)
+    def __init__(self) -> None:
+        self.db: Any = get_db()
+        self.collection: Any = self.db.collection(CAMPAIGNS) if self.db else None
 
     def save_campaign(
         self,
@@ -345,7 +358,7 @@ class CampaignDB:
             return campaign_id
         else:
             doc_ref = self.collection.add(doc_data)
-            return doc_ref[1].id
+            return cast(str, doc_ref[1].id)
 
     def get_campaign(self, campaign_id: str) -> Optional[Dict[str, Any]]:
         """Get a campaign by ID."""
@@ -353,7 +366,7 @@ class CampaignDB:
         if doc.exists:
             return {
                 "id": doc.id,
-                **doc.to_dict()
+                **cast(Dict[str, Any], doc.to_dict())
             }
         return None
 
@@ -379,9 +392,9 @@ class CampaignDB:
 class AnalyticsDB:
     """Track analytics and metrics."""
 
-    def __init__(self):
-        self.db = get_db()
-        self.collection = self.db.collection(ANALYTICS)
+    def __init__(self) -> None:
+        self.db: Any = get_db()
+        self.collection: Any = self.db.collection(ANALYTICS) if self.db else None
 
     def log_event(
         self,
@@ -399,7 +412,7 @@ class AnalyticsDB:
         }
 
         doc_ref = self.collection.add(doc_data)
-        return doc_ref[1].id
+        return cast(str, doc_ref[1].id)
 
     def get_events(
         self,

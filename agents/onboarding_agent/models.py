@@ -13,7 +13,7 @@ class BusinessCard(BaseModel):
 
     @field_validator('website')
     @classmethod
-    def validate_website(cls, v):
+    def validate_website(cls, v: Optional[str]) -> Optional[str]:
         """Validate website URL format."""
         if v and v != "Not provided":
             # Ensure URL has protocol
@@ -21,7 +21,7 @@ class BusinessCard(BaseModel):
                 v = 'https://' + v
         return v
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str]:
         """Convert to dictionary for JSON serialization."""
         return {
             "name": self.name or "Not provided",
@@ -48,4 +48,3 @@ class BusinessCard(BaseModel):
             self.location and self.location != "Not provided",
             self.service_type and self.service_type != "Not provided"
         ])
-

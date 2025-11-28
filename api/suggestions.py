@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import uuid
-from typing import Optional
+from typing import Optional, Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -27,7 +27,7 @@ class SuggestionsResponse(BaseModel):
 
 
 def build_suggestions_router(
-    suggestions_agent,
+    suggestions_agent: Any,
     message_store: MessageStore,
     user_service: UserService,
 ) -> APIRouter:
@@ -37,7 +37,7 @@ def build_suggestions_router(
     def get_suggestions(
         request: SuggestionsRequest,
         current_user: Optional[UserInfo] = Depends(get_optional_user)
-    ):
+    ) -> SuggestionsResponse:
         """
         Get personalized welcome message and campaign suggestions for a user.
 
@@ -57,6 +57,8 @@ def build_suggestions_router(
 
         try:
             # Resolve user_id (auth or anon)
+            user_id: Optional[str]
+            user_name: Optional[str]
             if current_user:
                 user_id = current_user.user_id
                 user_name = current_user.name
@@ -117,7 +119,7 @@ def build_suggestions_router(
                     app_name=runner.app_name, user_id=user_id, session_id=temp_session_id
                 )
 
-            def _ensure_temp_session():
+            def _ensure_temp_session() -> None:
                 session_service_local = runner.session_service
                 if hasattr(session_service_local, "get_session_sync") and hasattr(session_service_local, "create_session_sync"):
                     existing = session_service_local.get_session_sync(
@@ -139,7 +141,7 @@ def build_suggestions_router(
                 parts=[types.Part(text=f"Generate welcome message and campaign suggestions based on:\n\n{context}")],
             )
 
-            def _run_suggestions():
+            def _run_suggestions() -> str:
                 text = ""
                 for event in runner.run(
                     user_id=user_id,

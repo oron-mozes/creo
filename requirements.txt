@@ -146,3 +146,4 @@ PyJWT
 google-auth-oauthlib
 email-validator
 itsdangerous>=2.2.0
+mypy==1.11.1

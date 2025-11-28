@@ -6,16 +6,16 @@ from workflow_enums import MessageRole, SocketEvent
 
 
 async def handle_join_session(
-    sio,
-    session_manager,
-    message_store,
+    sio: Any,
+    session_manager: Any,
+    message_store: Any,
     get_business_card: Callable[[str], Any],
-    root_agent,
+    root_agent: Any,
     sid: str,
-    data: dict,
+    data: dict[str, Any],
     verify_token: Callable[[str], Any],
     run_agent_and_stream: Callable[..., Any],
-):
+) -> None:
     """
     Shared implementation for the Socket.IO join_session handler.
     """

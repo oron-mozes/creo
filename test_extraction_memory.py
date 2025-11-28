@@ -4,7 +4,7 @@
 from session_manager import SessionMemory
 from workflow_enums import ExtractedField, OnboardingStatus
 
-def test_extraction_memory():
+def test_extraction_memory() -> None:
     """Test the onboarding agent extraction memory functionality."""
 
     print("=" * 80)

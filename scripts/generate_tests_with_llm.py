@@ -11,7 +11,7 @@ Supports two modes:
 import json
 import sys
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set, cast
 import re
 import google.generativeai as genai
 import os
@@ -44,7 +44,7 @@ def _call_gemini(prompt: str, model_name: str) -> str:
             max_output_tokens=8000,
         )
     )
-    return response.text.strip()
+    return cast(str, response.text).strip()
 
 
 def _extract_json_array(response_text: str) -> Optional[List[Any]]:
@@ -118,7 +118,7 @@ def _call_openai_compatible(
     )
     resp.raise_for_status()
     data = resp.json()
-    return data["choices"][0]["message"]["content"].strip()
+    return cast(str, data["choices"][0]["message"]["content"]).strip()
 
 
 def generate_tests_with_llm(
@@ -189,15 +189,16 @@ CRITICAL:
 Generate the {num_tests} test cases now:"""
 
     # Choose backend and generate
+    response_text: str = ""
     try:
         backend_choice = backend
         if backend_choice == "gemini":
-            model_name = model or "gemini-2.5-flash"
+            model_name: str = model or "gemini-2.5-flash"
             response_text = _call_gemini(prompt, model_name)
         else:
-            model_name = model or os.environ.get("LLM_GEN_MODEL", "llama3.1")
-            base = api_base or os.environ.get("LLM_GEN_BASE_URL", "http://localhost:11434/v1")
-            key = api_key or os.environ.get("LLM_GEN_API_KEY")
+            model_name = model or os.environ.get("LLM_GEN_MODEL", "llama3.1") or "llama3.1"
+            base: str = api_base or os.environ.get("LLM_GEN_BASE_URL", "http://localhost:11434/v1") or "http://localhost:11434/v1"
+            key: Optional[str] = api_key or os.environ.get("LLM_GEN_API_KEY")
             max_toks = max_tokens or int(os.environ.get("LLM_GEN_MAX_TOKENS", "2000"))
             response_text = _call_openai_compatible(prompt, model_name, base, key, max_toks)
 
@@ -222,8 +223,9 @@ Generate the {num_tests} test cases now:"""
             print(f"Error: LLM did not return a JSON array. Snippet: {snippet}")
             return []
 
-        print(f"✓ Generated {len(test_cases)} test cases using {backend_choice}")
-        return test_cases
+        typed_cases: List[Dict[str, Any]] = [cast(Dict[str, Any], tc) for tc in test_cases]
+        print(f"✓ Generated {len(typed_cases)} test cases using {backend_choice}")
+        return typed_cases
 
     except json.JSONDecodeError as e:
         print(f"Error: Failed to parse LLM response as JSON: {e}")
@@ -259,7 +261,7 @@ def get_golden_tests(agent_name: str) -> List[Dict[str, Any]]:
         # Get the generator function
         generators = test_utils.AGENT_TEST_GENERATORS
         if enum_value in generators:
-            golden_tests = generators[enum_value]()
+            golden_tests = cast(List[Dict[str, Any]], generators[enum_value]())
             print(f"  ✓ Loaded {len(golden_tests)} golden tests from test_utils.py")
             return golden_tests
 
@@ -285,7 +287,7 @@ def merge_tests(golden_tests: List[Dict[str, Any]], llm_tests: List[Dict[str, An
     return merged
 
 
-def main():
+def main() -> None:
     """Generate tests for all agents or a specific agent."""
     backend = os.environ.get("LLM_GEN_BACKEND", "gemini")
     backend_model = os.environ.get("LLM_GEN_MODEL")
@@ -352,8 +354,8 @@ def main():
             print(f"  ✓ Combined {len(golden_tests)} golden + {len(llm_tests)} LLM = {len(test_cases)} total tests")
         else:
             print("  Mode: LLM-only")
-            llm_tests: List[Dict[str, Any]] = []
-            used_names: set[str] = set()
+            llm_tests = []
+            used_names = set()
             attempts = 0
             while len(llm_tests) < target_llm and attempts < max_attempts:
                 needed = target_llm - len(llm_tests)
