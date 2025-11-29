@@ -1,6 +1,7 @@
 // Message component for displaying user and assistant messages
 import React from 'react'
 import type { Message as MessageType } from '../../types'
+import { AuthSignInWidget } from './AuthSignInWidget'
 
 interface MessageProps {
   message: MessageType
@@ -40,9 +41,13 @@ export function Message({ message, className = '' }: MessageProps) {
       </div>
       <div className="flex-1 space-y-2">
         <p className="text-sm font-medium text-gray-500">Creo Assistant</p>
-        <div className="text-base leading-relaxed whitespace-pre-wrap break-words" style={{ color: 'rgba(31, 41, 55, 0.9)' }}>
-          {message.content}
-        </div>
+        {message.widget === 'auth_signin' ? (
+          <AuthSignInWidget message={message.content} />
+        ) : (
+          <div className="text-base leading-relaxed whitespace-pre-wrap break-words" style={{ color: 'rgba(31, 41, 55, 0.9)' }}>
+            {message.content}
+          </div>
+        )}
       </div>
     </div>
   )

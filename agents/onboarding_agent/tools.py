@@ -3,6 +3,7 @@ from typing import Optional, Dict, Any, MutableMapping
 from google.adk.tools import FunctionTool
 from agents.onboarding_agent.models import BusinessCard
 from agents.session_context import set_context as set_shared_context, get_context as get_shared_context
+from workflow_enums import WorkflowStage
 
 # Backwards-compatibility for tests that import these globals directly
 import agents.session_context as _session_ctx
@@ -110,6 +111,8 @@ def save_business_card_tool(
 
         # Also save to session memory
         session_memory.set_business_card(business_card_data)
+        # Advance workflow stage now that onboarding is complete
+        session_memory.set_workflow_stage(WorkflowStage.CAMPAIGN_BRIEF)
 
         print(f"[TOOL] ✓ Business card saved successfully for {name}")
 

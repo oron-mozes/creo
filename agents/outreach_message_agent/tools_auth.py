@@ -25,6 +25,17 @@ def require_auth_for_outreach_tool(reason: Optional[str] = None) -> Dict[str, An
     if authed:
         return {"success": True, "auth_required": False, "message": "Authenticated; outreach may proceed."}
 
+    # Set flag in session metadata so run_agent can trigger login UI
+    ctx = get_context("shared") or get_context("outreach_message_agent")
+    if ctx and "session_manager" in ctx:
+        session_manager = ctx["session_manager"]
+        session_id = ctx.get("session_id")
+        if session_manager and session_id:
+            session_memory = session_manager.get_session_memory(session_id)
+            if session_memory:
+                metadata = session_memory.get_shared_context().setdefault("metadata", {})
+                metadata["auth_required_triggered"] = True
+
     return {
         "success": False,
         "auth_required": True,

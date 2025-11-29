@@ -30,6 +30,9 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
   const chatRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const sendButtonRef = useRef<HTMLButtonElement>(null)
+  const chatBottomRef = useRef<HTMLDivElement>(null)
+  const [isNearBottom, setIsNearBottom] = useState(true)
+  const [fabNeedsAttention, setFabNeedsAttention] = useState(false)
 
   const {
     messages,
@@ -47,6 +50,8 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
       }
     },
   })
+
+  const isAssistantStreaming = isLoading || !!streamingMessage
 
   // Load welcome message and suggestions
   useEffect(() => {
@@ -89,13 +94,15 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
       textareaRef.current.style.height = 'auto'
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
 
-      if (message.trim() && sendButtonRef.current) {
-        sendButtonRef.current.style.backgroundColor = 'rgb(0, 160, 235)'
-      } else if (sendButtonRef.current) {
-        sendButtonRef.current.style.backgroundColor = 'rgba(0, 160, 235, 0.4)'
+      if (sendButtonRef.current) {
+        if (isAssistantStreaming || !message.trim()) {
+          sendButtonRef.current.style.backgroundColor = 'rgba(0, 160, 235, 0.4)'
+        } else {
+          sendButtonRef.current.style.backgroundColor = 'rgb(0, 160, 235)'
+        }
       }
     }
-  }, [message])
+  }, [message, isAssistantStreaming])
 
   const scrollToChat = () => {
     if (chatRef.current) {
@@ -110,17 +117,13 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
     }
   }
 
-  // Auto-scroll to chat when messages exist
-  useEffect(() => {
-    if (messages.length > 0 || streamingMessage) {
-      chatRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages.length, streamingMessage])
-
   const handleSendMessage = () => {
-    if (!message.trim() || isLoading) return
+    if (!message.trim() || isAssistantStreaming) return
     sendChatMessage(message)
     setMessage('')
+    if (isNearBottom) {
+      requestAnimationFrame(scrollToChatBottom)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -152,6 +155,46 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
     // Scroll to chat
     chatRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  const scrollToChatBottom = () => {
+    if (chatBottomRef.current) {
+      chatBottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+    setFabNeedsAttention(false)
+  }
+
+  useEffect(() => {
+    if (!messages.length) return
+    const latest = messages[messages.length - 1]
+    if (latest.role === 'user' && isNearBottom) {
+      scrollToChatBottom()
+      return
+    }
+
+    // If assistant replied and user isn't at bottom, nudge the FAB to show new content
+    if (latest.role === 'assistant' && !isNearBottom) {
+      setFabNeedsAttention(true)
+    }
+  }, [messages, isNearBottom])
+
+  // Track scroll position to see if user is near the bottom
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const viewport = window.innerHeight
+      const docHeight = document.documentElement.scrollHeight
+      const distanceFromBottom = docHeight - (scrollY + viewport)
+      const nearBottom = distanceFromBottom < 120
+      setIsNearBottom(nearBottom)
+      if (nearBottom) {
+        setFabNeedsAttention(false)
+      }
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <div className="min-h-screen bg-white">
@@ -363,17 +406,19 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
               <div className="flex gap-4 items-end">
                 <textarea
                   ref={textareaRef}
+                  data-testid="chat-textarea"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   rows={1}
-                  className="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg"
+                  className="flex-1 resize-none text-base border-0 focus:ring-0 focus:outline-none p-3 rounded-lg placeholder-ellipsis"
                   placeholder="Type here... (e.g., 'I have a small bakery in Manchester')"
-                  style={{ maxHeight: '200px', overflowY: 'auto' }}
+                  style={{ maxHeight: '200px', overflowY: 'auto', overflowX: 'hidden' }}
                 />
                 <button
                   ref={sendButtonRef}
                   onClick={handleSendMessage}
+                  disabled={isAssistantStreaming || !message.trim()}
                   className="inline-flex items-center justify-center gap-2 text-white px-6 py-4 rounded-2xl font-medium transition-all shrink-0"
                   style={{ backgroundColor: 'rgba(0, 160, 235, 0.4)' }}
                 >
@@ -393,7 +438,22 @@ export function HomePage({ initialShowAuthModal = false }: HomePageProps) {
             <ChatHelpfulTipsCard />
           </div>
         </div>
+        <div ref={chatBottomRef} />
       </main>
+
+      {/* Scroll to bottom FAB */}
+      <button
+        onClick={scrollToChatBottom}
+        data-testid="scroll-to-bottom-fab"
+        className={`fixed bottom-6 right-6 z-20 inline-flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors text-white ${fabNeedsAttention ? 'fab-attention' : ''}`}
+        style={{ backgroundColor: 'rgb(0, 160, 235)' }}
+        aria-label="Scroll to bottom"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-6 w-6 fab-arrow`}>
+          <path d="m7 13 5 5 5-5" />
+          <path d="M12 18V6" />
+        </svg>
+      </button>
     </div>
   )
 }

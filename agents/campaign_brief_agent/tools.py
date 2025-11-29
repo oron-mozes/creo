@@ -73,14 +73,30 @@ def save_campaign_brief_tool(
     )
 
     try:
+        print(f"[CAMPAIGN_BRIEF] Starting tool execution for session {session_id}")
         from utils.message_utils import save_campaign_brief as save_brief_util
 
+        print(f"[CAMPAIGN_BRIEF] Calling save_brief_util...")
         save_brief_util(user_id, session_id, brief)
+        print(f"[CAMPAIGN_BRIEF] Brief saved to database")
+        
         # Also keep in session memory for quick access by other agents
-        session_memory.set_agent_context("campaign_brief_agent", {"brief": brief})
+        print(f"[CAMPAIGN_BRIEF] Updating agent context...")
+        session_memory.update_agent_context("campaign_brief_agent", "brief", brief)
+        print(f"[CAMPAIGN_BRIEF] Agent context updated")
+        
+        # Transition to creator_finder stage after brief is saved
+        print(f"[CAMPAIGN_BRIEF] About to transition stage...")
+        from workflow_enums import WorkflowStage
+        print(f"[CAMPAIGN_BRIEF] WorkflowStage imported: {WorkflowStage.CREATOR_FINDER}")
+        session_memory.set_workflow_stage(WorkflowStage.CREATOR_FINDER)
+        print(f"[CAMPAIGN_BRIEF] Stage transition complete. New stage: {session_memory.get_workflow_stage()}")
+        
         return json.dumps({"success": True, "message": "Campaign brief saved successfully!", "brief": brief})
     except Exception as e:
         print(f"[TOOL ERROR] Failed to save campaign brief: {e}")
+        import traceback
+        traceback.print_exc()
         return json.dumps({"success": False, "error": str(e)})
 
 

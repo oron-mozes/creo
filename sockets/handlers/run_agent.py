@@ -64,6 +64,7 @@ def _handle_root_final(
         brief_ctx = session_memory_local.get_agent_context("campaign_brief_agent")
         has_brief = bool(brief_ctx and brief_ctx.get("brief"))
 
+    # Check if implicit login gate applies
     if should_prompt_login(stage, has_brief, is_authenticated):
         login_prompt = (
             "Please sign in to continue. We need your email to contact creators and share replies. "
@@ -80,6 +81,37 @@ def _handle_root_final(
                 "session_id": session_id,
                 "message_id": message_id_login,
                 "auth_required": True,
+                "widget": "auth_signin",
+            },
+            room=session_id,
+        )
+        return True
+
+    # Check if explicit tool-triggered auth is required
+    auth_triggered = False
+    if session_memory_local:
+        metadata = session_memory_local.get_shared_context().get("metadata", {})
+        print(f"[RUN_AGENT] Checking auth_required_triggered flag. Metadata: {metadata}")
+        if metadata.get("auth_required_triggered"):
+            auth_triggered = True
+            print(f"[RUN_AGENT] Auth required flag detected! is_authenticated={is_authenticated}")
+            # Clear the flag so it doesn't persist
+            metadata["auth_required_triggered"] = False
+
+    if auth_triggered and not is_authenticated:
+        print(f"[RUN_AGENT] Emitting MESSAGE_COMPLETE with auth_required=True and widget='auth_signin'")
+        # Use the agent's response as the message, but attach auth_required=True
+        message_store.save_message(session_id, MessageRole.ASSISTANT.value, final_text, user_id)
+        session_manager.save_assistant_message(session_id, final_text, message_id)
+        sio.start_background_task(
+            sio.emit,
+            SocketEvent.MESSAGE_COMPLETE.value,
+            {
+                "message": final_text,
+                "session_id": session_id,
+                "message_id": message_id,
+                "auth_required": True,
+                "widget": "auth_signin",
             },
             room=session_id,
         )
@@ -172,16 +204,34 @@ async def run_agent_and_stream(
             break
 
     if not got_final_response:
-        await _emit_fallback_response(
-            sio=sio,
-            session_id=session_id,
-            message_id=message_id,
-            message_store=message_store,
-            session_manager=session_manager,
-            user_id=user_id,
-            response_chunks=response_chunks,
-            all_chunks=all_chunks,
-        )
+        # Check if we have a saved frontdesk response in metadata (fallback for empty Orchestrator response)
+        session_memory = session_manager.get_session_memory(session_id)
+        last_response = None
+        if session_memory:
+            metadata = session_memory.get_shared_context().get("metadata", {})
+            last_response = metadata.get("last_frontdesk_response")
+
+        if last_response:
+            print(f"[run_agent] Using saved frontdesk response as fallback: {last_response[:50]}...")
+            # Emit the saved response as if it were the final message
+            message_store.save_message(session_id, MessageRole.ASSISTANT.value, last_response, user_id)
+            session_manager.save_assistant_message(session_id, last_response, message_id)
+            await sio.emit(
+                SocketEvent.MESSAGE_COMPLETE.value,
+                {"message": last_response, "session_id": session_id, "message_id": message_id},
+                room=session_id,
+            )
+        else:
+            await _emit_fallback_response(
+                sio=sio,
+                session_id=session_id,
+                message_id=message_id,
+                message_store=message_store,
+                session_manager=session_manager,
+                user_id=user_id,
+                response_chunks=response_chunks,
+                all_chunks=all_chunks,
+            )
 
 
 async def _emit_fallback_response(

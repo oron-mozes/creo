@@ -13,6 +13,8 @@ export interface Message {
   content: string
   timestamp?: number
   messageId?: string
+  widget?: string
+  auth_required?: boolean
 }
 
 export interface Session {
@@ -69,6 +71,8 @@ export interface SocketEvents {
     message_id: string
     business_card?: BusinessCard
     is_error?: boolean
+    auth_required?: boolean
+    widget?: string
   }
   error: { error: string }
 }

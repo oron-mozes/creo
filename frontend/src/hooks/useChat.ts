@@ -78,9 +78,11 @@ export function useChat({ sessionId, userId, onNewMessage, onAuthRequired }: Use
     // Handle message complete
     const handleMessageComplete = (data: {
       message: string
+      session_id?: string
       business_card?: BusinessCard
       is_error?: boolean
       auth_required?: boolean
+      widget?: string
     }) => {
       setLoading(sessionId, false)
 
@@ -88,6 +90,8 @@ export function useChat({ sessionId, userId, onNewMessage, onAuthRequired }: Use
         role: 'assistant',
         content: data.message,
         timestamp: Date.now(),
+        widget: data.widget,
+        auth_required: data.auth_required,
       }
 
       addMessage(sessionId, newMessage)
@@ -101,14 +105,14 @@ export function useChat({ sessionId, userId, onNewMessage, onAuthRequired }: Use
         setError(sessionId, data.message)
       }
 
-       if (data.auth_required) {
-         onNewMessageRef.current?.(newMessage)
-         // Bubble up auth requirement
-         if (typeof onAuthRequired === 'function') {
-           onAuthRequired({ sessionId: data.session_id || sessionId, prompt: data.message })
-         }
-         return
-       }
+      if (data.auth_required) {
+        onNewMessageRef.current?.(newMessage)
+        // Bubble up auth requirement
+        if (typeof onAuthRequired === 'function') {
+          onAuthRequired({ sessionId: data.session_id || sessionId, prompt: data.message })
+        }
+        return
+      }
 
       onNewMessageRef.current?.(newMessage)
     }

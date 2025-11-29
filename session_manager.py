@@ -12,13 +12,43 @@ Key Architecture:
 """
 from __future__ import annotations
 
-from typing import Optional, Dict, Any, Union, List, Iterable, cast
+from typing import Optional, Dict, Any, Union, List, Iterable, cast, TYPE_CHECKING
 from types import SimpleNamespace
 from google.adk.runners import InMemoryRunner
+from google.adk.plugins.base_plugin import BasePlugin
 from google.genai import types
 from datetime import datetime
 
 from workflow_enums import WorkflowStage, OnboardingStatus, ExtractedField
+
+if TYPE_CHECKING:
+    from google.adk.tools.tool_context import ToolContext
+
+
+_RUNNER_PLUGIN_NAME = "runner_tool_context_injector"
+
+
+class _ToolContextRunnerPlugin(BasePlugin):
+    """Injects the active runner (and session manager) into ToolContext."""
+
+    def __init__(self, runner: InMemoryRunner, session_manager: "SessionManager") -> None:
+        super().__init__(_RUNNER_PLUGIN_NAME)
+        self._runner = runner
+        self._session_manager = session_manager
+
+    async def before_tool_callback(
+        self,
+        *,
+        tool,
+        tool_args: Dict[str, Any],
+        tool_context: "ToolContext",
+    ) -> Optional[dict]:
+        # Downstream tools expect runner + session_manager on the ToolContext.
+        if getattr(tool_context, "runner", None) is None:
+            setattr(tool_context, "runner", self._runner)
+        if getattr(tool_context, "session_manager", None) is None:
+            setattr(tool_context, "session_manager", self._session_manager)
+        return None
 
 
 class SessionMemory:
@@ -408,6 +438,14 @@ class SessionManager:
 
         # Root agent (will be set from server.py)
         self._root_agent = root_agent
+    
+    def _ensure_runner_plugin(self, runner: InMemoryRunner) -> None:
+        """Ensure runner has the plugin that injects context into tools."""
+        existing = runner.plugin_manager.get_plugin(_RUNNER_PLUGIN_NAME)
+        if existing is None:
+            runner.plugin_manager.register_plugin(
+                _ToolContextRunnerPlugin(runner, self)
+            )
 
     def set_root_agent(self, root_agent: Any) -> None:
         """Set the root agent for creating runners.
@@ -432,7 +470,35 @@ class SessionManager:
             print(f"[SessionManager] Creating new runner for user: {user_id}")
             # Align app_name with agent package to avoid session/app mismatch warnings
             self._runners[user_id] = InMemoryRunner(agent=self._root_agent, app_name="agents")
-        return self._runners[user_id]
+        runner = self._runners[user_id]
+        self._ensure_runner_plugin(runner)
+        return runner
+
+    def create_sub_runner(self, agent: Any, user_id: str) -> InMemoryRunner:
+        """Create a new runner for a sub-agent sharing the main session service.
+
+        Args:
+            agent: The sub-agent instance to run
+            user_id: The user identifier
+
+        Returns:
+            A new InMemoryRunner configured for the sub-agent
+        """
+        # Get the main runner to access its session service
+        main_runner = self.get_or_create_runner(user_id)
+        
+        # Create new runner for the sub-agent
+        # We use the same app_name to ensure session compatibility
+        sub_runner = InMemoryRunner(agent=agent, app_name=main_runner.app_name)
+        
+        # CRITICAL: Inject the existing session service to share state/history
+        # This ensures the sub-agent sees the same session as the root agent
+        sub_runner.session_service = main_runner.session_service
+        
+        # Ensure plugins are set up
+        self._ensure_runner_plugin(sub_runner)
+        
+        return sub_runner
 
     def ensure_session(self, user_id: str, session_id: str, user_profile: Optional[Dict[str, Any]] = None) -> None:
         """Ensure a session exists in the runner.
@@ -526,6 +592,7 @@ class SessionManager:
             # Reset frontdesk_called flag for this turn
             metadata = session_memory.get_shared_context().setdefault('metadata', {})
             metadata['frontdesk_called'] = False
+            metadata['last_frontdesk_response'] = None
 
         # Set session context for tools to access
         from agents.onboarding_agent.tools import set_session_context
